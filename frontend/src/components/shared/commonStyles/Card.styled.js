@@ -14,7 +14,6 @@ export const CardStyled = styled.div`
   gap: 30px;
   background-color: #1d1d1d;
   border-radius: 20px;
-  width: 600px;
   padding: 40px 0;
   flex-direction: column;
 `;

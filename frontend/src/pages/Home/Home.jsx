@@ -19,7 +19,7 @@ const Home = () => {
                     <img src='/images/arrow_forward.png' />
                 </ButtonWrapper>
                 <div className="links">
-                    Have an invite text? <Link className='sign-in'>Sign in</Link>
+                    Have an invite text? <Link className='sign-in' to="/login">Sign in</Link>
                 </div>
             </CardStyled>
         </MainStyled>
