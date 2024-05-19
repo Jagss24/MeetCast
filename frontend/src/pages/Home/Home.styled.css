@@ -1,0 +1,14 @@
+.sub {
+  text-align: center;
+  padding: 0 30px;
+  width: 400px;
+  line-height: 36px;
+  font-weight: medium;
+}
+
+.links,
+.sign-in {
+  color: #0077ff;
+  font-size: 16px;
+  text-decoration: none;
+}
