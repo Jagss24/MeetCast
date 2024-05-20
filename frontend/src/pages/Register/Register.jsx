@@ -15,7 +15,6 @@ const steps = {
 const Register = () => {
     const [step, setStep] = useState(1)
     const Step = steps[step]
-    console.log(steps[step])
     return (
         <>
             <Step />
