@@ -48,8 +48,11 @@ export const ButtonWrapper = styled.button`
   border-radius: 20px;
   cursor: pointer;
   margin-bottom: 10px;
-
-  &:hover {
-    opacity: 0.9;
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  &:not(&:disabled):hover {
+    opacity: 0.8;
   }
 `;

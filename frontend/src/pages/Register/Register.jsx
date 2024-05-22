@@ -17,7 +17,7 @@ const Register = () => {
     const Step = steps[step]
     return (
         <>
-            <Step />
+            <Step setStep={setStep} />
         </>
     )
 }
