@@ -4,8 +4,8 @@ import { TermStyled, InputBoxStyled, InputStyled, EmailPhoneWrapper } from "./St
 import { CiMobile1 } from "react-icons/ci";
 import { AiOutlineMail } from "react-icons/ai";
 const StepPhoneEmail = ({ setStep }) => {
-    const [number, setNumber] = useState()
-    const [email, setEmail] = useState()
+    const [number, setNumber] = useState(null)
+    const [email, setEmail] = useState(null)
     const [isPhoneActive, setIsPhoneActive] = useState(true)
     const handlePhoneSubmission = () => {
         setStep(2)
@@ -42,7 +42,8 @@ const StepPhoneEmail = ({ setStep }) => {
                         </ButtonWrapper>
                         <TermStyled>By entering your number you are agreeing to our Terms of services and Privacy Policy Thanks!</TermStyled>
                     </CardStyled>
-                </MainStyled> : <MainStyled>
+                </MainStyled> :
+                <MainStyled>
                     <CardStyled>
                         <HeadingWrapper>
                             <HeadingImg src='/images/msg.png' style={{ width: "25px", height: "20px" }}></HeadingImg>

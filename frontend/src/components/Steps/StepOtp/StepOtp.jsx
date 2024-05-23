@@ -40,6 +40,7 @@ const StepOtp = () => {
                 <OTPBox
                   autoFocus={i === 0}
                   type="text"
+                  key={i}
                   value={value}
                   ref={inputRefs.current[i]}
                   disabled={i !== currentFocus}
