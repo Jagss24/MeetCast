@@ -9,3 +9,8 @@ export const creatUser = async (data) => {
   const user = await User.create(data);
   return user;
 };
+
+export const userDto = (fields) => {
+  const { _id, activated, number, createdAt } = fields;
+  return { id: _id, activated, number, createdAt };
+};

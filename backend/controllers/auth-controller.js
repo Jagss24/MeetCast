@@ -1,5 +1,5 @@
 import { generateOtp, hashOtp, sendSms } from "../services/otpServices.js";
-import { creatUser, findUser } from "../services/userService.js";
+import { creatUser, findUser, userDto } from "../services/userService.js";
 import { generateTokens } from "../services/tokenService.js";
 
 export const authentiCateOtpMobile = async (req, res) => {
@@ -17,8 +17,9 @@ export const authentiCateOtpMobile = async (req, res) => {
   const data = `${number}.${otp}.${expires}`; // hashing the data more securely
   const hash = await hashOtp(data);
 
+  // Send the OTP on mobile
   try {
-    await sendSms(number, otp);
+    // await sendSms(number, otp);
     return res.status(200).json({ hash: `${hash}.${expires}`, otp, number });
   } catch (err) {
     console.log(err);
@@ -48,7 +49,7 @@ export const verifyOtpMobile = async (req, res) => {
   try {
     user = await findUser({ number }); //Finding user
     if (!user) {
-      await creatUser({ number }); //If not then create
+      user = await creatUser({ number }); //If not then create
     }
   } catch (error) {
     console.log(error);
@@ -58,7 +59,7 @@ export const verifyOtpMobile = async (req, res) => {
   //Token Generation
 
   const { accessToken, refereshToken } = generateTokens({
-    id: user._id,
+    id: user?._id,
     activated: false,
   });
 
@@ -67,7 +68,7 @@ export const verifyOtpMobile = async (req, res) => {
     maxAge: 1000 * 60 * 60 * 24 * 30,
     httpOnly: true,
   });
-
-  res.json({ accessToken });
+  const userData = userDto(user);
+  res.json({ accessToken, userData });
 };
 export const authentiCateOtpEmail = async (req, res) => {};
