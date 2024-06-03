@@ -3,16 +3,22 @@ import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, HeadingImg, Butt
 import { TermStyled, InputBoxStyled, InputStyled, EmailPhoneWrapper } from "./StepPhoneEmail.styled"
 import { CiMobile1 } from "react-icons/ci";
 import { AiOutlineMail } from "react-icons/ai";
+import { sendOtpMobile } from '../../../hooks/useOtp';
+import { SpinningCircles } from 'react-loading-icons';
 const StepPhoneEmail = ({ setStep }) => {
-    const [number, setNumber] = useState(null)
-    const [email, setEmail] = useState(null)
+    const [number, setNumber] = useState("")
+    const [email, setEmail] = useState("")
     const [isPhoneActive, setIsPhoneActive] = useState(true)
-    const handlePhoneSubmission = () => {
-        setStep(2)
+    const handlePhoneSubmission = async () => {
+        refetch()
+        // setStep(2)
     }
     const handleEmailSubmission = () => {
-        setStep(2)
+
+        // setStep(2)   
     }
+
+    const { refetch, isFetching, isLoading, isRefetching } = sendOtpMobile(number)
     return (
         <>
             <EmailPhoneWrapper>
@@ -38,6 +44,7 @@ const StepPhoneEmail = ({ setStep }) => {
                         </InputBoxStyled>
                         <ButtonWrapper onClick={handlePhoneSubmission}>
                             Next
+                            {isFetching && <SpinningCircles speed={2} width={20} height={20} />}
                             <img src='/images/arrow_forward.png' />
                         </ButtonWrapper>
                         <TermStyled>By entering your number you are agreeing to our Terms of services and Privacy Policy Thanks!</TermStyled>
