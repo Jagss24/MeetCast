@@ -2,9 +2,15 @@ import React, { useEffect, useRef, useState } from 'react'
 import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, HeadingImg, ButtonWrapper } from "../../shared/commonStyles/Card.styled"
 import { TermStyled } from '../StepPhoneEmail/StepPhoneEmail.styled'
 import { OTPBox, OTPWrapper } from './StepOtp.styled'
+import { useSelector, useDispatch } from 'react-redux'
+import { verifyOtpMobile } from '../../../hooks/useOtp'
+import { SpinningCircles } from 'react-loading-icons'
+import { setUser } from '../../../slices/userSlice'
 
-const StepOtp = () => {
+const StepOtp = ({ setStep }) => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
+  const dispatch = useDispatch()
+  const { otp, user } = useSelector(state => state.user)
   const [currentFocus, setCurrentFocus] = useState(0);
   const inputRefs = useRef([
     useRef(null),
@@ -23,9 +29,22 @@ const StepOtp = () => {
     }
   };
 
+  const handleSubmit = () => {
+    refetch()
+  }
+
+  const { data, isSuccess, refetch, isFetching } = verifyOtpMobile(inputs.join(""), otp.hash, otp.number)
+
   useEffect(() => {
     inputRefs.current[currentFocus]?.current?.focus();
   }, [currentFocus]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(setUser(data?.data.userData))
+      setStep(3)
+    }
+  }, [isSuccess])
   return (
     <>
       <MainStyled>
@@ -55,9 +74,11 @@ const StepOtp = () => {
             </div>
             <TermStyled>Didn't receive the code? Tap to resend</TermStyled>
           </OTPWrapper>
-          <ButtonWrapper disabled={inputs.includes("")} onClick={() => console.log(inputs.join(""))}>
+          <ButtonWrapper disabled={inputs.includes("")} onClick={handleSubmit}>
             Next
+            {isFetching && <SpinningCircles speed={2} width={20} height={20} />}
             <img src='/images/arrow_forward.png' />
+
           </ButtonWrapper>
         </CardStyled>
       </MainStyled>

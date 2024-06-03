@@ -1,24 +1,35 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, HeadingImg, ButtonWrapper } from "../../shared/commonStyles/Card.styled"
 import { TermStyled, InputBoxStyled, InputStyled, EmailPhoneWrapper } from "./StepPhoneEmail.styled"
 import { CiMobile1 } from "react-icons/ci";
 import { AiOutlineMail } from "react-icons/ai";
 import { sendOtpMobile } from '../../../hooks/useOtp';
+import { setOtp } from '../../../slices/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { SpinningCircles } from 'react-loading-icons';
 const StepPhoneEmail = ({ setStep }) => {
+    const dispatch = useDispatch()
+    const { otp } = useSelector(state => state.user)
     const [number, setNumber] = useState("")
     const [email, setEmail] = useState("")
     const [isPhoneActive, setIsPhoneActive] = useState(true)
     const handlePhoneSubmission = async () => {
         refetch()
-        // setStep(2)
     }
     const handleEmailSubmission = () => {
 
         // setStep(2)   
     }
 
-    const { refetch, isFetching, isLoading, isRefetching } = sendOtpMobile(number)
+    const { data, refetch, isFetching, isSuccess } = sendOtpMobile(number)
+
+    useEffect(() => {
+        if (isSuccess) {
+            dispatch(setOtp({ number: data?.data.number, hash: data?.data.hash }))
+            setStep(2)
+        }
+    }, [isSuccess])
+
     return (
         <>
             <EmailPhoneWrapper>

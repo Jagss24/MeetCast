@@ -10,4 +10,6 @@ const api = axios.create({
 
 export const sendOtp = (payload) => api.post("authenticate/sendOtp", payload);
 
+export const verifyOtp = (payload) =>
+  api.post("authenticate/verifyOtp", payload);
 export default api;
