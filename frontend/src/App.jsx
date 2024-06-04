@@ -6,13 +6,11 @@ import Login from "./pages/Login/Login";
 import Activate from "./pages/Activate/Activate";
 import Rooms from "./pages/Rooms/Rooms";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
-const isAuth = false;
-const user = {
-  activated: false
-};
 
-function AuthHandler() {
+
+function AuthHandler({ isAuth, user }) {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,10 +31,11 @@ function AuthHandler() {
 }
 
 function App() {
+  const { isAuth, user } = useSelector(state => state.user)
   return (
     <Router>
       <Navigation />
-      <AuthHandler /> {/* This component handles the navigation logic */}
+      <AuthHandler isAuth={isAuth} user={user} /> {/* This component handles the navigation logic */}
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path="/register" element={<Register />} />
