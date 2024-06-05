@@ -82,9 +82,9 @@ export const getUser = async (req, res) => {
   console.log({ userId });
   const user = await findUserById(userId);
   if (user) {
-    res.json({ userData: user });
+    res.status(200).json({ userData: user });
   } else {
-    res.json({ message: "Not Found" });
+    res.status(400).json({ message: "Not Found" });
   }
 };
 
