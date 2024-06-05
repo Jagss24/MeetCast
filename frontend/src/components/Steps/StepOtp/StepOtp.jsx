@@ -18,7 +18,6 @@ const StepOtp = ({ setStep }) => {
     useRef(null),
     useRef(null),
   ]);
-
   const handleChange = (value, idx) => {
     if (Number.isInteger(+value) && +value < 10) {
       // If there is empty str like "" it will stil be true.
@@ -39,12 +38,26 @@ const StepOtp = ({ setStep }) => {
     inputRefs.current[currentFocus]?.current?.focus();
   }, [currentFocus]);
 
+  const updateUrlQuery = (key, value) => {
+    const searchParams = new URLSearchParams(window.location.search)
+    searchParams.set(key, value)
+    const newRelativeQuery = window.location.pathname + "?" + searchParams.toString()
+    history.pushState(null, "", newRelativeQuery)
+  }
+
   useEffect(() => {
     if (isSuccess) {
-      dispatch(setUser(data?.data.userData))
-      setStep(3)
+      dispatch(setUser(data?.data?.userData))
+
     }
   }, [isSuccess])
+
+  useEffect(() => {
+    if (user?.id) {
+      updateUrlQuery("user", user?.id)
+      setStep(3)
+    }
+  }, [user?.id])
   return (
     <>
       <MainStyled>
