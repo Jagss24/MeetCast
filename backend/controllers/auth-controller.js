@@ -1,5 +1,10 @@
 import { generateOtp, hashOtp, sendSms } from "../services/otpServices.js";
-import { creatUser, findUser, userDto } from "../services/userService.js";
+import {
+  creatUser,
+  findUser,
+  userDto,
+  findUserById,
+} from "../services/userService.js";
 import { generateTokens } from "../services/tokenService.js";
 
 export const authentiCateOtpMobile = async (req, res) => {
@@ -71,4 +76,16 @@ export const verifyOtpMobile = async (req, res) => {
   const userData = userDto(user);
   res.json({ accessToken, userData });
 };
+
+export const getUser = async (req, res) => {
+  const { userId } = req.query;
+  console.log({ userId });
+  const user = await findUserById(userId);
+  if (user) {
+    res.json({ userData: user });
+  } else {
+    res.json({ message: "Not Found" });
+  }
+};
+
 export const authentiCateOtpEmail = async (req, res) => {};
