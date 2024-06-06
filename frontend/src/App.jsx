@@ -15,17 +15,17 @@ function AuthHandler({ isAuth, user }) {
 
   useEffect(() => {
     const navigateFunc = () => {
-      if (isAuth && user.activated) {
-        navigate("/rooms");
+      if (isAuth && user?.activated) {
+        navigate(`/rooms?user=${user?.id}`);
       } else if (isAuth) {
-        if (!user.activated) {
-          navigate("/activate");
+        if (!user?.activated) {
+          navigate(`/activate?user=${user?.id}`);
         }
       }
     };
 
     navigateFunc();
-  }, [navigate]);
+  }, [navigate, isAuth, user?.activated, user?.id]);
 
   return null;
 }
@@ -42,11 +42,11 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route
           path="/activate"
-          element={isAuth && !user.activated ? <Activate /> : <Navigate to="/" />}
+          element={<Activate />}
         />
         <Route
           path="/rooms"
-          element={isAuth && user.activated ? <Rooms /> : <Navigate to="/" />}
+          element={<Rooms />}
         />
       </Routes>
     </Router>
