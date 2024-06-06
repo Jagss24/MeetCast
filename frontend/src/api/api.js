@@ -12,4 +12,7 @@ export const sendOtp = (payload) => api.post("authenticate/sendOtp", payload);
 
 export const verifyOtp = (payload) =>
   api.post("authenticate/verifyOtp", payload);
+
+export const getUSer = (userId) =>
+  api.get(`authenticate/getUser?userId=${userId}`);
 export default api;
