@@ -81,8 +81,9 @@ export const getUser = async (req, res) => {
   const { userId } = req.query;
   console.log({ userId });
   const user = await findUserById(userId);
+  const userData = userDto(user);
   if (user) {
-    res.status(200).json({ userData: user });
+    res.status(200).json({ userData });
   } else {
     res.status(400).json({ message: "Not Found" });
   }
