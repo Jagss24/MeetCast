@@ -23,7 +23,6 @@ function AuthHandler({ isAuth, user }) {
         }
       }
     };
-
     navigateFunc();
   }, [navigate, isAuth, user?.activated, user?.id]);
 
