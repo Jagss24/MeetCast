@@ -5,7 +5,10 @@ import {
   userDto,
   findUserById,
 } from "../services/userService.js";
-import { generateTokens } from "../services/tokenService.js";
+import {
+  generateTokens,
+  storeRefereshToken,
+} from "../services/tokenService.js";
 
 export const authentiCateOtpMobile = async (req, res) => {
   const { number } = req.body;
@@ -68,13 +71,20 @@ export const verifyOtpMobile = async (req, res) => {
     activated: false,
   });
 
+  //Stroing refresh Token
+  await storeRefereshToken(refereshToken, user?._id);
+
   //Sending refreshtoken in cookie & accessotken in JSON
   res.cookie("refreshtoken", refereshToken, {
     maxAge: 1000 * 60 * 60 * 24 * 30,
     httpOnly: true,
   });
+  res.cookie("accesstoken", accessToken, {
+    maxAge: 1000 * 60 * 60 * 24 * 30,
+    httpOnly: true,
+  });
   const userData = userDto(user);
-  res.json({ accessToken, userData });
+  res.json({ userData, auth: true });
 };
 
 export const getUser = async (req, res) => {
