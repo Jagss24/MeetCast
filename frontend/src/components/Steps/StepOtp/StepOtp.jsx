@@ -7,7 +7,7 @@ import { verifyOtpMobile } from '../../../hooks/useOtp'
 import { SpinningCircles } from 'react-loading-icons'
 import { setUser } from '../../../slices/userSlice'
 
-const StepOtp = ({ setStep }) => {
+const StepOtp = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
   const dispatch = useDispatch()
   const { otp, user } = useSelector(state => state.user)
@@ -20,7 +20,7 @@ const StepOtp = ({ setStep }) => {
   ]);
   const handleChange = (value, idx) => {
     if (Number.isInteger(+value) && +value < 10) {
-      // If there is empty str like "" it will stil be true.
+      // If there is empty str like "" it will still be true.
       const newInputs = [...inputs];
       newInputs[idx] = value;
       setInputs(newInputs);
@@ -55,7 +55,6 @@ const StepOtp = ({ setStep }) => {
   useEffect(() => {
     if (user?.id) {
       updateUrlQuery("user", user?.id)
-      setStep(3)
     }
   }, [user?.id])
   return (
