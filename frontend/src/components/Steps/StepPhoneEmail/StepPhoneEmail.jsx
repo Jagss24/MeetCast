@@ -20,7 +20,15 @@ const StepPhoneEmail = ({ setStep }) => {
 
         // setStep(2)   
     }
-
+    const handleNumber = (e) => {
+        const inputValue = e.target.value;
+        const regex = /^[6-9]\d{0,9}$/;
+        if (inputValue === '' || regex.test(inputValue)) {
+            setNumber(inputValue);
+        } else {
+            return
+        }
+    }
     const { data, refetch, isFetching, isSuccess } = sendOtpMobile(number)
 
     useEffect(() => {
@@ -51,9 +59,9 @@ const StepPhoneEmail = ({ setStep }) => {
                         </HeadingWrapper>
                         <InputBoxStyled>
                             <img src='/images/india.png' alt="india_logo" />
-                            <InputStyled type="number" placeholder='8369198662' value={number} onChange={e => setNumber(e.target.value)} />
+                            <InputStyled type="text" placeholder='8369198662' value={number} onChange={handleNumber} />
                         </InputBoxStyled>
-                        <ButtonWrapper onClick={handlePhoneSubmission}>
+                        <ButtonWrapper onClick={handlePhoneSubmission} disabled={number.length !== 10}>
                             Next
                             {isFetching && <SpinningCircles speed={2} width={20} height={20} />}
                             <img src='/images/arrow_forward.png' />
