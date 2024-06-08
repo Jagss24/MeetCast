@@ -16,6 +16,6 @@ export const findUserById = async (data) => {
 };
 
 export const userDto = (fields) => {
-  const { _id, activated, number, createdAt } = fields;
-  return { id: _id, activated, number, createdAt };
+  const { _id, activated, number, createdAt, name } = fields;
+  return { id: _id, name, activated, number, createdAt };
 };
