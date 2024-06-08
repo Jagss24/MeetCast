@@ -11,7 +11,7 @@ export const CardStyled = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 30px;
+  gap: 20px;
   background-color: #1d1d1d;
   border-radius: 20px;
   padding: 40px 0;
