@@ -12,14 +12,14 @@ import { CgProfile } from "react-icons/cg";
 
 const StepAvatar = ({ setStep }) => {
     const savedName = sessionStorage.getItem("userName")
-    const [img, setImg] = useState("/images/monkey.png")
+    const [img, setImg] = useState("")
     const [wrongImgType, setWrongImgType] = useState(false)
 
     const { user } = useSelector(state => state.user)
     const dispatch = useDispatch()
     const { data, isFetching, refetch, isSuccess } = useQuery({
         queryKey: ["acivate-api"],
-        queryFn: () => activate({ name: savedName, userId: user?.id }),
+        queryFn: () => activate({ name: savedName, userId: user?.id, avatar: img }),
         enabled: false
     })
     const uploadImage = (e) => {
@@ -27,8 +27,11 @@ const StepAvatar = ({ setStep }) => {
         const file = e.target.files[0]
         if (file?.type === "image/png" || file?.type === "image/jpeg") {
             setWrongImgType(false)
-            const imageUrl = URL.createObjectURL(file);
-            setImg({ url: imageUrl, file });
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImg(reader.result);
+            }
+            reader.readAsDataURL(file)
         }
         else {
             setWrongImgType(true)
@@ -40,7 +43,7 @@ const StepAvatar = ({ setStep }) => {
         setStep(1)
     }
     const handleNext = () => {
-        if (savedName && user?.id) {
+        if (savedName && user?.id && img) {
             refetch()
         }
     }
@@ -65,19 +68,19 @@ const StepAvatar = ({ setStep }) => {
                     <TermStyled>Let's upload your profile Pic</TermStyled>
                     <div>
                         <ImageWrapper>
-                            {img?.url ? <ImgInput src={img?.url}></ImgInput> : <CgProfile size={50} />}
+                            {img ? <ImgInput src={img}></ImgInput> : <CgProfile size={50} />}
                         </ImageWrapper>
                         {wrongImgType && <ErrorStyled>Wrong image Type</ErrorStyled>}
                     </div>
                     <BlueLineText htmlFor="fileInput">
                         <input type="file" id="fileInput" onChange={uploadImage} style={{ display: "none" }} />
-                        {img?.url ? "Choose another Pic" : "Upload your Pic"}
+                        {img ? "Choose another Pic" : "Upload your Pic"}
                     </BlueLineText>
                     <Buttons>
                         <ButtonWrapper onClick={handleGoBack}>
                             <FaArrowLeft />Go Back
                         </ButtonWrapper>
-                        <ButtonWrapper disabled={!img?.url} onClick={handleNext}>Next
+                        <ButtonWrapper disabled={!img} onClick={handleNext}>Next
                             {isFetching && <SpinningCircles speed={2} width={20} height={20} />}
                             <FaArrowRight />
                         </ButtonWrapper>
