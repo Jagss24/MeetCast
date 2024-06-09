@@ -1,4 +1,7 @@
 .navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   position: absolute;
   left: 20px;
   top: 20px;

@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { setUser } from '../../../slices/userSlice'
 import { getUSer } from '../../../api/api'
+import styled from 'styled-components'
 
 const Navigation = () => {
     const dispatch = useDispatch()
@@ -43,9 +44,29 @@ const Navigation = () => {
                 <HeadingImg src='/images/logo.png' alt='logo' />
                 <span>VoiceHub</span>
             </Link>
+            {user?.avatar && <UserComponent>
+                <span>{user?.name}</span>
+                <img src={user?.avatar} alt="user_pic" />
+            </UserComponent>}
         </nav>
 
     )
 }
+
+const UserComponent = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    img{
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+    span{
+        font-weight: normal;
+    }
+`
+
 
 export default Navigation
