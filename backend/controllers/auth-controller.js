@@ -83,7 +83,7 @@ export const verifyOtpMobile = async (req, res) => {
     maxAge: 1000 * 60 * 60 * 24 * 30,
     httpOnly: true,
   });
-  const userData = userDto(user);
+  const userData = await userDto(user);
   res.json({ userData, auth: true });
 };
 
@@ -92,10 +92,25 @@ export const getUser = async (req, res) => {
   console.log({ userId });
   const user = await findUserById(userId);
   if (user) {
-    const userData = userDto(user);
+    const userData = await userDto(user);
     res.status(200).json({ userData });
   } else {
     res.status(200).json({ message: "Not Found" });
+  }
+};
+
+export const activateUser = async (req, res) => {
+  const { userId, name, avatar } = req.body;
+  const user = await findUserById(userId);
+  if (user) {
+    user.name = name;
+    user.avatar = avatar;
+    user.activated = true;
+    await user.save();
+    const userData = await userDto(user);
+    res.status(200).json({ userData });
+  } else {
+    res.status(404).json({ message: "No user found" });
   }
 };
 
