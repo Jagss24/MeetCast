@@ -6,16 +6,17 @@ import cors from "cors";
 const mongoURI = process.env.MONGO_URI;
 conn(mongoURI);
 import authenticate from "./routes/authenticate.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
-
+app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
     origin: process.env.FRONTEND_URL,
   })
 );
-app.use(express.json());
+app.use(express.json({ limit: "5mb" }));
 app.use("/authenticate", authenticate);
 app.get("/", (req, res) => {
   res.send("Hello");
