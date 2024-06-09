@@ -89,7 +89,6 @@ export const verifyOtpMobile = async (req, res) => {
 
 export const getUser = async (req, res) => {
   const { userId } = req.query;
-  console.log({ userId });
   const user = await findUserById(userId);
   if (user) {
     const userData = await userDto(user);

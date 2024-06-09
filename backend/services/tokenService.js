@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import Refresh from "../models/refreshModel.js";
-import User from "../models/user-model.js";
 
 export const generateTokens = (payload) => {
   const accessTokenSecret = process.env.JWT_ACCESS_TOKEN_SECRET;
@@ -19,7 +18,6 @@ export const generateTokens = (payload) => {
 export const storeRefereshToken = async (token, userId) => {
   try {
     const refreshTokenExist = await Refresh.findOne({ userId });
-    console.log({ refreshTokenExist });
     if (refreshTokenExist) {
       console.log("true");
       return;
@@ -30,5 +28,17 @@ export const storeRefereshToken = async (token, userId) => {
     });
   } catch (err) {
     console.log(err);
+  }
+};
+
+export const verifyAccessToken = async (token) => {
+  try {
+    const accessTokenSecret = process.env.JWT_ACCESS_TOKEN_SECRET;
+
+    // Verify the token
+    return jwt.verify(token, accessTokenSecret);
+  } catch (error) {
+    console.error("Error verifying token:", error);
+    return null;
   }
 };
