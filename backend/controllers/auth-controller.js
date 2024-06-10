@@ -9,6 +9,7 @@ import {
   generateTokens,
   storeRefereshToken,
 } from "../services/tokenService.js";
+import Refresh from "../models/refreshModel.js";
 
 export const authentiCateOtpMobile = async (req, res) => {
   const { number } = req.body;
@@ -110,6 +111,26 @@ export const activateUser = async (req, res) => {
     res.status(200).json({ userData });
   } else {
     res.status(404).json({ message: "No user found" });
+  }
+};
+
+export const autoReLoginFunctionality = async (req, res) => {
+  try {
+    const { refreshtoken } = req.cookies;
+    if (refreshtoken) {
+      const userToken = await Refresh.findOne({ token: refreshtoken });
+      const user = await findUserById(userToken?.userId);
+      if (!user) {
+        return res.status(404).json({ message: "No user Found" });
+      }
+      const userData = await userDto(user);
+      res.status(200).json({ userData });
+    } else {
+      res.status(400).json({ messgae: "Refresh Token is required" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
