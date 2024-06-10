@@ -35,3 +35,11 @@ export const Buttons = styled.div`
   gap: 30px;
   align-items: center;
 `;
+
+export const ActivationStyled = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 80px;
+`;

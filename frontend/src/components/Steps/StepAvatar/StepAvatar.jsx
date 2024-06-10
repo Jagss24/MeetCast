@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { MainStyled, CardStyled, HeadingWrapper, HeadingImg, HeadingStyled, ButtonWrapper } from '../../shared/commonStyles/Card.styled'
 import { TermStyled } from '../StepPhoneEmail/StepPhoneEmail.styled'
-import { ImgInput, BlueLineText, ImageWrapper, ErrorStyled, Buttons } from './StepAvatar.styled'
+import { ImgInput, BlueLineText, ImageWrapper, ErrorStyled, Buttons, ActivationStyled } from './StepAvatar.styled'
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import { useQuery } from '@tanstack/react-query';
 import { activate } from '../../../api/api';
 import { useSelector, useDispatch } from 'react-redux';
-import { SpinningCircles } from 'react-loading-icons';
+import { Bars } from 'react-loading-icons';
 import { setUser } from '../../../slices/userSlice';
 import { CgProfile } from "react-icons/cg";
 
@@ -59,7 +59,7 @@ const StepAvatar = ({ setStep }) => {
     }, [isSuccess])
     return (
         <>
-            <MainStyled>
+            {!isFetching ? (<MainStyled>
                 <CardStyled>
                     <HeadingWrapper>
                         <HeadingImg src='/images/cool.png' style={{ width: "25px", height: "25px" }}></HeadingImg>
@@ -81,13 +81,21 @@ const StepAvatar = ({ setStep }) => {
                             <FaArrowLeft />Go Back
                         </ButtonWrapper>
                         <ButtonWrapper disabled={!img} onClick={handleNext}>Next
-                            {isFetching && <SpinningCircles speed={2} width={20} height={20} />}
                             <FaArrowRight />
                         </ButtonWrapper>
                     </Buttons>
 
                 </CardStyled>
-            </MainStyled>
+            </MainStyled>) : (
+                <MainStyled>
+                    <CardStyled>
+                        <ActivationStyled>
+                            <p>Activation in Progress</p>
+                            <Bars speed={1} width={50} height={50} />
+                        </ActivationStyled>
+
+                    </CardStyled>
+                </MainStyled>)}
         </>
     )
 }
