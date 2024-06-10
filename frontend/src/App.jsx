@@ -6,13 +6,15 @@ import Login from "./pages/Login/Login";
 import Activate from "./pages/Activate/Activate";
 import Rooms from "./pages/Rooms/Rooms";
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
+import { autoReLogin } from "./api/api";
+import { setUser } from "./slices/userSlice";
 
 
 
 function AuthHandler({ isAuth, user }) {
   const navigate = useNavigate();
-
   useEffect(() => {
     const navigateFunc = () => {
       if (isAuth && user?.activated) {
@@ -31,6 +33,23 @@ function AuthHandler({ isAuth, user }) {
 
 function App() {
   const { isAuth, user } = useSelector(state => state.user)
+  const dispatch = useDispatch()
+  const { data, isSuccess, refetch } = useQuery({
+    queryKey: ["user-login"],
+    queryFn: () => autoReLogin(),
+    enabled: false
+  })
+  useEffect(() => {
+    if (!user?.name) {
+      refetch()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (data?.data?.userData) {
+      dispatch(setUser(data?.data?.userData))
+    }
+  }, [isSuccess])
   return (
     <Router>
       <Navigation />
