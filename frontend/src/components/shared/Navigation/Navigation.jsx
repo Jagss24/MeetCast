@@ -1,42 +1,24 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import "./Navigation.styled.css"
 import { HeadingImg } from '../commonStyles/Card.styled'
 import { useQuery } from '@tanstack/react-query'
-import { useDispatch, useSelector } from 'react-redux'
-import { setUser } from '../../../slices/userSlice'
-import { getUSer } from '../../../api/api'
+import { useSelector } from 'react-redux'
+import { logout } from '../../../api/api'
+import { IoMdLogOut } from "react-icons/io";
 import styled from 'styled-components'
 
 const Navigation = () => {
-    const dispatch = useDispatch()
     const { user } = useSelector(state => state.user)
-    const searchParams = new URLSearchParams(window.location.search);
-    const userId = searchParams.get('user');
-    const { data, refetch } = useQuery({
-        queryKey: [userId],
-        queryFn: () => getUSer(userId),
-        retry: 0,
-        enabled: false,
-    });
-
-    useEffect(() => {
-        if (userId !== user?.id && userId) {
-            refetch()
-
-        }
-    }, [window.location.search, user?.id])
-
-    useEffect(() => {
-        if (data) {
-            if (data?.data?.message === "Not Found") {
-                window.location.assign("/");
-            }
-            else {
-                dispatch(setUser(data?.data?.userData))
-            }
-        }
-    }, [data])
+    const { refetch: logoutRefetch } = useQuery({
+        queryKey: ["user-logout"],
+        queryFn: () => logout(),
+        enabled: false
+    })
+    const handleLogout = () => {
+        logoutRefetch()
+        window.location.assign("/")
+    }
 
     return (
         <nav className={`navbar container`}>
@@ -47,6 +29,9 @@ const Navigation = () => {
             {user?.avatar && <UserComponent>
                 <span>{user?.name}</span>
                 <img src={user?.avatar} alt="user_pic" />
+                <IconComponent onClick={handleLogout}>
+                    <IoMdLogOut color={"blue"} />
+                </IconComponent>
             </UserComponent>}
         </nav>
 
@@ -67,6 +52,15 @@ const UserComponent = styled.div`
         font-weight: normal;
     }
 `
-
+const IconComponent = styled.span`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #fff;
+`
 
 export default Navigation
