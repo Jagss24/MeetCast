@@ -21,7 +21,7 @@ const Navigation = () => {
     }
 
     return (
-        <nav className={`navbar container`}>
+        <nav className={`navbar`}>
             <Link to="/" className="logo_wrapper" >
                 <HeadingImg src='/images/logo.png' alt='logo' />
                 <span>VoiceHub</span>
@@ -30,7 +30,7 @@ const Navigation = () => {
                 <span>{user?.name}</span>
                 <img src={user?.avatar} alt="user_pic" />
                 <IconComponent onClick={handleLogout}>
-                    <IoMdLogOut color={"blue"} />
+                    <IoMdLogOut />
                 </IconComponent>
             </UserComponent>}
         </nav>
@@ -56,11 +56,15 @@ const IconComponent = styled.span`
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
     padding: 5px;
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background-color: #fff;
+    background-color: #0077ff;
+    &:hover{
+        opacity: 0.8;
+    }
 `
 
 export default Navigation
