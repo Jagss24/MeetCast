@@ -20,4 +20,6 @@ export const getUSer = (userId) =>
 export const activate = (data) => api.post("authenticate/activate", data);
 
 export const autoReLogin = () => api.get("authenticate/autoReLogin");
+
+export const logout = () => api.get("authenticate/logout");
 export default api;
