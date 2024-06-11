@@ -5,6 +5,7 @@ import {
   getUser,
   activateUser,
   autoReLoginFunctionality,
+  logoutFunctionality,
 } from "../controllers/auth-controller.js";
 import { authMiddleWarefunc } from "../middlewares/authMiddleWare.js";
 
@@ -19,5 +20,7 @@ router.get("/getUser", getUser);
 router.post("/activate", authMiddleWarefunc, activateUser);
 
 router.get("/autoReLogin", autoReLoginFunctionality);
+
+router.get("/logout", logoutFunctionality);
 
 export default router;

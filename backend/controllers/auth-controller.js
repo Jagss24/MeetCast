@@ -108,6 +108,11 @@ export const activateUser = async (req, res) => {
     user.activated = true;
     await user.save();
     const userData = await userDto(user);
+    res.cookie("accesstoken", "", {
+      expires: new Date(0),
+      httpOnly: true,
+      path: "/",
+    });
     res.status(200).json({ userData });
   } else {
     res.status(404).json({ message: "No user found" });
@@ -126,12 +131,25 @@ export const autoReLoginFunctionality = async (req, res) => {
       const userData = await userDto(user);
       res.status(200).json({ userData });
     } else {
-      res.status(400).json({ messgae: "Refresh Token is required" });
+      res.status(200).json({ message: "Refresh Token is required" });
     }
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
+};
+
+export const logoutFunctionality = async (req, res) => {
+  const { refreshtoken } = req.cookies;
+  if (!refreshtoken) {
+    return res.status(400).json({ message: "No Cookies found" });
+  }
+  res.cookie("refreshtoken", "", {
+    expires: new Date(0),
+    httpOnly: true,
+    path: "/",
+  });
+  res.status(200).json({ message: "User Logged out" });
 };
 
 export const authentiCateOtpEmail = async (req, res) => {};
