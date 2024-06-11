@@ -18,10 +18,10 @@ function AuthHandler({ isAuth, user }) {
   useEffect(() => {
     const navigateFunc = () => {
       if (isAuth && user?.activated) {
-        navigate(`/rooms?user=${user?.id}`);
+        navigate(`/rooms`);
       } else if (isAuth) {
         if (!user?.activated) {
-          navigate(`/activate?user=${user?.id}`);
+          navigate(`/activate`);
         }
       }
     };

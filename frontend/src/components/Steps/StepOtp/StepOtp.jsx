@@ -38,25 +38,14 @@ const StepOtp = () => {
     inputRefs.current[currentFocus]?.current?.focus();
   }, [currentFocus]);
 
-  const updateUrlQuery = (key, value) => {
-    const searchParams = new URLSearchParams(window.location.search)
-    searchParams.set(key, value)
-    const newRelativeQuery = window.location.pathname + "?" + searchParams.toString()
-    history.pushState(null, "", newRelativeQuery)
-  }
+
 
   useEffect(() => {
     if (isSuccess) {
       dispatch(setUser(data?.data?.userData))
-
     }
   }, [isSuccess])
 
-  useEffect(() => {
-    if (user?.id) {
-      updateUrlQuery("user", user?.id)
-    }
-  }, [user?.id])
   return (
     <>
       <MainStyled>
