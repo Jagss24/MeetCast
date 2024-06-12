@@ -1,8 +1,12 @@
 import React from 'react'
+import { RoomComponent, RoomMainComponent } from './Rooms.styled'
 
 const Rooms = () => {
     return (
-        <div>Rooms</div>
+        <RoomComponent>
+            <RoomMainComponent>Rooms</RoomMainComponent>
+
+        </RoomComponent>
     )
 }
 
