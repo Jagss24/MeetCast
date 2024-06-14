@@ -1,14 +1,17 @@
 import styled from "styled-components";
 
 export const RoomComponent = styled.div`
+  padding-top: 100px;
+`;
+export const RoomCardContainer = styled.div`
   display: flex;
-  padding-top: 80px;
+  gap: 20px;
+  flex-wrap: wrap;
 `;
 export const RoomNav = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100vw;
   padding: 0 30px;
 `;
 
@@ -44,5 +47,3 @@ export const SearchInput = styled.input`
   color: #fff;
   background-color: #353535;
 `;
-
-export const RoomMainComponent = styled.div``;

@@ -1,6 +1,7 @@
 import React from 'react'
-import { RoomComponent, RoomMainComponent, SearchInput, RoomNav, FirstChild, SecondChild, StartContainer } from './Rooms.styled'
+import { RoomComponent, RoomCardContainer, SearchInput, RoomNav, FirstChild, SecondChild, StartContainer } from './Rooms.styled'
 import { MdOutlinePeople } from "react-icons/md";
+import RoomCard from '../../components/RoomCard/RoomCard';
 
 const Rooms = () => {
     return (
@@ -18,6 +19,11 @@ const Rooms = () => {
                     <StartContainer>Start a room</StartContainer>
                 </SecondChild>
             </RoomNav>
+            <RoomCardContainer>
+                <RoomCard />
+                <RoomCard />
+                <RoomCard />
+            </RoomCardContainer>
         </RoomComponent>
     )
 }
