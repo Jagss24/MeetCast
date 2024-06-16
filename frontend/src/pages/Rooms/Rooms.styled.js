@@ -1,12 +1,16 @@
 import styled from "styled-components";
 
 export const RoomComponent = styled.div`
-  padding-top: 100px;
+  padding-top: 20px;
+  width: 100%;
 `;
 export const RoomCardContainer = styled.div`
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 20px;
   flex-wrap: wrap;
+  width: 100%;
 `;
 export const RoomNav = styled.div`
   display: flex;
@@ -38,12 +42,14 @@ export const StartContainer = styled.button`
   color: #fff;
   border: none;
   outline: none;
+  cursor: pointer;
 `;
 export const SearchInput = styled.input`
-  padding: 8px 12px;
-  border-radius: 20px;
+  padding: 12px;
+  border-radius: 12px;
   border: none;
   outline: none;
   color: #fff;
   background-color: #353535;
+  width: ${(props) => (props.fullWidth ? "100%" : "")};
 `;
