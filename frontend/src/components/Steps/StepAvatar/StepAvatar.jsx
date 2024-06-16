@@ -23,7 +23,6 @@ const StepAvatar = ({ setStep }) => {
         enabled: false
     })
     const uploadImage = (e) => {
-        console.log("hello", e.target.files[0])
         const file = e.target.files[0]
         if (file?.type === "image/png" || file?.type === "image/jpeg") {
             setWrongImgType(false)

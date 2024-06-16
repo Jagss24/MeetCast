@@ -5,9 +5,7 @@ export const EmailPhoneWrapper = styled.div`
   justify-content: center;
   align-items: center;
   gap: 15px;
-  position: absolute;
-  top: 75px;
-  right: 400px;
+  align-self: flex-end;
 `;
 
 export const TermStyled = styled.span`
