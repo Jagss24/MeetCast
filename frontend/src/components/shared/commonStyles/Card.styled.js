@@ -4,7 +4,8 @@ export const MainStyled = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  flex-direction: column;
+  min-height: calc(100vh - 80px);
 `;
 
 export const CardStyled = styled.div`
@@ -16,6 +17,7 @@ export const CardStyled = styled.div`
   border-radius: 20px;
   padding: 40px 0;
   flex-direction: column;
+  position: relative;
 `;
 
 export const HeadingStyled = styled.p`

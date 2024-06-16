@@ -1,6 +1,5 @@
 html {
   box-sizing: border-box;
-  font-size: 16px;
 }
 
 body,
@@ -10,7 +9,8 @@ h3,
 h4,
 h5,
 h6,
-p.ol.ul {
+p.ol.ul,
+span {
   margin: 0;
   padding: 0;
   font-weight: normal;
@@ -29,6 +29,8 @@ img {
 
 body {
   background: #121212;
-  font-family: "Nunito", sans-serif;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   color: #fff;
+  line-height: 1.5;
+  font-weight: 400;
 }

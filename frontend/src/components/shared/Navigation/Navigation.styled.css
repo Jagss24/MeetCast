@@ -2,10 +2,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: absolute;
-  left: 20px;
-  top: 20px;
-  right: 20px;
+  margin-top: 20px;
+  padding: 0 30px;
+  height: 60px;
 }
 
 span {
