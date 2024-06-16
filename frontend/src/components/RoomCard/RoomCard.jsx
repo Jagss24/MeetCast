@@ -1,31 +1,32 @@
 import React from 'react'
-import { RoomCardStyled, RoomMain, Topic, SpeakerContainers, SpeakersAvatar, SpeakersName, TotalNumber, IconContainer } from './RoomCard.styled'
+import { RoomCardStyled, RoomMain, Topic, SpeakerContainers, SpeakersAvatar, SpeakersName, TotalNumber, IconContainer, JoinRoom } from './RoomCard.styled'
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { FaUserAlt } from "react-icons/fa";
 
-const RoomCard = () => {
+const RoomCard = ({ topic, speakers, totalMembers }) => {
+    const borderColors = ["red", "green", "blue", "yellow"];
     return (
         <RoomCardStyled>
             <RoomMain>
-                <Topic>Which framework is best for you? Lets us discuss!!</Topic>
+                <Topic>{topic}</Topic>
                 <SpeakerContainers>
-                    <SpeakersAvatar>
-                        <img src='/images/monkey.png' />
-                        <img src='/images/monkey.png' />
+                    <SpeakersAvatar randomcolors={borderColors[Math.floor(Math.random() * 4)]}>
+                        {speakers.map((speaker, index) => <img key={index} src={speaker?.avatar} alt={"profile"}
+                        />)}
                     </SpeakersAvatar>
                     <SpeakersName>
-                        <span>Om Rai <IoChatbubbleEllipsesOutline /></span>
-                        <span>Jagannath Samantara <IoChatbubbleEllipsesOutline /></span>
+                        {speakers.map((speaker, index) => <span key={index} >{speaker?.name} <IoChatbubbleEllipsesOutline /></span>)}
                     </SpeakersName>
                 </SpeakerContainers>
                 <TotalNumber>
-                    <span>800</span>
+                    <span>{totalMembers}</span>
                     <IconContainer>
                         <FaUserAlt color={"#C4C5C5"} />
                     </IconContainer>
-
-
                 </TotalNumber>
+                <JoinRoom>
+                    <span>Join the Room  </span>
+                </JoinRoom>
             </RoomMain>
         </RoomCardStyled>
     )
