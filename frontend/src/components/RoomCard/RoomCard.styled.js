@@ -27,7 +27,9 @@ export const SpeakerContainers = styled.div`
   align-items: center;
   position: relative;
 `;
-export const SpeakersAvatar = styled.div`
+export const SpeakersAvatar = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "randomcolors",
+})`
   display: flex;
   flex-direction: column;
   position: relative;

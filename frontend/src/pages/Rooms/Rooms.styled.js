@@ -44,7 +44,9 @@ export const StartContainer = styled.button`
   outline: none;
   cursor: pointer;
 `;
-export const SearchInput = styled.input`
+export const SearchInput = styled.input.withConfig({
+  shouldForwardProp: (prop) => prop !== "fullWidth",
+})`
   padding: 12px;
   border-radius: 12px;
   border: none;
