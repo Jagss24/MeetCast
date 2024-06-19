@@ -131,7 +131,9 @@ export const autoReLoginFunctionality = async (req, res) => {
       const userData = await userDto(user);
       res.status(200).json({ userData });
     } else {
-      res.status(200).json({ message: "Refresh Token is required" });
+      res
+        .status(200)
+        .json({ message: "Your Session has expired. Please Login again" });
     }
   } catch (error) {
     console.log(error);
