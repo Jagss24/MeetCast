@@ -32,7 +32,7 @@ const Rooms = () => {
                 <RoomCard /> */}
                 </RoomCardContainer>
             </RoomComponent>
-            {showModal && <StartRoom />}
+            {showModal && <StartRoom closeModal={() => setShowModal(false)} />}
         </>
     )
 }

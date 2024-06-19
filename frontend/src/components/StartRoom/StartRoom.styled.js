@@ -20,6 +20,14 @@ export const StartRoomBody = styled.div`
   max-width: 500px;
   background: #1d1d1d;
   border-radius: 20px;
+  position: relative;
+  & > span {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 10px;
+    cursor: pointer;
+  }
 `;
 
 export const StartRoomHeader = styled.div`

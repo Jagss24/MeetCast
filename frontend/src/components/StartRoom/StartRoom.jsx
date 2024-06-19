@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { StartRoomContainer, StartRoomBody, StartRoomHeader, StartRoomFooter, RoomTypes, RoomType, RoomTitle } from './StartRoom.styled'
 import { SearchInput } from '../../pages/Rooms/Rooms.styled';
-import { FaEarthEurope } from "react-icons/fa6";
+import { HiXMark } from "react-icons/hi2";
 
-const StartRoom = () => {
+const StartRoom = ({ closeModal }) => {
     const roomType = ["open", "social", "private"]
     const [activeRoom, setActiveRoom] = useState(roomType[0])
     console.log(activeRoom)
@@ -41,6 +41,9 @@ const StartRoom = () => {
                         <img src="/images/Emoji.png" />
                         <span>Let's go</span></button>
                 </StartRoomFooter>
+                <span onClick={closeModal}>
+                    <HiXMark color={"#fff"} size={20} />
+                </span>
             </StartRoomBody>
         </StartRoomContainer >
     )
