@@ -22,4 +22,8 @@ export const activate = (data) => api.post("authenticate/activate", data);
 export const autoReLogin = () => api.get("authenticate/autoReLogin");
 
 export const logout = () => api.get("authenticate/logout");
+
+export const getRooms = () => api.get("rooms/getRooms");
+
+export const createRoom = (data) => api.post("rooms/createRoom", data);
 export default api;
