@@ -1,14 +1,14 @@
 import express from "express";
 import Refresh from "../models/refreshModel.js";
 import { findUserById } from "../services/userService.js";
-import { createRoom, roomDto } from "../services/roomServices.js";
+import { createRoom, getRooms, roomDto } from "../services/roomServices.js";
 
 const router = express.Router();
 
 router.post("/createRoom", async (req, res) => {
-  const { topic, roomType } = req.body();
-  const { refreshtoken } = req.cookies();
-  if (!topic || !roomtType) {
+  const { topic, roomType } = req.body;
+  const { refreshtoken } = req.cookies;
+  if (!topic || !roomType) {
     return res.status(200).json({ message: "Topic and roomType is mandatory" });
   }
   if (refreshtoken) {
@@ -19,11 +19,17 @@ router.post("/createRoom", async (req, res) => {
     }
     const ownerId = user._id;
     const room = await createRoom({ topic, roomType, ownerId });
-    const roomDto = await roomDto(room);
+    const roomDtos = await roomDto(room);
+    res.status(200).json({ roomDtos });
   } else {
     res
       .status(200)
       .json({ message: "Your Session has expired. Please Login again" });
   }
+});
+
+router.get("/getRooms", async (req, res) => {
+  const rooms = await getRooms("open");
+  res.status(200).json({ rooms });
 });
 export default router;

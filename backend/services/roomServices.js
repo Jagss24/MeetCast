@@ -14,3 +14,11 @@ export const roomDto = async (fields) => {
   const { _id, ownerId, topic, roomType, speakers } = fields;
   return { id: _id, ownerId, topic, roomType, speakers };
 };
+
+export const getRooms = async (type) => {
+  const rooms = await Rooms.find({ roomType: type })
+    .populate("speakers")
+    .populate("ownerId")
+    .exec();
+  return rooms;
+};
