@@ -28,7 +28,8 @@ export const SpeakerContainers = styled.div`
   position: relative;
 `;
 export const SpeakersAvatar = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== "randomcolors",
+  shouldForwardProp: (prop) =>
+    !["randomcolors", "speakerLength"].includes(prop),
 })`
   display: flex;
   flex-direction: column;
@@ -41,7 +42,8 @@ export const SpeakersAvatar = styled.div.withConfig({
     border: 3px solid;
     border-color: ${(props) => props.randomcolors};
     &:last-child {
-      position: absolute;
+      position: ${(props) =>
+        props.speakerLength === 1 ? "initial" : "absolute"};
       top: 25px;
       left: 20px;
     }
