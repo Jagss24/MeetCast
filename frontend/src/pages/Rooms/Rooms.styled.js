@@ -55,3 +55,12 @@ export const SearchInput = styled.input.withConfig({
   background-color: #353535;
   width: ${(props) => (props.fullWidth ? "100%" : "")};
 `;
+
+export const LoadingDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 40px;
+  min-height: calc(100vh - 150px);
+`;

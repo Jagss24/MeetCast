@@ -1,12 +1,25 @@
-import React, { useState } from 'react'
-import { RoomComponent, RoomCardContainer, SearchInput, RoomNav, FirstChild, SecondChild, StartContainer } from './Rooms.styled'
+import React, { useEffect, useState } from 'react'
+import { RoomComponent, RoomCardContainer, SearchInput, RoomNav, FirstChild, SecondChild, StartContainer, LoadingDiv } from './Rooms.styled'
 import { MdOutlinePeople } from "react-icons/md";
 import RoomCard from '../../components/RoomCard/RoomCard';
-import { rooms } from './room';
 import StartRoom from '../../components/StartRoom/StartRoom';
-
+import { useQuery } from '@tanstack/react-query';
+import { getRooms } from '../../api/api';
+import { Grid } from "react-loading-icons"
 const Rooms = () => {
     const [showModal, setShowModal] = useState(false)
+    const [rooms, setRooms] = useState([])
+
+    const { data, isLoading } = useQuery({
+        queryKey: ["get-rooms"],
+        queryFn: getRooms
+    })
+
+    useEffect(() => {
+        if (data?.data) {
+            setRooms(data?.data?.rooms)
+        }
+    }, [data])
     return (
         <>
             <RoomComponent>
@@ -23,14 +36,16 @@ const Rooms = () => {
                         <StartContainer>Start a room</StartContainer>
                     </SecondChild>
                 </RoomNav>
-                <RoomCardContainer>
-                    {
-                        rooms.map((room, index) => <RoomCard key={index} topic={room?.topic} speakers={room?.speakers} totalMembers={room?.totalMembers}></RoomCard>)
-                    }
-                    {/* <RoomCard />
-                <RoomCard />
-                <RoomCard /> */}
-                </RoomCardContainer>
+                {isLoading ?
+                    <LoadingDiv >
+                        <Grid speed={3} />
+                        <span> Please wait rooms are loading...</span>
+                    </LoadingDiv> : <RoomCardContainer>
+                        {
+                            rooms.map((room, index) => <RoomCard key={index} room={room}></RoomCard>)
+                        }
+                    </RoomCardContainer>
+                }
             </RoomComponent>
             {showModal && <StartRoom closeModal={() => setShowModal(false)} />}
         </>
