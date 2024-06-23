@@ -62,6 +62,7 @@ export const StartRoomFooter = styled.div`
     outline: none;
     border-radius: 22px;
     padding: 6px 12px;
+    cursor: pointer;
   }
 `;
 
