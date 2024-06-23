@@ -10,26 +10,27 @@ import { useSelector, useDispatch } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import { autoReLogin } from "./api/api";
 import { setUser } from "./slices/userSlice";
+import Room from "./pages/Room/Room";
 
 
 
-function AuthHandler({ isAuth, user }) {
-  const navigate = useNavigate();
-  useEffect(() => {
-    const navigateFunc = () => {
-      if (isAuth && user?.activated) {
-        navigate(`/rooms`);
-      } else if (isAuth) {
-        if (!user?.activated) {
-          navigate(`/activate`);
-        }
-      }
-    };
-    navigateFunc();
-  }, [navigate, isAuth, user?.activated, user?.id]);
+// function AuthHandler({ isAuth, user }) {
+//   const navigate = useNavigate();
+//   useEffect(() => {
+//     const navigateFunc = () => {
+//       if (isAuth && user?.activated) {
+//         navigate(`/rooms`);
+//       } else if (isAuth) {
+//         if (!user?.activated) {
+//           navigate(`/activate`);
+//         }
+//       }
+//     };
+//     navigateFunc();
+//   }, [navigate, isAuth, user?.activated, user?.id]);
 
-  return null;
-}
+//   return null;
+// }
 
 function App() {
   const { isAuth, user } = useSelector(state => state.user)
@@ -53,7 +54,7 @@ function App() {
   return (
     <Router>
       <Navigation />
-      <AuthHandler isAuth={isAuth} user={user} /> {/* This component handles the navigation logic */}
+      {/* <AuthHandler isAuth={isAuth} user={user} /> This component handles the navigation logic */}
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path="/register" element={<Register />} />
@@ -66,6 +67,7 @@ function App() {
           path="/rooms"
           element={<Rooms />}
         />
+        <Route path="/room/:id" element={<Room />} />
       </Routes>
     </Router>
   );
