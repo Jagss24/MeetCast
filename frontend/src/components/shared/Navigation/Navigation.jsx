@@ -17,7 +17,7 @@ const Navigation = () => {
     })
     const handleLogout = () => {
         logoutRefetch()
-        window.location.assign("/")
+        navigate("/")
     }
 
     return (
