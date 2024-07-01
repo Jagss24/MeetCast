@@ -1,4 +1,4 @@
-import { generateOtp, hashOtp, sendSms } from "../services/otpServices.js";
+import { generateOtp, hashOtp } from "../services/otpServices.js";
 import {
   creatUser,
   findUser,
@@ -10,35 +10,80 @@ import {
   storeRefereshToken,
 } from "../services/tokenService.js";
 import Refresh from "../models/refreshModel.js";
+import bcryptjs from "bcryptjs";
+import nodemailer from "nodemailer";
 
-export const authentiCateOtpMobile = async (req, res) => {
-  const { number } = req.body;
-  if (!number) {
-    return res.status(400).json({ message: "Phne field is required" });
+export const authenticateOtpEmail = async (req, res) => {
+  const { emailId } = req.body;
+  const gmail = process.env.GMAIL_ADDRESS;
+  const gmailpass = process.env.GMAIL_APP_PASSWORD;
+  if (!emailId) {
+    return res.status(400).json({ message: "Email Id  is required" });
   }
+  const isExistingEmailId = await findUser({ emailId });
 
+  if (isExistingEmailId) {
+    return res
+      .status(200)
+      .json({ message: "EmailId already in use try another one" });
+  }
+  console.log(gmail, gmailpass);
   //Generate the Otp
   const otp = await generateOtp();
 
   // Hash the Otp
   const ttl = 1000 * 60 * 5; //2min
   const expires = Date.now() + ttl;
-  const data = `${number}.${otp}.${expires}`; // hashing the data more securely
+  const data = `${emailId}.${otp}.${expires}`; // hashing the data more securely
   const hash = await hashOtp(data);
 
-  // Send the OTP on mobile
+  // Send the OTP on email
   try {
-    // await sendSms(number, otp);
-    return res.status(200).json({ hash: `${hash}.${expires}`, otp, number });
+    let transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: gmail,
+        // This is app password for my account
+        pass: gmailpass,
+      },
+    });
+    let mailOptions = {
+      from: `"VoiceHub" ${process.env.GMAIL_ADDRESS}`,
+      to: emailId,
+      subject: "VoiceHub Signup OTP",
+      text: `
+      Hello User,
+      This is your OTP ${otp} to signup your account on WATCHME.
+      Please do not share with anyone
+      If this is not you then just ignore this mail
+      `,
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+        if (error.code === "EENVELOPE" && error.responseCode === 553) {
+          return res.status(200).json({ message: "Wrong Email Address" });
+        } else {
+          return res
+            .status(200)
+            .json({ message: "There's some error in sending mail" });
+        }
+      } else {
+        console.log("Email sent: " + info.response);
+        return res
+          .status(200)
+          .json({ hash: `${hash}.${expires}`, otp, emailId });
+      }
+    });
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: "Some error occured" });
   }
 };
 
-export const verifyOtpMobile = async (req, res) => {
-  const { otp, hash, number } = req.body;
-  if (!otp || !hash || !number)
+export const verifyOtpEmail = async (req, res) => {
+  const { otp, hash, emailId } = req.body;
+  if (!otp || !hash || !emailId)
     return res.status(400).json({ message: "All fields are required" });
 
   const [hashedOtp, expires] = hash.split("."); // Destructuring the hashedOtp & expired time
@@ -46,7 +91,7 @@ export const verifyOtpMobile = async (req, res) => {
   if (Date.now() > expires)
     return res.status(200).json({ message: "Otp is expired" });
 
-  const data = `${number}.${otp}.${expires}`;
+  const data = `${emailId}.${otp}.${expires}`;
 
   const computedHash = await hashOtp(data); //Whether Hashed otp is correct or not
 
@@ -56,9 +101,9 @@ export const verifyOtpMobile = async (req, res) => {
   let user;
 
   try {
-    user = await findUser({ number }); //Finding user
+    user = await findUser({ emailId }); //Finding user
     if (!user) {
-      user = await creatUser({ number }); //If not then create
+      user = await creatUser({ emailId }); //If not then create
     }
   } catch (error) {
     console.log(error);
@@ -100,11 +145,15 @@ export const getUser = async (req, res) => {
 };
 
 export const activateUser = async (req, res) => {
-  const { userId, name, avatar } = req.body;
+  const { userId, userName, fullName, password } = req.body;
   const user = await findUserById(userId);
-  if (user) {
-    user.name = name;
-    user.avatar = avatar;
+  if (user && user.activated) {
+    res.status(200).json({ message: "User is already activate" });
+  } else if (user) {
+    const hashPassword = bcryptjs.hashSync(password);
+    user.userName = userName;
+    user.fullName = fullName;
+    user.password = hashPassword;
     user.activated = true;
     await user.save();
     const userData = await userDto(user);
@@ -138,6 +187,24 @@ export const autoReLoginFunctionality = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+export const loginUser = async (req, res) => {
+  try {
+    const { userName, password } = req.body;
+    const user = await findUser({ userName });
+    if (!user) {
+      return res.status(200).json({ message: "No user found" });
+    }
+    const isPasswordCorrect = bcryptjs.compareSync(password, user.password);
+    if (!isPasswordCorrect) {
+      return res.status(200).json({ message: "Password is not correct" });
+    }
+    const userDtos = userDto(user);
+    res.status(200).json({ userDtos });
+  } catch (error) {
+    console.log(error);
+    return res.status(200).json({ error });
   }
 };
 
