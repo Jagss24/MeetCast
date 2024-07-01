@@ -191,8 +191,8 @@ export const autoReLoginFunctionality = async (req, res) => {
 };
 export const loginUser = async (req, res) => {
   try {
-    const { userName, password } = req.body;
-    const user = await findUser({ userName });
+    const { emailId, password } = req.body;
+    const user = await findUser({ emailId });
     if (!user) {
       return res.status(200).json({ message: "No user found" });
     }
@@ -220,5 +220,3 @@ export const logoutFunctionality = async (req, res) => {
   });
   res.status(200).json({ message: "User Logged out" });
 };
-
-export const authentiCateOtpEmail = async (req, res) => {};
