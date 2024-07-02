@@ -43,3 +43,11 @@ export const ActivationStyled = styled.div`
   flex-direction: column;
   padding: 80px;
 `;
+
+export const SkipStyled = styled.span`
+  position: absolute;
+  top: 3%;
+  right: 3%;
+  cursor: pointer;
+  color: #0077ff;
+`;

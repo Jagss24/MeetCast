@@ -20,16 +20,16 @@ const Navigation = () => {
         logoutRefetch()
         navigate("/")
     }
-
     return (
         <nav className={`navbar`}>
             <Link to="/" className="logo_wrapper" >
                 <HeadingImg src='/images/logo.png' alt='logo' />
                 <span>VoiceHub</span>
             </Link>
-            {user?.avatar && <UserComponent>
-                <span>{user?.name}</span>
-                <img src={user?.avatar} alt="user_pic" />
+            {user?.userName && <UserComponent>
+                <span>{user?.userName}</span>
+                {user?.avatar ? <img src={user?.avatar} alt="user_pic" /> : <DummyImage>
+                    <span>{user?.userName?.charAt(0).toUpperCase()}</span></DummyImage>}
                 <IconComponent onClick={handleLogout}>
                     <IoMdLogOut />
                 </IconComponent>
@@ -65,6 +65,18 @@ const IconComponent = styled.span`
     background-color: #0077ff;
     &:hover{
         opacity: 0.8;
+    }
+`
+const DummyImage = styled.span`
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: red;
+    span{
+        font-size: 1.2rem;
     }
 `
 
