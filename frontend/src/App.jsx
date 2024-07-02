@@ -41,7 +41,7 @@ function App() {
     enabled: false
   })
   useEffect(() => {
-    if (!user?.name) {
+    if (!user?.userName) {
       refetch()
     }
   }, [])

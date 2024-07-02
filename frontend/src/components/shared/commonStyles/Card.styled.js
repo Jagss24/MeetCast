@@ -44,11 +44,11 @@ export const ButtonWrapper = styled.button`
   color: #fff;
   font-size: 16px;
   font-weight: normal;
+  cursor: pointer;
   outline: none;
   border: none;
-  padding: 8px;
-  border-radius: 20px;
-  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 22px;
   margin-bottom: 10px;
   &:disabled {
     opacity: 0.5;

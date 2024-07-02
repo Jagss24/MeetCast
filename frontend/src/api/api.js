@@ -21,6 +21,8 @@ export const activate = (data) => api.post("authenticate/activate", data);
 
 export const autoReLogin = () => api.get("authenticate/autoReLogin");
 
+export const loginUser = (data) => api.post("authenticate/login", data);
+
 export const logout = () => api.get("authenticate/logout");
 
 export const getRooms = () => api.get("rooms/getRooms");

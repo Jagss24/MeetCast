@@ -200,7 +200,7 @@ export const loginUser = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(200).json({ message: "Password is not correct" });
     }
-    const userDtos = userDto(user);
+    const userDtos = await userDto(user);
     res.status(200).json({ userDtos });
   } catch (error) {
     console.log(error);
