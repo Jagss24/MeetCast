@@ -12,7 +12,7 @@ export const TermStyled = styled.span`
   color: #d9d9d9;
   text-align: center;
   font-weight: normal;
-  font-size: 12px;
+  font-size: 13px;
   opacity: 0.8;
   padding: 0 60px;
   width: 400px;
@@ -33,7 +33,6 @@ export const InputStyled = styled.input`
   padding: 12px;
   color: #fff;
   font-size: 16px;
-  text-align: center;
 
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {

@@ -1,16 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, HeadingImg, ButtonWrapper } from "../../shared/commonStyles/Card.styled"
-import { TermStyled } from '../StepPhoneEmail/StepPhoneEmail.styled'
+import { TermStyled } from '../StepEmail/StepEmail.styled'
 import { OTPBox, OTPWrapper } from './StepOtp.styled'
 import { useSelector, useDispatch } from 'react-redux'
-import { verifyOtpMobile } from '../../../hooks/useOtp'
 import { SpinningCircles } from 'react-loading-icons'
 import { setUser } from '../../../slices/userSlice'
+import { useMutation } from '@tanstack/react-query'
+import { verifyOtp } from '../../../api/api'
+import { useNavigate } from 'react-router-dom'
 
 const StepOtp = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
   const dispatch = useDispatch()
-  const { otp, user } = useSelector(state => state.user)
+  const navigate = useNavigate()
+  const { otp } = useSelector(state => state.user)
   const [currentFocus, setCurrentFocus] = useState(0);
   const inputRefs = useRef([
     useRef(null),
@@ -29,11 +32,20 @@ const StepOtp = () => {
   };
 
   const handleSubmit = () => {
-    refetch()
+    mutate({
+      otp: inputs.join(""),
+      hash: otp.hash,
+      emailId: otp.emailId
+    })
   }
 
-  const { data, isSuccess, refetch, isFetching } = verifyOtpMobile(inputs.join(""), otp.hash, otp.number)
+  // const { data, isSuccess, refetch, isFetching } = verifyOtpMobile(inputs.join(""), otp.hash, otp.number)
 
+
+  const { data, mutate, isSuccess, isPending } = useMutation({
+    mutationKey: ["verify-otp"],
+    mutationFn: verifyOtp
+  })
   useEffect(() => {
     inputRefs.current[currentFocus]?.current?.focus();
   }, [currentFocus]);
@@ -43,6 +55,7 @@ const StepOtp = () => {
   useEffect(() => {
     if (isSuccess) {
       dispatch(setUser(data?.data?.userData))
+      navigate("/activate")
     }
   }, [isSuccess])
 
@@ -77,9 +90,7 @@ const StepOtp = () => {
           </OTPWrapper>
           <ButtonWrapper disabled={inputs.includes("")} onClick={handleSubmit}>
             Next
-            {isFetching && <SpinningCircles speed={2} width={20} height={20} />}
-            <img src='/images/arrow_forward.png' />
-
+            {isPending && <SpinningCircles speed={2} width={16} height={16} />}
           </ButtonWrapper>
         </CardStyled>
       </MainStyled>

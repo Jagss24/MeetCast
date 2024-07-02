@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import StepPhoneEmail from '../../components/Steps/StepPhoneEmail/StepPhoneEmail'
+import StepEmail from '../../components/Steps/StepEmail/StepEmail'
 import StepOtp from '../../components/Steps/StepOtp/StepOtp'
 
 const steps = {
-    1: StepPhoneEmail,
+    1: StepEmail,
     2: StepOtp,
 }
 const Register = () => {
