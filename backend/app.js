@@ -8,7 +8,7 @@ conn(mongoURI);
 import authenticate from "./routes/authenticate.js";
 import rooms from "./routes/rooms.js";
 import cookieParser from "cookie-parser";
-import http, { METHODS } from "http";
+import http from "http";
 import { Server } from "socket.io";
 import { ACTIONS } from "./actions.js";
 
@@ -20,6 +20,7 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+
 app.use(cookieParser());
 app.use(
   cors({
@@ -35,28 +36,88 @@ app.get("/", (req, res) => {
 });
 
 // Sockets
-const socketUserMapping = {};
+const socketUserMap = {};
+
 io.on("connection", (socket) => {
-  console.log("new connection", socket.id);
-
+  console.log("New connection", socket.id);
   socket.on(ACTIONS.JOIN, ({ roomId, user }) => {
-    socketUserMapping[socket.id] = user;
+    socketUserMap[socket.id] = user;
 
-    //new Map:- To check which clients are present in the room
+    // console.log('Map', socketUserMap);
+
+    // get all the clients from io adapter
+    // console.log('joining');
     const clients = Array.from(io.sockets.adapter.rooms.get(roomId) || []);
+    // console.log('All connected clients', clients, io.sockets.adapter.rooms);
+    // Add peers and offers and all
 
     clients.forEach((clientId) => {
-      io.to(clientId).emit(ACTIONS.ADDPEER, {});
+      io.to(clientId).emit(ACTIONS.ADD_PEER, {
+        peerId: socket.id,
+        createOffer: false,
+        user,
+      });
+
+      // Send myself as well that much msgs how many clients
+
+      socket.emit(ACTIONS.ADD_PEER, {
+        peerId: clientId,
+        createOffer: true,
+        user: socketUserMap[clientId],
+      });
     });
 
-    socket.emit(ACTIONS.ADDPEER);
-
+    // Join the room
     socket.join(roomId);
-    console.log({ clients });
   });
+
+  // Handle Relay Ice event
+  socket.on(ACTIONS.RELAY_ICE, ({ peerId, icecandidate }) => {
+    io.to(peerId).emit(ACTIONS.ICE_CANDIDATE, {
+      peerId: socket.id,
+      icecandidate,
+    });
+  });
+
+  // Handle Relay SDP
+  socket.on(ACTIONS.RELAY_SDP, ({ peerId, sessionDescription }) => {
+    io.to(peerId).emit(ACTIONS.SESSION_DESCRIPTION, {
+      peerId: socket.id,
+      sessionDescription,
+    });
+  });
+
+  const leaveRoom = () => {
+    const { rooms } = socket;
+    console.log("leaving", rooms);
+    // console.log('socketUserMap', socketUserMap);
+    Array.from(rooms).forEach((roomId) => {
+      const clients = Array.from(io.sockets.adapter.rooms.get(roomId) || []);
+      clients.forEach((clientId) => {
+        io.to(clientId).emit(ACTIONS.REMOVE_PEER, {
+          peerId: socket.id,
+          userId: socketUserMap[socket.id]?.id,
+        });
+
+        socket.emit(ACTIONS.REMOVE_PEER, {
+          peerId: clientId,
+          userId: socketUserMap[clientId]?.id,
+        });
+
+        socket.leave(roomId);
+      });
+    });
+
+    delete socketUserMap[socket.id];
+
+    console.log("map", socketUserMap);
+  };
+
+  socket.on(ACTIONS.LEAVE, leaveRoom);
+
+  socket.on("disconnecting", leaveRoom);
 });
 
-server.listen("3000", () => {
-  console.log(process.env.PORT);
-  console.log("Server Listen");
-});
+server.listen("3000", () =>
+  console.log(`Listening on port ${process.env.PORT}`)
+);
