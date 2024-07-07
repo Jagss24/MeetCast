@@ -67,7 +67,7 @@ const IconComponent = styled.span`
         opacity: 0.8;
     }
 `
-const DummyImage = styled.span`
+export const DummyImage = styled.span`
     width: 40px;
     height: 40px;
     display: flex;
