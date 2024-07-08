@@ -51,27 +51,27 @@ io.on("connection", (socket) => {
     // console.log('All connected clients', clients, io.sockets.adapter.rooms);
     // Add peers and offers and all
 
-    clients.forEach((clientId) => {
-      io.to(clientId).emit(ACTIONS.ADD_PEER, {
-        peerId: socket.id,
-        createOffer: false,
-        user,
+    if (clients.length > 0) {
+      clients.forEach((clientId) => {
+        io.to(clientId).emit(ACTIONS.ADD_PEER, {
+          peerId: socket.id,
+          createOffer: false,
+          user,
+        });
+
+        socket.emit(ACTIONS.ADD_PEER, {
+          peerId: clientId,
+          createOffer: true,
+          user: socketUserMap[clientId],
+        });
       });
+    }
 
-      // Send myself as well that much msgs how many clients
-
-      socket.emit(ACTIONS.ADD_PEER, {
-        peerId: clientId,
-        createOffer: true,
-        user: socketUserMap[clientId],
-      });
-    });
-
-    // Join the room
+    // Join the room, (the reason we wrote this here is because we don't want the socket.emit to emit function for itself and createOffer for itself also that's why after getting all the clients in which that specific user is not present the user will join the room)
     socket.join(roomId);
   });
 
-  // Handle Relay Ice event
+  // Handle ice canidate that are sent from client to server
   socket.on(ACTIONS.RELAY_ICE, ({ peerId, icecandidate }) => {
     io.to(peerId).emit(ACTIONS.ICE_CANDIDATE, {
       peerId: socket.id,
@@ -79,7 +79,7 @@ io.on("connection", (socket) => {
     });
   });
 
-  // Handle Relay SDP
+  // Handle SDP's that are sent from client to server
   socket.on(ACTIONS.RELAY_SDP, ({ peerId, sessionDescription }) => {
     io.to(peerId).emit(ACTIONS.SESSION_DESCRIPTION, {
       peerId: socket.id,

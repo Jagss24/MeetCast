@@ -105,7 +105,6 @@ export const useWebRTC = (roomId, user) => {
       // Start capturing local video stream.
 
       localMediaStream.current = await navigator.mediaDevices.getUserMedia({
-        video: true,
         audio: true,
       });
     };
@@ -134,10 +133,10 @@ export const useWebRTC = (roomId, user) => {
     };
   }, []);
 
-  // Handle ice candidate
+  // Handle ice candidate that are sent from server to client
   useEffect(() => {
     socket.current.on(ACTIONS.ICE_CANDIDATE, ({ peerId, icecandidate }) => {
-      // console.log('ices', connections.current[peerId]);
+      // Add the icecanidate of another user in our ice candiates
       if (icecandidate) {
         connections.current[peerId].addIceCandidate(icecandidate);
       }
@@ -148,8 +147,7 @@ export const useWebRTC = (roomId, user) => {
     };
   }, []);
 
-  // Handle session description
-
+  // Handle SDP that are sent from server to client
   useEffect(() => {
     const setRemoteMedia = async ({
       peerId,
