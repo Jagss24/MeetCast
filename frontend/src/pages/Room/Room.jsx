@@ -13,7 +13,7 @@ const Room = () => {
             <div>Room</div>
             {
                 clients.map((client, id) => client?.id && <div key={id}>
-                    <video ref={(instance) => provideRef(instance, client?.id)} controls autoPlay />
+                    <audio ref={(instance) => provideRef(instance, client?.id)} controls autoPlay />
                     <p>{client?.fullName}</p>
                 </div>)
             }
