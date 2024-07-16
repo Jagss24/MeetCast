@@ -6,25 +6,198 @@ import { useStateWithCallback } from "./useStateWithCallback";
 
 export const useWebRTC = (roomId, user) => {
   const [clients, setClients] = useStateWithCallback([]);
-  const audioElements = useRef({});
+  const videoElements = useRef({});
   const connections = useRef({});
+  const screenShareStream = useRef(null);
   const socket = useRef(null);
   const localMediaStream = useRef(null);
+  const senders = useRef([]);
+  const clientIds = useRef(new Set());
 
   const addNewClient = useCallback(
     (newClient, cb) => {
-      const lookingFor = clients.find((client) => client.id === newClient.id);
-
-      console.log("clients", clients, lookingFor);
-      if (lookingFor === undefined) {
+      // if client is not present only then add new client
+      if (!clientIds.current.has(newClient?.id)) {
+        clientIds.current.add(newClient?.id);
         setClients((existingClients) => [...existingClients, newClient], cb);
       }
     },
-    [clients, setClients]
+    [setClients]
   );
 
   useEffect(() => {
     socket.current = socketInit();
+  }, []);
+
+  const handleVideo = (userId) => {
+    try {
+      const videoTrack = localMediaStream.current.getVideoTracks()[0];
+      videoTrack.enabled = !videoTrack.enabled;
+
+      setClients((clients) =>
+        clients.map((client) => {
+          if (client.id === userId) {
+            return { ...client, isVideoOn: videoTrack.enabled };
+          }
+          return client;
+        })
+      );
+
+      // Broadcast the video status change to all peers
+      socket.current.emit(ACTIONS.TOGGLE_VIDEO, {
+        userId,
+        isVideoOn: videoTrack.enabled,
+      });
+      // Update the local video element
+      const localElement = videoElements.current[user.id];
+      if (localElement) {
+        localElement.srcObject = new MediaStream([
+          videoTrack,
+          ...localMediaStream.current.getAudioTracks(),
+        ]);
+      }
+    } catch (error) {
+      console.error("Error starting video: ", error);
+    }
+  };
+
+  const handleAudio = () => {
+    try {
+      const audioTrack = localMediaStream.current.getAudioTracks()[0];
+      audioTrack.enabled = !audioTrack.enabled;
+
+      // Update the local video element
+      const localElement = videoElements.current[user.id];
+      if (localElement) {
+        localElement.srcObject = new MediaStream([
+          audioTrack,
+          ...localMediaStream.current.getVideoTracks(),
+        ]);
+      }
+    } catch (error) {
+      console.error("Error starting audio: ", error);
+    }
+  };
+
+  const screenSharing = () => {
+    let screenTrack;
+    //start sharing the screen
+    async function startScreenSharing(setscreenIsSharing) {
+      try {
+        screenShareStream.current =
+          await navigator.mediaDevices.getDisplayMedia({
+            video: {
+              cursor: "always",
+              displaySurface: "monitor",
+            },
+          });
+
+        screenTrack = screenShareStream.current.getTracks()[0];
+
+        // if screen share is started then set isVideon as true so that video element will be display as block
+        setClients((clients) =>
+          clients.map((client) => {
+            if (client.id === user.id) {
+              return { ...client, isVideoOn: true };
+            }
+            return client;
+          })
+        );
+
+        // Broadcast the video status change to all peers
+        socket.current.emit(ACTIONS.TOGGLE_VIDEO, {
+          userId: user?.id,
+          isVideoOn: true,
+        });
+        // Get the screentrack and replace with your video track.
+        senders.current
+          .find((sender) => sender.track.kind === "video")
+          .replaceTrack(screenTrack);
+
+        const localElement = videoElements.current[user.id];
+        if (localElement) {
+          localElement.srcObject = screenShareStream.current;
+        }
+        setscreenIsSharing(true);
+        // on stop sharing
+        screenTrack.onended = function () {
+          stopScreenSharing();
+        };
+      } catch (error) {
+        console.error("Error in screen sharing: ", error);
+        setscreenIsSharing(false);
+      }
+    }
+
+    const stopScreenSharing = (setscreenIsSharing) => {
+      // Replace your video Track with the screen track.
+      senders.current
+        .find((sender) => sender.track.kind === "video")
+        .replaceTrack(localMediaStream.current.getTracks()[1]);
+
+      // if screen share is stopped then set isVideon as false so that video element will be display as none
+      setClients((clients) =>
+        clients.map((client) => {
+          if (client.id === user.id) {
+            return { ...client, isVideoOn: false };
+          }
+          return client;
+        })
+      );
+
+      // Broadcast the video status change to all peers
+      socket.current.emit(ACTIONS.TOGGLE_VIDEO, {
+        userId: user?.id,
+        isVideoOn: false,
+      });
+      const localElement = videoElements.current[user.id];
+      if (localElement) localElement.srcObject = localMediaStream.current;
+
+      setscreenIsSharing(false);
+    };
+
+    return { startScreenSharing, stopScreenSharing };
+  };
+
+  // Get the video & audio of user as soon as user gets connected
+  useEffect(() => {
+    const startCapture = async () => {
+      // Start capturing local video stream.
+      localMediaStream.current = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+
+      // By defeault keeps the videoTrack as false
+      const videoTracks = localMediaStream.current.getVideoTracks()[0];
+      videoTracks.enabled = false;
+
+      const audioTracks = localMediaStream.current.getAudioTracks()[0];
+      audioTracks.enabled = false;
+    };
+
+    startCapture().then(() => {
+      // add user to clients list
+      addNewClient(user, () => {
+        const localElement = videoElements.current[user.id];
+        if (localElement) {
+          localElement.volume = 0;
+          localElement.srcObject = localMediaStream.current;
+        }
+      });
+
+      // Emit the action to join
+      socket.current.emit(ACTIONS.JOIN, {
+        roomId,
+        user,
+      });
+    });
+
+    // Leaving the room
+    return () => {
+      localMediaStream.current.getTracks().forEach((track) => track.stop());
+      socket.current.emit(ACTIONS.LEAVE, { roomId });
+    };
   }, []);
 
   // Handle new peer
@@ -38,7 +211,7 @@ export const useWebRTC = (roomId, user) => {
         );
       }
 
-      // Store it to connections
+      // If user is new then store it to connections
       connections.current[peerId] = new RTCPeerConnection({
         iceServers: freeice(),
       });
@@ -54,14 +227,14 @@ export const useWebRTC = (roomId, user) => {
       // Handle on track event on this connection
       connections.current[peerId].ontrack = ({ streams: [remoteStream] }) => {
         addNewClient(remoteUser, () => {
-          // console.log('peer', audioElements.current, peerId);
-          if (audioElements.current[remoteUser.id]) {
-            audioElements.current[remoteUser.id].srcObject = remoteStream;
+          if (videoElements.current[remoteUser.id]) {
+            videoElements.current[remoteUser.id].srcObject = remoteStream;
           } else {
+            //Checking again nd again on 1 sec interval till user get's the remoteStream and set it as its own stream.
             let settled = false;
             const interval = setInterval(() => {
-              if (audioElements.current[remoteUser.id]) {
-                audioElements.current[remoteUser.id].srcObject = remoteStream;
+              if (videoElements.current[remoteUser.id]) {
+                videoElements.current[remoteUser.id].srcObject = remoteStream;
                 settled = true;
               }
 
@@ -75,7 +248,10 @@ export const useWebRTC = (roomId, user) => {
 
       // Add connection to peer connections track
       localMediaStream.current.getTracks().forEach((track) => {
-        connections.current[peerId].addTrack(track, localMediaStream.current);
+        // Also push the connection in senders so that we can replace tracks.
+        senders.current.push(
+          connections.current[peerId].addTrack(track, localMediaStream.current)
+        );
       });
 
       // Create an offer if required
@@ -99,39 +275,6 @@ export const useWebRTC = (roomId, user) => {
       socket.current.off(ACTIONS.ADD_PEER);
     };
   }, [clients]);
-
-  useEffect(() => {
-    const startCapture = async () => {
-      // Start capturing local video stream.
-
-      localMediaStream.current = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-      });
-    };
-
-    startCapture().then(() => {
-      // add user to clients list
-      addNewClient(user, () => {
-        const localElement = audioElements.current[user.id];
-        if (localElement) {
-          localElement.volume = 0;
-          localElement.srcObject = localMediaStream.current;
-        }
-      });
-
-      // Emit the action to join
-      socket.current.emit(ACTIONS.JOIN, {
-        roomId,
-        user,
-      });
-    });
-
-    // Leaving the room
-    return () => {
-      localMediaStream.current.getTracks().forEach((track) => track.stop());
-      socket.current.emit(ACTIONS.LEAVE, { roomId });
-    };
-  }, []);
 
   // Handle ice candidate that are sent from server to client
   useEffect(() => {
@@ -177,13 +320,38 @@ export const useWebRTC = (roomId, user) => {
     };
   }, []);
 
+  // If video status is changed of any user let all other user know it
+  useEffect(() => {
+    const handleVideoStatusChanged = ({ userId, isVideoOn }) => {
+      setClients((clients) =>
+        clients.map((client) => {
+          if (client.id === userId) {
+            return { ...client, isVideoOn };
+          }
+          return client;
+        })
+      );
+    };
+
+    socket.current.on(ACTIONS.VIDEO_STATUS, handleVideoStatusChanged);
+
+    return () => {
+      socket.current.off(ACTIONS.VIDEO_STATUS, handleVideoStatusChanged);
+    };
+  }, []);
+
+  // If browser is close directly then this will be triggered
   useEffect(() => {
     window.addEventListener("unload", function () {
       alert("leaving");
       socket.current.emit(ACTIONS.LEAVE, { roomId });
     });
   }, []);
+  const leaveRoom = () => {
+    socket.current.emit(ACTIONS.LEAVE, { roomId });
+  };
 
+  // To remove the peer from connection.
   useEffect(() => {
     const handleRemovePeer = ({ peerID, userId }) => {
       console.log("leaving", peerID, userId);
@@ -193,7 +361,7 @@ export const useWebRTC = (roomId, user) => {
       }
 
       delete connections.current[peerID];
-      delete audioElements.current[peerID];
+      delete videoElements.current[peerID];
 
       setClients((list) => list.filter((c) => c.id !== userId));
     };
@@ -205,9 +373,17 @@ export const useWebRTC = (roomId, user) => {
     };
   }, []);
 
+  // reference for video elemenets controlled through user Id.
   const provideRef = (instance, userId) => {
-    audioElements.current[userId] = instance;
+    videoElements.current[userId] = instance;
   };
 
-  return { clients, provideRef };
+  return {
+    clients,
+    provideRef,
+    screenSharing,
+    handleVideo,
+    leaveRoom,
+    handleAudio,
+  };
 };

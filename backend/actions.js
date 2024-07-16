@@ -7,4 +7,6 @@ export const ACTIONS = {
   ICE_CANDIDATE: "iceCandidate", // we are using this to sent ice candiate from server to client
   SESSION_DESCRIPTION: "sessionDescription", // we are using this to sent sdp from server to client
   REMOVE_PEER: "removePeer",
+  TOGGLE_VIDEO: "toggle-video", // This will let the user toggle the video status
+  VIDEO_STATUS: "video-status-changed", // This will broadcast to everyone which user has on the video
 };

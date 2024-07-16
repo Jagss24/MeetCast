@@ -12,7 +12,8 @@ const Rooms = () => {
 
     const { data, isLoading } = useQuery({
         queryKey: ["get-rooms"],
-        queryFn: getRooms
+        queryFn: getRooms,
+        refetchOnWindowFocus: false,
     })
 
     useEffect(() => {
