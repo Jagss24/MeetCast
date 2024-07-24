@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Rooms from "../models/roomModel.js";
 
 export const createRoom = async ({ topic, roomType, ownerId }) => {
@@ -19,6 +20,23 @@ export const getRooms = async (type) => {
   const rooms = await Rooms.find({ roomType: type })
     .populate("speakers")
     .populate("ownerId")
+    .exec();
+  return rooms;
+};
+
+export const getSingleRoom = async (roomId) => {
+  if (!mongoose.Types.ObjectId.isValid(roomId)) {
+    return null;
+  }
+  const rooms = await Rooms.findById(roomId)
+    .populate({
+      path: "speakers",
+      select: "fullName avatar _id",
+    })
+    .populate({
+      path: "ownerId",
+      select: "fullName avatar _id",
+    })
     .exec();
   return rooms;
 };

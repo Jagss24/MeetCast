@@ -1,7 +1,12 @@
 import express from "express";
 import Refresh from "../models/refreshModel.js";
 import { findUserById } from "../services/userService.js";
-import { createRoom, getRooms, roomDto } from "../services/roomServices.js";
+import {
+  createRoom,
+  getRooms,
+  getSingleRoom,
+  roomDto,
+} from "../services/roomServices.js";
 
 const router = express.Router();
 
@@ -31,5 +36,14 @@ router.post("/createRoom", async (req, res) => {
 router.get("/getRooms", async (req, res) => {
   const rooms = await getRooms("open");
   res.status(200).json({ rooms });
+});
+
+router.get("/getSingleRoom", async (req, res) => {
+  const { roomId } = req.query;
+  const room = await getSingleRoom(roomId);
+  if (!room) {
+    return res.status(404).json({ message: "Not a Valid Room Id " });
+  }
+  res.status(200).json({ room });
 });
 export default router;
