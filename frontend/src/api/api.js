@@ -28,4 +28,7 @@ export const logout = () => api.get("authenticate/logout");
 export const getRooms = () => api.get("rooms/getRooms");
 
 export const createRoom = (data) => api.post("rooms/createRoom", data);
+
+export const getSingleRoom = (roomId) =>
+  api.get(`rooms/getSingleRoom?roomId=${roomId}`);
 export default api;

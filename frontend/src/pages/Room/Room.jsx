@@ -1,132 +1,90 @@
-import React, { useState } from 'react'
-import { useWebRTC } from '../../hooks/useWebRtc'
+import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from "react-router-dom"
 import { useSelector } from 'react-redux'
-import styled from 'styled-components'
-import { FaVideo, FaVideoSlash, FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
-import { MdOutlineScreenShare, MdCallEnd, MdOutlineStopScreenShare } from "react-icons/md";
-import { DummyImage } from '../../components/shared/Navigation/Navigation'
+import { RoomConatiner, Title, About, SpeakerConatiners, EachSpeaker, ButtonConatiners, Spinner, LoadingContainer } from './Room.styled'
+import Meet from '../../components/Meet/Meet'
+import Podcast from '../../components/Podcast/Podcast'
+import { getSingleRoom } from '../../api/api'
+import { useQuery } from '@tanstack/react-query'
+import DummyImage from '../../components/DummyImage'
+import { ThreeDots } from 'react-loading-icons'
 
 const Room = () => {
     const { id: roomId } = useParams()
-    const navigate = useNavigate()
     const { user } = useSelector(state => state.user)
-    const { clients, provideRef, screenSharing, handleVideo, leaveRoom, handleAudio } = useWebRTC(roomId, user)
-    const { startScreenSharing, stopScreenSharing } = screenSharing()
-    const [isAudioOn, setIsAudioOn] = useState(false)
-    const [isVideoOn, setIsVideoOn] = useState(false)
-    const [screenIsSharing, setscreenIsSharing] = useState(false)
-    console.log({ clients })
+    const [meet, setMeet] = useState(false)
+    const [podcast, setPodCast] = useState(false)
+    const navigate = useNavigate()
+
+    const { data, isLoading, isError } = useQuery({
+        queryKey: ["get-single-room", roomId],
+        queryFn: () => getSingleRoom(roomId),
+        retry: 0,
+        refetchOnWindowFocus: false
+    })
+    const room = data?.data?.room
+
+    useEffect(() => {
+        if (isError) {
+            alert("Not a Valid room Id")
+            navigate("/rooms")
+        }
+    }, [isError])
     return (
-        <RoomConatiner>
-            <div>Room</div>
-            <VideoContainer>
+        isLoading ?
+            <LoadingContainer>
+                <ThreeDots />
+                <h3>Setting you up please wait</h3>
+            </LoadingContainer> :
+            <RoomConatiner>
+                {!meet && (
+                    <>
+                        <Title>{room?.topic}</Title>
+                        <About>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iste obcaecati nihil quaerat maxime, voluptates, corporis culpa magni facilis nobis voluptatibus natus quis placeat unde, dolores assumenda. Suscipit voluptates expedita blanditiis minima, ab consectetur perspiciatis architecto distinctio, vitae magni cumque sunt nisi culpa recusandae dolorum nobis incidunt dolorem vel nam fuga!
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea libero harum enim modi commodi eligendi incidunt eaque iste, cumque delectus iusto omnis, tempore ipsa. Deserunt fugiat non fugit atque earum velit ratione quaerat quas facere molestiae vel incidunt dolore distinctio provident mollitia dignissimos nihil, ex sequi, enim est odio! Totam nesciunt maxime sapiente culpa, laborum numquam minus excepturi eum atque veniam, ipsa voluptatum, consequatur commodi quod dolore fugiat. Aspernatur, eligendi voluptatibus, cupiditate sit soluta fugit quasi ea, maiores vero odio sint deserunt voluptates officia nemo quod. Libero qui vel perspiciatis eos magni aperiam autem, nostrum quae deleniti accusamus voluptate aliquam.
+                        </About>
+                        <SpeakerConatiners>
+                            <h3>Speakers</h3>
+                            <div>
+                                {room?.speakers.map((speaker) => <EachSpeaker key={speaker?._id}>
+                                    {speaker?.avatar ?
+                                        <img
+                                            src={speaker.avatar}
+                                            alt={`${speaker.fullName}'s avatar`}
+                                        /> : <DummyImage userName={speaker?.fullName?.charAt(0).toUpperCase()} width={60} height={60} />}
+
+                                    <p>{speaker?.fullName}</p>
+                                </EachSpeaker>)}
+
+                            </div>
+
+
+                        </SpeakerConatiners>
+                        <ButtonConatiners>
+                            <button disabled={isLoading || !roomId || !user?.id}
+                                onClick={() => setMeet(true)}>Join the Room
+                                <span>{(isLoading || !roomId || !user?.id) && <Spinner width={15} height={15} />}</span>
+                            </button>
+
+                            <button onClick={() => navigate("/rooms")}>
+                                Return to rooms
+                            </button>
+                        </ButtonConatiners>
+                    </>)}
                 {
-                    clients.map((client, id) => <ClientContainer key={id} style={{ width: "45%" }} >
-
-                        <VideoElement ref={(instance) => provideRef(instance, client?.id)} autoPlay isVideoOn={client?.isVideoOn} />
-                        {!client?.isVideoOn && (
-                            <AvtarContainer>
-                                {client?.avatar ?
-                                    <img
-                                        src={client.avatar}
-                                        alt={`${client.fullName}'s avatar`}
-                                    /> : <DummyImage><span>{client?.userName?.charAt(0).toUpperCase()}</span></DummyImage>}
-                            </AvtarContainer>
-                        )}
-                        <p>{client?.fullName}</p>
-                    </ClientContainer >)
+                    meet && roomId && user?.id && <Meet
+                        user={user}
+                        roomId={roomId}
+                    />
                 }
-            </VideoContainer >
-
-            <Controls>
-                <div>
-                    <button onClick={() => {
-                        setIsAudioOn(prev => !prev)
-                        handleAudio()
-                    }}><span>{isAudioOn ? <FaMicrophone size={20} /> : <FaMicrophoneSlash size={20} />}</span></button>
-                    <button onClick={() => {
-                        setIsVideoOn(prev => !prev)
-                        handleVideo(user?.id)
-                    }}><span>{isVideoOn ? <FaVideo size={20} /> : <FaVideoSlash size={20} />}</span></button>
-                    {screenIsSharing ? <button onClick={() => {
-                        stopScreenSharing(setscreenIsSharing)
-                    }}><span><MdOutlineStopScreenShare size={20} /></span></button> : <button onClick={() => {
-                        startScreenSharing(setscreenIsSharing)
-
-                    }}><span><MdOutlineScreenShare size={20} /></span></button>}
-                    <button onClick={() => {
-                        leaveRoom()
-                        navigate("/rooms")
-                    }}><span><MdCallEnd size={20} color='red' /></span></button>
-                </div>
-            </Controls >
-        </RoomConatiner>
+                {
+                    podcast && roomId && user?.id && <Podcast
+                        user={user}
+                        roomId={roomId}
+                    />
+                }
+            </RoomConatiner>
     )
 }
 
 export default Room
-
-const RoomConatiner = styled.div`
-    
-`
-const VideoContainer = styled.div`
-display: flex;
-flex-wrap: wrap;
-justify-content: flex-start;
-align-items: center;
-gap: 10%;
-width: 100%;
-height: 100%;
-`
-
-const Controls = styled.div`
-position: fixed;
-bottom: 30px;
-display: flex;
-justify-content: center;
-align-items: center;
-width: 100vw;
-&>div{
-    width: 30%;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 20px;
-    border-radius: 22px;
-
-    &>button{
-        cursor: pointer;
-            background: #1d1d1d;
-            padding: 20px;
-            border-radius: 50%;
-            border: none;
-            outline: none;
-    }
-}
-`
-
-const ClientContainer = styled.div`
-    width: 450px;
-    height: 450px;
-    position: relative;
-    text-align: center;
-`
-const VideoElement = styled.video.withConfig({
-    shouldForwardProp: (prop) => prop !== "isVideoOn",
-})`
-    width: 100%;
-    height: 100%; 
-    display: ${(props) => (props.isVideoOn ? "block" : "none")};
-    margin: 0 auto; 
-    object-fit: fill;
-`
-const AvtarContainer = styled.div`
-    width: 100%;
-    height: 100%; 
-    display:flex ;
-    justify-content: center;
-    align-items: center;
-    background: #1d1d1d;
-    
-`
