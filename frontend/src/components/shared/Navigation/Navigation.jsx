@@ -6,7 +6,9 @@ import { useQuery } from '@tanstack/react-query'
 import { useSelector } from 'react-redux'
 import { logout } from '../../../api/api'
 import { IoMdLogOut } from "react-icons/io";
+import DummyImage from "../../DummyImage"
 import styled from 'styled-components'
+
 
 const Navigation = () => {
     const { user } = useSelector(state => state.user)
@@ -28,8 +30,8 @@ const Navigation = () => {
             </Link>
             {user?.userName && <UserComponent>
                 <span>{user?.userName}</span>
-                {user?.avatar ? <img src={user?.avatar} alt="user_pic" /> : <DummyImage>
-                    <span>{user?.userName?.charAt(0).toUpperCase()}</span></DummyImage>}
+                {user?.avatar ? <img src={user?.avatar} alt="user_pic" /> : <DummyImage
+                    userName={user?.userName?.charAt(0).toUpperCase()} />}
                 <IconComponent onClick={handleLogout}>
                     <IoMdLogOut />
                 </IconComponent>
@@ -67,17 +69,4 @@ const IconComponent = styled.span`
         opacity: 0.8;
     }
 `
-export const DummyImage = styled.span`
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    background-color: red;
-    span{
-        font-size: 1.2rem;
-    }
-`
-
 export default Navigation

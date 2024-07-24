@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { StartRoomContainer, StartRoomBody, StartRoomHeader, StartRoomFooter, RoomTypes, RoomType, RoomTitle } from './StartRoom.styled'
 import { SearchInput } from '../../pages/Rooms/Rooms.styled';
 import { HiXMark } from "react-icons/hi2";
@@ -66,6 +66,10 @@ const StartRoom = ({ closeModal }) => {
                         <img src="/images/Emoji.png" />
                         <span >Let's go</span></button>
                 </StartRoomFooter>
+                <select>
+                    <option>PodCast</option>
+                    <option>Meet</option>
+                </select>
                 <span onClick={closeModal}>
                     <HiXMark color={"#fff"} size={20} />
                 </span>
@@ -74,4 +78,4 @@ const StartRoom = ({ closeModal }) => {
     )
 }
 
-export default StartRoom
+export default memo(StartRoom)
