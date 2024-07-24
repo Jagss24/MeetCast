@@ -1,19 +1,26 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { ACTIONS } from "../actions";
 import { socketInit } from "../socket";
 import freeice from "freeice";
 import { useStateWithCallback } from "./useStateWithCallback";
 
-export const useWebRTC = (roomId, user) => {
+export const usePodCast = (roomId, user) => {
   const [clients, setClients] = useStateWithCallback([]);
-  const videoElements = useRef({});
+  const [monitoringVolume, setMonitoringVolume] = useState(true);
+  const audioElements = useRef({});
   const connections = useRef({});
-  const screenShareStream = useRef(null);
   const socket = useRef(null);
   const localMediaStream = useRef(null);
   const senders = useRef([]);
   const clientIds = useRef(new Set());
+  const [isUserSpeaking, setisUserSpeaking] = useState(false);
 
+  const audioContext = new window.AudioContext();
+  const analyser = audioContext.createAnalyser();
+  analyser.fftSize = 256;
+  const dataArray = new Uint8Array(analyser.fftSize);
+
+  // Functions
   const addNewClient = useCallback(
     (newClient, cb) => {
       // if client is not present only then add new client
@@ -25,167 +32,90 @@ export const useWebRTC = (roomId, user) => {
     [setClients]
   );
 
-  useEffect(() => {
-    socket.current = socketInit();
-  }, []);
-
-  const handleVideo = (userId) => {
+  const handleAudio = (userId) => {
     try {
-      const videoTrack = localMediaStream.current.getVideoTracks()[0];
-      videoTrack.enabled = !videoTrack.enabled;
+      const audioTrack = localMediaStream.current.getAudioTracks()[0];
+      audioTrack.enabled = !audioTrack.enabled;
 
       setClients((clients) =>
         clients.map((client) => {
           if (client.id === userId) {
-            return { ...client, isVideoOn: videoTrack.enabled };
+            return { ...client, isAudioOn: audioTrack.enabled };
           }
           return client;
         })
       );
 
-      // Broadcast the video status change to all peers
-      socket.current.emit(ACTIONS.TOGGLE_VIDEO, {
+      // Broadcast the audio status change to all peers
+      socket.current.emit(ACTIONS.TOGGLE_AUDIO, {
         userId,
-        isVideoOn: videoTrack.enabled,
+        isAudioOn: audioTrack.enabled,
       });
       // Update the local video element
-      const localElement = videoElements.current[user.id];
+      const localElement = audioElements.current[user.id];
       if (localElement) {
-        localElement.srcObject = new MediaStream([
-          videoTrack,
-          ...localMediaStream.current.getAudioTracks(),
-        ]);
-      }
-    } catch (error) {
-      console.error("Error starting video: ", error);
-    }
-  };
-
-  const handleAudio = () => {
-    try {
-      const audioTrack = localMediaStream.current.getAudioTracks()[0];
-      audioTrack.enabled = !audioTrack.enabled;
-
-      // Update the local video element
-      const localElement = videoElements.current[user.id];
-      if (localElement) {
-        localElement.srcObject = new MediaStream([
-          audioTrack,
-          ...localMediaStream.current.getVideoTracks(),
-        ]);
+        localElement.srcObject = new MediaStream([audioTrack]);
       }
     } catch (error) {
       console.error("Error starting audio: ", error);
     }
   };
 
-  const screenSharing = () => {
-    let screenTrack;
-    //start sharing the screen
-    async function startScreenSharing(setscreenIsSharing) {
-      try {
-        screenShareStream.current =
-          await navigator.mediaDevices.getDisplayMedia({
-            video: {
-              cursor: "always",
-              displaySurface: "monitor",
-            },
-          });
+  const monitorVolume = () => {
+    if (!monitoring) return;
 
-        screenTrack = screenShareStream.current.getTracks()[0];
+    requestAnimationFrame(monitorVolume);
 
-        // if screen share is started then set isVideon as true so that video element will be display as block
-        setClients((clients) =>
-          clients.map((client) => {
-            if (client.id === user.id) {
-              return { ...client, isVideoOn: true };
-            }
-            return client;
-          })
-        );
+    analyser.getByteFrequencyData(dataArray);
+    const averageVolume =
+      dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
 
-        // Broadcast the video status change to all peers
-        socket.current.emit(ACTIONS.TOGGLE_VIDEO, {
-          userId: user?.id,
-          isVideoOn: true,
-        });
-        // Get the screentrack and replace with your video track.
-        senders.current
-          .find((sender) => sender.track.kind === "video")
-          .replaceTrack(screenTrack);
-
-        const localElement = videoElements.current[user.id];
-        if (localElement) {
-          localElement.srcObject = screenShareStream.current;
-        }
-        setscreenIsSharing(true);
-        // on stop sharing
-        screenTrack.onended = function () {
-          stopScreenSharing();
-        };
-      } catch (error) {
-        console.error("Error in screen sharing: ", error);
-        setscreenIsSharing(false);
-      }
+    if (averageVolume > 10) {
+      // Adjust the threshold value as needed
+      setisUserSpeaking(true);
+      console.log("User is speaking");
+    } else {
+      setisUserSpeaking(false);
+      console.log("User is not speaking");
     }
-
-    const stopScreenSharing = (setscreenIsSharing) => {
-      // Replace your video Track with the screen track.
-      senders.current
-        .find((sender) => sender.track.kind === "video")
-        .replaceTrack(localMediaStream.current.getTracks()[1]);
-
-      // if screen share is stopped then set isVideon as false so that video element will be display as none
-      setClients((clients) =>
-        clients.map((client) => {
-          if (client.id === user.id) {
-            return { ...client, isVideoOn: false };
-          }
-          return client;
-        })
-      );
-
-      // Broadcast the video status change to all peers
-      socket.current.emit(ACTIONS.TOGGLE_VIDEO, {
-        userId: user?.id,
-        isVideoOn: false,
-      });
-      const localElement = videoElements.current[user.id];
-      if (localElement) localElement.srcObject = localMediaStream.current;
-
-      setscreenIsSharing(false);
-    };
-
-    return { startScreenSharing, stopScreenSharing };
   };
+
+  // useEffects
+
+  useEffect(() => {
+    socket.current = socketInit();
+  }, []);
+
+  let monitoring = true;
 
   // Get the video & audio of user as soon as user gets connected
   useEffect(() => {
     const startCapture = async () => {
       // Start capturing local video stream.
       localMediaStream.current = await navigator.mediaDevices.getUserMedia({
-        video: true,
         audio: true,
       });
 
-      // By defeault keeps the videoTrack as false
-      const videoTracks = localMediaStream.current.getVideoTracks()[0];
-      videoTracks.enabled = false;
-
       const audioTracks = localMediaStream.current.getAudioTracks()[0];
       audioTracks.enabled = false;
+
+      const source = audioContext.createMediaStreamSource(
+        localMediaStream.current
+      );
+      source.connect(analyser);
+
+      monitorVolume();
     };
 
     startCapture().then(() => {
       // add user to clients list
       addNewClient(user, () => {
-        const localElement = videoElements.current[user.id];
+        const localElement = audioElements.current[user.id];
         if (localElement) {
           localElement.volume = 0;
           localElement.srcObject = localMediaStream.current;
         }
       });
-
       // Emit the action to join
       socket.current.emit(ACTIONS.JOIN, {
         roomId,
@@ -197,6 +127,13 @@ export const useWebRTC = (roomId, user) => {
     return () => {
       localMediaStream.current.getTracks().forEach((track) => track.stop());
       socket.current.emit(ACTIONS.LEAVE, { roomId });
+      setMonitoringVolume(false);
+      if (audioContext.state !== "closed") {
+        audioContext.close().then(() => {
+          console.log("Audio context closed");
+        });
+        monitoring = false;
+      }
     };
   }, []);
 
@@ -227,14 +164,14 @@ export const useWebRTC = (roomId, user) => {
       // Handle on track event on this connection
       connections.current[peerId].ontrack = ({ streams: [remoteStream] }) => {
         addNewClient(remoteUser, () => {
-          if (videoElements.current[remoteUser.id]) {
-            videoElements.current[remoteUser.id].srcObject = remoteStream;
+          if (audioElements.current[remoteUser?.id]) {
+            audioElements.current[remoteUser?.id].srcObject = remoteStream;
           } else {
             //Checking again nd again on 1 sec interval till user get's the remoteStream and set it as its own stream.
             let settled = false;
             const interval = setInterval(() => {
-              if (videoElements.current[remoteUser.id]) {
-                videoElements.current[remoteUser.id].srcObject = remoteStream;
+              if (audioElements.current[remoteUser?.id]) {
+                audioElements.current[remoteUser?.id].srcObject = remoteStream;
                 settled = true;
               }
 
@@ -320,26 +257,25 @@ export const useWebRTC = (roomId, user) => {
     };
   }, []);
 
-  // If video status is changed of any user let all other user know it
+  // If audio status is changed of any user let all other user know it
   useEffect(() => {
-    const handleVideoStatusChanged = ({ userId, isVideoOn }) => {
+    const handleAudioStatusChanged = ({ userId, isAudioOn }) => {
       setClients((clients) =>
         clients.map((client) => {
           if (client.id === userId) {
-            return { ...client, isVideoOn };
+            return { ...client, isAudioOn };
           }
           return client;
         })
       );
     };
 
-    socket.current.on(ACTIONS.VIDEO_STATUS, handleVideoStatusChanged);
+    socket.current.on(ACTIONS.AUDIO_STATUS, handleAudioStatusChanged);
 
     return () => {
-      socket.current.off(ACTIONS.VIDEO_STATUS, handleVideoStatusChanged);
+      socket.current.off(ACTIONS.AUDIO_STATUS, handleAudioStatusChanged);
     };
   }, []);
-
   // If browser is close directly then this will be triggered
   useEffect(() => {
     window.addEventListener("unload", function () {
@@ -361,7 +297,7 @@ export const useWebRTC = (roomId, user) => {
       }
 
       delete connections.current[peerID];
-      delete videoElements.current[peerID];
+      delete audioElements.current[peerID];
 
       setClients((list) => list.filter((c) => c.id !== userId));
       const updatedClientIds = new Set(
@@ -379,16 +315,15 @@ export const useWebRTC = (roomId, user) => {
 
   // reference for video elemenets controlled through user Id.
   const provideRef = (instance, userId) => {
-    videoElements.current[userId] = instance;
+    audioElements.current[userId] = instance;
   };
 
   return {
     clients,
     provideRef,
-    screenSharing,
-    handleVideo,
     leaveRoom,
     handleAudio,
     clientIds,
+    isUserSpeaking,
   };
 };

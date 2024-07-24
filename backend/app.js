@@ -89,29 +89,67 @@ io.on("connection", (socket) => {
 
   // Video Status changed so let all users know it
   socket.on(ACTIONS.TOGGLE_VIDEO, ({ userId, isVideoOn }) => {
-    socket.broadcast.emit(ACTIONS.VIDEO_STATUS, { userId, isVideoOn });
+    let userFound = false;
+
+    // Iterate over the socketUserMap to find the user by userId
+    for (const clientId in socketUserMap) {
+      if (socketUserMap[clientId].id === userId) {
+        // Update the isAudioOn status for the found user
+        socketUserMap[clientId].isVideoOn = isVideoOn;
+        userFound = true;
+        break;
+      }
+    }
+
+    if (userFound) {
+      // Broadcast the updated audio status to all clients
+      socket.broadcast.emit(ACTIONS.VIDEO_STATUS, { userId, isVideoOn });
+    } else {
+      console.warn(`User with ID ${userId} not found in socketUserMap.`);
+    }
   });
-  const leaveRoom = () => {
-    const { rooms } = socket;
-    console.log("leaving", rooms);
-    // console.log('socketUserMap', socketUserMap);
-    Array.from(rooms).forEach((roomId) => {
-      const clients = Array.from(io.sockets.adapter.rooms.get(roomId) || []);
-      clients.forEach((clientId) => {
+
+  // Audio Status changed so let all users know it
+  socket.on(ACTIONS.TOGGLE_AUDIO, ({ userId, isAudioOn }) => {
+    let userFound = false;
+
+    // Iterate over the socketUserMap to find the user by userId
+    for (const clientId in socketUserMap) {
+      if (socketUserMap[clientId].id === userId) {
+        // Update the isAudioOn status for the found user
+        socketUserMap[clientId].isAudioOn = isAudioOn;
+        userFound = true;
+        break;
+      }
+    }
+
+    if (userFound) {
+      // Broadcast the updated audio status to all clients
+      socket.broadcast.emit(ACTIONS.AUDIO_STATUS, { userId, isAudioOn });
+    } else {
+      console.warn(`User with ID ${userId} not found in socketUserMap.`);
+    }
+  });
+
+  const leaveRoom = ({ roomId }) => {
+    const clients = Array.from(io.sockets.adapter.rooms.get(roomId) || []);
+    console.log({ clients });
+    clients.forEach((clientId) => {
+      if (clientId !== socket.id) {
+        console.log(socketUserMap[clientId]?.userName);
         io.to(clientId).emit(ACTIONS.REMOVE_PEER, {
           peerId: socket.id,
           userId: socketUserMap[socket.id]?.id,
+          userName: socketUserMap[socket.id]?.userName,
         });
-
-        socket.emit(ACTIONS.REMOVE_PEER, {
-          peerId: clientId,
-          userId: socketUserMap[clientId]?.id,
-        });
-
-        socket.leave(roomId);
-      });
+      }
     });
-
+    socket.emit(ACTIONS.REMOVE_PEER, {
+      peerId: socket.id,
+      userId: socketUserMap[socket.id]?.id,
+      userName: socketUserMap[socket.id]?.userName,
+    });
+    socket.leave(roomId);
     delete socketUserMap[socket.id];
 
     console.log("map", socketUserMap);

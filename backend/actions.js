@@ -9,4 +9,6 @@ export const ACTIONS = {
   REMOVE_PEER: "removePeer",
   TOGGLE_VIDEO: "toggle-video", // This will let the user toggle the video status
   VIDEO_STATUS: "video-status-changed", // This will broadcast to everyone which user has on the video
+  TOGGLE_AUDIO: "toggle-audio", // This will let the user toggle the audio status
+  AUDIO_STATUS: "video-status-changed", // This will broadcast to everyone which user enabled the audio
 };
