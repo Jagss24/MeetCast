@@ -28,8 +28,7 @@ const Navigation = () => {
                 <HeadingImg src='/images/logo.png' alt='logo' />
                 <span>VoiceHub</span>
             </Link>
-            {user?.userName && <UserComponent>
-                <span>{user?.userName}</span>
+            {user?.userName && <UserComponent onClick={() => navigate(`/profile/${user?.userName}`)}>
                 {user?.avatar ? <img src={user?.avatar} alt="user_pic" /> : <DummyImage
                     userName={user?.userName?.charAt(0).toUpperCase()} />}
                 <IconComponent onClick={handleLogout}>
@@ -50,9 +49,7 @@ const UserComponent = styled.div`
         width: 50px;
         height: 50px;
         border-radius: 50%;
-    }
-    span{
-        font-weight: normal;
+        cursor: pointer
     }
 `
 const IconComponent = styled.span`
