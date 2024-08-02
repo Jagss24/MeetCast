@@ -42,3 +42,16 @@ export const verifyAccessToken = async (token) => {
     return null;
   }
 };
+
+export const getUserToken = async (userId) => {
+  try {
+    const refreshToken = await Refresh.findOne({ userId });
+    if (!refreshToken) {
+      return null;
+    }
+    return refreshToken.token;
+  } catch (error) {
+    console.error("Error verifying token:", error);
+    return null;
+  }
+};

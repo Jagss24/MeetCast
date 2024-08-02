@@ -4,9 +4,11 @@ import {
   findUser,
   userDto,
   findUserById,
+  searchUser,
 } from "../services/userService.js";
 import {
   generateTokens,
+  getUserToken,
   storeRefereshToken,
 } from "../services/tokenService.js";
 import Refresh from "../models/refreshModel.js";
@@ -200,7 +202,14 @@ export const loginUser = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(200).json({ message: "Password is not correct" });
     }
+    const refreshToken = await getUserToken(user?.id);
     const userDtos = await userDto(user);
+    if (refreshToken) {
+      res.cookie("refreshtoken", refreshToken, {
+        maxAge: 1000 * 60 * 60 * 24 * 30,
+        httpOnly: true,
+      });
+    }
     res.status(200).json({ userDtos });
   } catch (error) {
     console.log(error);
@@ -219,4 +228,26 @@ export const logoutFunctionality = async (req, res) => {
     path: "/",
   });
   res.status(200).json({ message: "User Logged out" });
+};
+export const searchUserFunctionality = async (req, res) => {
+  try {
+    const { searchText } = req.query;
+
+    // Ensure searchText is provided
+    if (!searchText) {
+      return res.status(400).json({ error: "searchText is required" });
+    }
+
+    // Create a regex for case-insensitive search
+    const searchRegEx = new RegExp(searchText, "i");
+
+    // Search in both userName and fullName fields
+    const users = await searchUser(searchRegEx);
+
+    res.status(200).json({ length: users.length, users });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred while searching for users" });
+  }
 };
