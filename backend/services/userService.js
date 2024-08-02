@@ -19,3 +19,12 @@ export const userDto = async (fields) => {
   const { _id, activated, emailId, userName, fullName, avatar } = fields;
   return { id: _id, userName, fullName, activated, emailId, avatar };
 };
+export const searchUser = async (searchText) => {
+  const users = User.find({
+    $or: [
+      { userName: { $regex: searchText } },
+      { fullName: { $regex: searchText } },
+    ],
+  });
+  return users;
+};

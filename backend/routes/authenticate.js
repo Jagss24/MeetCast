@@ -7,6 +7,7 @@ import {
   autoReLoginFunctionality,
   loginUser,
   logoutFunctionality,
+  searchUserFunctionality,
 } from "../controllers/auth-controller.js";
 import { authMiddleWarefunc } from "../middlewares/authMiddleWare.js";
 
@@ -25,5 +26,7 @@ router.post("/login", loginUser);
 router.get("/autoReLogin", autoReLoginFunctionality);
 
 router.get("/logout", logoutFunctionality);
+
+router.get("/searchUser", searchUserFunctionality);
 
 export default router;
