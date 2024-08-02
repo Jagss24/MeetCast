@@ -31,4 +31,22 @@ export const createRoom = (data) => api.post("rooms/createRoom", data);
 
 export const getSingleRoom = (roomId) =>
   api.get(`rooms/getSingleRoom?roomId=${roomId}`);
+
+export const searchUser = (searchText) =>
+  api.get(`authenticate/searchUser?searchText=${searchText}`);
+
+export const getUserRoom = (roomType, userName) =>
+  api.get(`rooms/getUserRoom?userName=${userName}&roomType=${roomType}`);
+
+export const getSpeakers = (userName) =>
+  api.get(`rooms/getSpeakers?userName=${userName}`);
+
+export const requestToJoinRoom = (payload) =>
+  api.put(`rooms/requestToJoin`, payload);
+
+export const addMemberToRoom = (payload) =>
+  api.put(`rooms/addMemberToRoom`, payload);
+
+export const removeMemberFromRoom = (payload) =>
+  api.put(`rooms/removeMemberFromRoom`, payload);
 export default api;

@@ -10,9 +10,40 @@ const roomSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    memberList: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
+      required: false,
+    },
+    removedList: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
+      required: false,
+    },
     roomType: {
       type: String,
       required: true,
+    },
+    accessibility: {
+      type: String,
+      required: true,
+    },
+    waitingList: {
+      type: [
+        {
+          type: Schema.Types.ObjectId,
+          ref: "User",
+        },
+      ],
+      required: false,
     },
     speakers: {
       type: [

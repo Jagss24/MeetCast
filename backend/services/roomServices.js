@@ -1,12 +1,20 @@
 import mongoose from "mongoose";
 import Rooms from "../models/roomModel.js";
 
-export const createRoom = async ({ topic, roomType, ownerId }) => {
+export const createRoom = async ({
+  topic,
+  roomType,
+  ownerId,
+  accessibility,
+  speakers,
+}) => {
+  let speakersId = speakers?.map((eachSpeaker) => eachSpeaker.value);
   const room = await Rooms.create({
     ownerId,
     topic,
     roomType,
-    speakers: [ownerId],
+    accessibility,
+    speakers: speakersId ? [ownerId, ...speakersId] : [ownerId],
   });
   return room;
 };
@@ -17,9 +25,15 @@ export const roomDto = async (fields) => {
 };
 
 export const getRooms = async (type) => {
-  const rooms = await Rooms.find({ roomType: type })
-    .populate("speakers")
-    .populate("ownerId")
+  const rooms = await Rooms.find({ roomType: type, accessibility: "public" })
+    .populate({
+      path: "speakers",
+      select: "fullName avatar _id",
+    })
+    .populate({
+      path: "ownerId",
+      select: "fullName avatar _id",
+    })
     .exec();
   return rooms;
 };
@@ -37,6 +51,130 @@ export const getSingleRoom = async (roomId) => {
       path: "ownerId",
       select: "fullName avatar _id",
     })
+    .populate({
+      path: "waitingList",
+      select: "fullName avatar _id",
+    })
+    .populate({
+      path: "memberList",
+      select: " _id",
+    })
+    .populate({
+      path: "removedList",
+      select: " _id",
+    })
     .exec();
   return rooms;
+};
+export const getUserRoomsWithType = async (roomType, user) => {
+  const rooms = await Rooms.find({ roomType, ownerId: user?._id })
+    .populate({
+      path: "speakers",
+      select: "fullName avatar _id",
+    })
+    .populate({
+      path: "ownerId",
+      select: "fullName avatar _id",
+    })
+    .exec();
+  return rooms;
+};
+
+//this function is used  to find the user is assigned as a speaker in which rooms
+export const getSpeakerRooms = async (user) => {
+  const rooms = await Rooms.find({
+    ownerId: { $ne: user?.id }, // ownerId should not be equal to userId
+    speakers: user?.id, // userId should be in the speakers array
+  })
+    .populate({
+      path: "speakers",
+      select: "fullName avatar _id",
+    })
+    .populate({
+      path: "ownerId",
+      select: "fullName avatar _id",
+    })
+    .exec();
+  return rooms;
+};
+
+//this function is used to add the user in the waiting list of room
+export const addUserinWaitingList = async (roomId, userId) => {
+  const room = await getSingleRoom(roomId);
+  if (!room) {
+    return false;
+  }
+  const UserExist = room.waitingList.find(
+    (eachUser) => eachUser?.id === userId
+  );
+  // Check if the user is already in the waiting list
+  if (!UserExist) {
+    // if not then push the userId into the waitingList array
+    room.waitingList.push(userId);
+
+    // Save the updated room
+    await room.save();
+    return true;
+  }
+  return false;
+};
+
+//this function is used to add the user from waiting list to member list
+export const addUserinMemberList = async (roomId, userId) => {
+  const room = await getSingleRoom(roomId);
+  if (!room) {
+    return false;
+  }
+
+  const userinMemberList = room.memberList.find(
+    (eachUser) => eachUser?.id === userId
+  );
+  const userinWaitinList = room.waitingList.find(
+    (eachUser) => eachUser?.id === userId
+  );
+  console.log(new mongoose.Types.ObjectId(userId));
+  console.log(userinWaitinList);
+  // Check if the user is in the waiting list & is not in member List
+  if (userinWaitinList && !userinMemberList) {
+    // if not then push the userId into the memberList array
+    room.memberList.push(userId);
+    room.waitingList = room.waitingList.filter(
+      (eachUser) => !eachUser?._id.equals(new mongoose.Types.ObjectId(userId))
+    );
+    // Save the updated room
+    await room.save();
+
+    return true;
+  }
+  return false;
+};
+
+//this function is used to add the user from waiting list to member list
+export const removeUserFromRoom = async (roomId, userId) => {
+  const room = await getSingleRoom(roomId);
+  if (!room) {
+    return false;
+  }
+
+  const userinRemoveList = room.removedList.find(
+    (eachUser) => eachUser?.id === userId
+  );
+  const userinWaitinList = room.waitingList.find(
+    (eachUser) => eachUser?.id === userId
+  );
+  console.log(new mongoose.Types.ObjectId(userId));
+  console.log(userinWaitinList);
+  // Check if the user is in the waiting list & is not in member List
+  if (userinWaitinList && !userinRemoveList) {
+    // if not then push the userId into the memberList array
+    room.removedList.push(userId);
+    room.waitingList = room.waitingList.filter(
+      (eachUser) => !eachUser?._id.equals(new mongoose.Types.ObjectId(userId))
+    );
+    // Save the updated room
+    await room.save();
+
+    return true;
+  }
+  return false;
 };

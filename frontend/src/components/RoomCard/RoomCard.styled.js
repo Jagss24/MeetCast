@@ -34,13 +34,12 @@ export const SpeakersAvatar = styled.div.withConfig({
   display: flex;
   flex-direction: column;
   position: relative;
-  img {
-    min-width: 40px;
-    height: 40px;
+  img,
+  div {
+    min-width: 45px;
+    height: 45px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid;
-    border-color: ${(props) => props.randomcolors};
     &:last-child {
       position: ${(props) =>
         props.speakerLength === 1 ? "initial" : "absolute"};
@@ -60,27 +59,6 @@ export const SpeakersName = styled.div`
 `;
 export const Topic = styled.span`
   max-width: 300px;
-`;
-
-export const TotalNumber = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  gap: 6px;
-  align-items: center;
-  position: absolute;
-  bottom: 30px;
-  right: 10px;
-  span {
-    font-weight: 500;
-    font-size: 0.8rem;
-    color: #c4c5c5;
-  }
-`;
-
-export const IconContainer = styled.span`
-  display: flex;
-  justify-content: center;
-  align-items: center;
 `;
 
 export const JoinRoom = styled.div`

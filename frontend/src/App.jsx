@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { autoReLogin } from "./api/api";
 import { setUser } from "./slices/userSlice";
 import Room from "./pages/Room/Room";
+import Profile from "./pages/Profile/Profile";
 
 
 
@@ -68,6 +69,7 @@ function App() {
           element={<Rooms />}
         />
         <Route path="/room/:id" element={<Room />} />
+        <Route path="/profile/:userName" element={<Profile avatar={user?.avatar} />} />
       </Routes>
     </Router>
   );
