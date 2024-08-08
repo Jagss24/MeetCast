@@ -107,11 +107,18 @@ export const addUserinWaitingList = async (roomId, userId) => {
   const UserExist = room.waitingList.find(
     (eachUser) => eachUser?.id === userId
   );
+
+  const UserinRemovedList = room.removedList.find(
+    (eachUser) => eachUser?.id === userId
+  );
   // Check if the user is already in the waiting list
   if (!UserExist) {
     // if not then push the userId into the waitingList array
     room.waitingList.push(userId);
-
+    if (UserinRemovedList)
+      room.removedList = room.removedList.filter(
+        (eachUser) => !eachUser?._id.equals(new mongoose.Types.ObjectId(userId))
+      );
     // Save the updated room
     await room.save();
     return true;
@@ -132,8 +139,6 @@ export const addUserinMemberList = async (roomId, userId) => {
   const userinWaitinList = room.waitingList.find(
     (eachUser) => eachUser?.id === userId
   );
-  console.log(new mongoose.Types.ObjectId(userId));
-  console.log(userinWaitinList);
   // Check if the user is in the waiting list & is not in member List
   if (userinWaitinList && !userinMemberList) {
     // if not then push the userId into the memberList array
@@ -162,11 +167,10 @@ export const removeUserFromRoom = async (roomId, userId) => {
   const userinWaitinList = room.waitingList.find(
     (eachUser) => eachUser?.id === userId
   );
-  console.log(new mongoose.Types.ObjectId(userId));
-  console.log(userinWaitinList);
-  // Check if the user is in the waiting list & is not in member List
+
+  // Check if the user is in the waiting list & is not in removed List
   if (userinWaitinList && !userinRemoveList) {
-    // if not then push the userId into the memberList array
+    // if not then push the userId into the removed list array
     room.removedList.push(userId);
     room.waitingList = room.waitingList.filter(
       (eachUser) => !eachUser?._id.equals(new mongoose.Types.ObjectId(userId))
