@@ -7,6 +7,9 @@ import { loginUser } from '../../api/api'
 import { SpinningCircles } from 'react-loading-icons';
 import { useDispatch } from 'react-redux'
 import { setUser } from '../../slices/userSlice'
+import { InputWrapper } from '../../components/shared/Navigation/Navigation.styled'
+import styled from 'styled-components'
+import { MdOutlineMailOutline, MdKey } from "react-icons/md";
 
 const Login = () => {
   const [data, setData] = useState({
@@ -42,14 +45,31 @@ const Login = () => {
       navigate("/rooms")
     }
   }, [isSuccess])
+
+  useEffect(() => {
+    const user = sessionStorage.getItem("isLoggedIn")
+    if (user !== "true") {
+      navigate("/")
+    }
+  }, [])
   return (
     <MainStyled>
       <CardStyled>
         <HeadingWrapper>
           <HeadingStyled>Login into your account</HeadingStyled>
         </HeadingWrapper>
-        <InputStyled placeholder="Enter your email" value={data.emailId} name="emailId" onChange={handleChange}></InputStyled>
-        <InputStyled placeholder="Enter your password" value={data.password} name="password" onChange={handleChange}></InputStyled>
+        <InputWrapper>
+          <span>
+            <MdOutlineMailOutline />
+          </span>
+          <InputStyled placeholder="Enter your email" value={data.emailId} name="emailId" onChange={handleChange} />
+        </InputWrapper>
+        <InputWrapper>
+          <span>
+            <MdKey />
+          </span>
+          <InputStyled placeholder="Enter your password" value={data.password} name="password" onChange={handleChange} />
+        </InputWrapper>
         <TermStyled>Don't have an account? <Link to="/register" style={{ color: "rgb(0, 119, 255)", textDecoration: "none" }}>Create one</Link></TermStyled>
         <ButtonWrapper disabled={isPending} onClick={handleLogin}>
           Login

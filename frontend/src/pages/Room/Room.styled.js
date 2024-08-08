@@ -27,9 +27,11 @@ export const About = styled.p`
   font-weight: 300;
 `;
 
-export const UserContainers = styled.div`
+export const UserContainers = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "isCenter",
+})`
   display: flex;
-  justify-content: space-between;
+  justify-content: ${(props) => (props.isCenter ? "center" : "space-between")};
   align-items: flex-start;
   width: 100%;
   & > div {
@@ -176,4 +178,26 @@ export const Spinner = styled.div.withConfig({
 export const DeclinedText = styled.p`
   margin: 0;
   color: #fc1616;
+`;
+
+export const ShareContainer = styled.div`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  cursor: pointer;
+  span {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #000;
+    padding: 15px;
+  }
+`;
+
+export const SuccessText = styled.p`
+  margin: 0;
+  color: #0fcd0f;
 `;

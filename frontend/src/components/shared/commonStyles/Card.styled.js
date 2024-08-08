@@ -18,6 +18,7 @@ export const CardStyled = styled.div`
   padding: 40px 0;
   flex-direction: column;
   position: relative;
+  box-shadow: 4px 4px 9.5px 0px #d9d9d980;
 `;
 
 export const HeadingStyled = styled.p`
@@ -40,7 +41,7 @@ export const HeadingImg = styled.img`
 export const ButtonWrapper = styled.button`
   display: flex;
   align-items: center;
-  background-color: #0077ff;
+  background-color: #20bd5f;
   color: #fff;
   font-size: 16px;
   font-weight: normal;

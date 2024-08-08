@@ -1,16 +1,18 @@
 import styled from "styled-components";
 
-const borderColors = [{ 1: "red", 2: "green", 3: "blue", 4: "yellow" }];
-
 export const RoomCardStyled = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-color: #1d1d1d;
-  border-radius: 12px;
-  margin-top: 30px;
-  width: 320px;
-  height: 160px;
+  align-items: flex-start;
+  padding: 12px 0;
+  background: linear-gradient(
+    72.8deg,
+    rgba(32, 189, 95, 0.5) 1.12%,
+    rgba(19, 19, 19, 0.5) 98.64%
+  );
+  border-radius: 10px;
+  width: 30%;
+  height: auto;
 `;
 
 export const RoomMain = styled.div`
@@ -23,9 +25,25 @@ export const RoomMain = styled.div`
 `;
 export const SpeakerContainers = styled.div`
   display: flex;
+  justify-content: space-between;
+  padding-right: 20px;
   gap: 30px;
   align-items: center;
   position: relative;
+  margin-bottom: 10px;
+`;
+
+export const HostContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  img,
+  div {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
 `;
 export const SpeakersAvatar = styled.div.withConfig({
   shouldForwardProp: (prop) =>
@@ -58,20 +76,27 @@ export const SpeakersName = styled.div`
   }
 `;
 export const Topic = styled.span`
-  max-width: 300px;
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 500;
 `;
-
-export const JoinRoom = styled.div`
-  margin-top: 25px;
+export const About = styled.span`
+  font-weight: 400;
+`;
+export const JoinRoom = styled.button`
   text-align: center;
-  width: 100%;
-  border-top: 1px solid #353535;
-  opacity: 0.8;
+  color: #20bd5f;
+  background-color: #000;
+  max-width: fit-content;
+  border: none;
+  outline: none;
+  padding: 10px;
+  border-radius: 10px;
+  align-self: center;
   cursor: pointer;
-  span {
-    width: 100%;
-  }
+  transition: all 0.1s;
   &:hover {
-    opacity: 1;
+    color: #fff;
+    opacity: 0.8;
   }
 `;

@@ -10,7 +10,7 @@ export const ImgInput = styled.img`
 `;
 export const BlueLineText = styled.label`
   font-size: 0.8rem;
-  color: #0077ff;
+  color: #20bd5f;
   cursor: pointer;
 `;
 
@@ -21,7 +21,7 @@ export const ImageWrapper = styled.div`
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  border: 4px solid #0077ff;
+  border: 4px solid #20bd5f;
 `;
 
 export const ErrorStyled = styled.p`
@@ -49,5 +49,5 @@ export const SkipStyled = styled.span`
   top: 3%;
   right: 3%;
   cursor: pointer;
-  color: #0077ff;
+  color: #20bd5f;
 `;

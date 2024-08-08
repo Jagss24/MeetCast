@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { RoomComponent, RoomCardContainer, SearchInput, RoomNav, FirstChild, SecondChild, StartContainer, LoadingDiv } from './Rooms.styled'
-import { MdOutlinePeople } from "react-icons/md";
+import { RoomComponent, RoomCardContainer, RoomNav, FirstChild, Buttons, LoadingDiv } from './Rooms.styled'
+import { MdOutlineKeyboardArrowDown, MdVoiceChat } from "react-icons/md";
 import RoomCard from '../../components/RoomCard/RoomCard';
 import StartRoom from '../../components/StartRoom/StartRoom';
 import { useQuery } from '@tanstack/react-query';
@@ -26,16 +26,23 @@ const Rooms = () => {
             <RoomComponent>
                 <RoomNav>
                     <FirstChild>
-                        <div style={{ display: "flex", flexDirection: "column" }}>
-                            <span>All Voice rooms</span>
-                            <span style={{ border: "1px solid red", marginTop: "8px", width: "50px" }}></span>
-                        </div>
-                        <SearchInput type='text' placeholder='Type here / to search' />
+                        <Buttons active={true}>
+                            <span >All Voice rooms</span>
+                        </Buttons>
+                        <Buttons>
+                            <span>Recents</span>
+                        </Buttons>
+                        <Buttons>
+                            <span>Topics</span>
+                            <span>
+                                <MdOutlineKeyboardArrowDown color='#fff' size={20} />
+                            </span>
+                        </Buttons>
                     </FirstChild>
-                    <SecondChild onClick={() => setShowModal(true)}>
-                        <MdOutlinePeople color='#fff' size={18} />
-                        <StartContainer>Start a room</StartContainer>
-                    </SecondChild>
+                    <Buttons onClick={() => setShowModal(true)} active={true}>
+                        <MdVoiceChat color='rgb(32, 189, 95)' size={18} />
+                        <span>Start a room</span>
+                    </Buttons>
                 </RoomNav>
                 {isLoading ?
                     <LoadingDiv >

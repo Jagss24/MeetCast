@@ -17,23 +17,19 @@ export const TermStyled = styled.span`
   padding: 0 60px;
   width: 400px;
 `;
-export const InputBoxStyled = styled.div`
-  position: relative;
-  img {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-  }
-`;
+
 export const InputStyled = styled.input`
-  background-color: #262626;
-  border-radius: 10px;
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 20px;
   border: none;
   outline: none;
-  padding: 12px;
-  color: #fff;
+  padding: 8px 10px 8px 30px;
+  color: #20bd5f;
   font-size: 16px;
-
+  &::placeholder {
+    color: #20bd5f;
+  }
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
