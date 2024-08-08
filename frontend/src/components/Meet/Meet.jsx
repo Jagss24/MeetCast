@@ -8,13 +8,14 @@ import { VideoContainer, VideoElement, ClientContainer, AvtarContainer, Controls
 
 const Meet = ({ roomId, user }) => {
     const navigate = useNavigate()
-    const { clients, provideRef, screenSharing, handleVideo, leaveRoom, handleAudio, clientIds } = useWebRTC(roomId, user)
+    const { clients, provideRef, screenSharing, handleVideo, leaveRoom, handleAudio, clientIds, isUserSpeaking } = useWebRTC({ roomId, user })
     const { startScreenSharing, stopScreenSharing } = screenSharing()
     const [isAudioOn, setIsAudioOn] = useState(false)
     const [isVideoOn, setIsVideoOn] = useState(false)
     const [screenIsSharing, setscreenIsSharing] = useState(false)
     console.log({ clients })
     console.log({ clientIds })
+    console.log({ isUserSpeaking })
     return (
         <>
             <VideoContainer>
@@ -23,12 +24,12 @@ const Meet = ({ roomId, user }) => {
 
                         <VideoElement ref={(instance) => provideRef(instance, client?.id)} autoPlay isVideoOn={client?.isVideoOn} />
                         {!client?.isVideoOn && (
-                            <AvtarContainer>
+                            <AvtarContainer isUserSpeaking={client?.isAudioOn}>
                                 {client?.avatar ?
                                     <img
                                         src={client.avatar}
                                         alt={`${client.fullName}'s avatar`}
-                                    /> : <DummyImage userName={client?.userName?.charAt(0).toUpperCase()} />}
+                                    /> : <DummyImage userName={client?.userName?.charAt(0).toUpperCase()} width={90} height={90} />}
                             </AvtarContainer>
                         )}
                         <p>{client?.fullName}</p>
@@ -40,7 +41,7 @@ const Meet = ({ roomId, user }) => {
                 <div>
                     <button onClick={() => {
                         setIsAudioOn(prev => !prev)
-                        handleAudio()
+                        handleAudio(user?.id)
                     }}><span>{isAudioOn ? <FaMicrophone size={20} /> : <FaMicrophoneSlash size={20} />}</span></button>
                     <button onClick={() => {
                         setIsVideoOn(prev => !prev)

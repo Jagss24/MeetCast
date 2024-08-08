@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const AudioConatiner = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: start;
   gap: 25px;
 `;
 
@@ -14,6 +14,7 @@ export const AudioElement = styled.div`
   flex-direction: column;
   & > p {
     text-align: center;
+    margin: 0;
   }
 `;
 

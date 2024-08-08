@@ -76,10 +76,25 @@ export const AvtarContainer = styled.div.withConfig({
   align-items: center;
   background: #1d1d1d;
   border-radius: ${(props) => (props?.audioElem ? "50%" : "0")};
+  img,
+  div {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    ${(props) => {
+      return (
+        props?.isUserSpeaking &&
+        !props?.audioElem &&
+        css`
+          animation: ${pulse} 1.5s infinite;
+        `
+      );
+    }}
+  }
   ${(props) => {
-    console.log({ props });
     return (
       props?.isUserSpeaking &&
+      props?.audioElem &&
       css`
         animation: ${pulse} 1.5s infinite;
       `
