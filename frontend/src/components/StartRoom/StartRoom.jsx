@@ -1,8 +1,8 @@
 import React, { memo, useEffect, useState } from 'react'
 import { StartRoomContainer, StartRoomBody, StartRoomHeader, StartRoomFooter, RoomTypes, RoomType, RoomTitle, AccessiBility, AccessiBilityOptions, AccessiBilityText, OptionOuterStyled, AssignSpeakerConatiner } from './StartRoom.styled'
-import { SearchInput } from '../../pages/Rooms/Rooms.styled';
+import { SearchInput } from '../shared/Navigation/Navigation.styled';
 import { HiXMark } from "react-icons/hi2";
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 import { createRoom, searchUser } from '../../api/api';
 import { useNavigate } from 'react-router-dom';
 import { FaPodcast } from "react-icons/fa6";
@@ -10,6 +10,8 @@ import { MdVideoCall } from "react-icons/md";
 import AsyncSelect from 'react-select/async';
 import { components } from "react-select"
 import DummyImage from '../DummyImage';
+import { useSelector } from 'react-redux';
+
 
 const StartRoom = ({ closeModal }) => {
     const navigate = useNavigate()
@@ -18,6 +20,7 @@ const StartRoom = ({ closeModal }) => {
     const [topic, setTopic] = useState("")
     const [accessibility, setAccessibility] = useState("public")
     const [selectedUser, setSelectedUser] = useState([])
+    const { user } = useSelector(state => state.user)
 
     const handleCreateRoom = () => {
         if (topic.split(" ").length < 2) {
@@ -48,12 +51,13 @@ const StartRoom = ({ closeModal }) => {
         } else {
             try {
                 const result = await searchUser(inputValue);
-                const fetchedUsers = result.data.users.map(user => ({
-                    value: user._id,
-                    label: user.fullName,
-                    avatar: user.avatar,
-                    userName: user.userName
-                }));
+                const fetchedUsers = result.data.users.filter(eachUser => eachUser._id !== user.id)
+                    .map(user => ({
+                        value: user._id,
+                        label: user.fullName,
+                        avatar: user.avatar,
+                        userName: user.userName
+                    }))
                 callback(fetchedUsers);
             } catch (error) {
                 console.error("Error searching users:", error);

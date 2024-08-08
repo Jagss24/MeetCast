@@ -4,9 +4,13 @@ import { socketInit } from "../socket";
 import freeice from "freeice";
 import { useStateWithCallback } from "./useStateWithCallback";
 
-export const usePodCast = (roomId, user) => {
+export const usePodCast = ({
+  roomId,
+  user,
+  isSpeaker = false,
+  isOwner = false,
+}) => {
   const [clients, setClients] = useStateWithCallback([]);
-  const [monitoringVolume, setMonitoringVolume] = useState(true);
   const audioElements = useRef({});
   const connections = useRef({});
   const socket = useRef(null);
@@ -19,6 +23,7 @@ export const usePodCast = (roomId, user) => {
   const analyser = audioContext.createAnalyser();
   analyser.fftSize = 256;
   const dataArray = new Uint8Array(analyser.fftSize);
+  let monitoring = true;
 
   // Functions
   const addNewClient = useCallback(
@@ -26,7 +31,24 @@ export const usePodCast = (roomId, user) => {
       // if client is not present only then add new client
       if (!clientIds.current.has(newClient?.id)) {
         clientIds.current.add(newClient?.id);
-        setClients((existingClients) => [...existingClients, newClient], cb);
+
+        setClients((existingClients) => {
+          if (newClient?.isOwner) {
+            return [newClient, ...existingClients];
+          } else if (newClient?.isSpeaker) {
+            if (existingClients.length && existingClients[0]?.isOwner) {
+              return [
+                existingClients[0],
+                newClient,
+                ...existingClients.slice(1),
+              ];
+            } else {
+              return [newClient, ...existingClients];
+            }
+          } else {
+            return [...existingClients, newClient];
+          }
+        }, cb);
       }
     },
     [setClients]
@@ -86,8 +108,6 @@ export const usePodCast = (roomId, user) => {
     socket.current = socketInit();
   }, []);
 
-  let monitoring = true;
-
   // Get the video & audio of user as soon as user gets connected
   useEffect(() => {
     const startCapture = async () => {
@@ -108,8 +128,9 @@ export const usePodCast = (roomId, user) => {
     };
 
     startCapture().then(() => {
+      const updatedUser = { ...user, isSpeaker, isOwner };
       // add user to clients list
-      addNewClient(user, () => {
+      addNewClient(updatedUser, () => {
         const localElement = audioElements.current[user.id];
         if (localElement) {
           localElement.volume = 0;
@@ -119,7 +140,7 @@ export const usePodCast = (roomId, user) => {
       // Emit the action to join
       socket.current.emit(ACTIONS.JOIN, {
         roomId,
-        user,
+        user: updatedUser,
       });
     });
 
@@ -127,7 +148,6 @@ export const usePodCast = (roomId, user) => {
     return () => {
       localMediaStream.current.getTracks().forEach((track) => track.stop());
       socket.current.emit(ACTIONS.LEAVE, { roomId });
-      setMonitoringVolume(false);
       if (audioContext.state !== "closed") {
         audioContext.close().then(() => {
           console.log("Audio context closed");

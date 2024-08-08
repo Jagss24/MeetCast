@@ -4,7 +4,7 @@ import { socketInit } from "../socket";
 import freeice from "freeice";
 import { useStateWithCallback } from "./useStateWithCallback";
 
-export const useWebRTC = (roomId, user) => {
+export const useWebRTC = ({ roomId, user }) => {
   const [clients, setClients] = useStateWithCallback([]);
   const videoElements = useRef({});
   const connections = useRef({});
@@ -13,7 +13,15 @@ export const useWebRTC = (roomId, user) => {
   const localMediaStream = useRef(null);
   const senders = useRef([]);
   const clientIds = useRef(new Set());
+  const [isUserSpeaking, setisUserSpeaking] = useState(false);
 
+  const audioContext = new window.AudioContext();
+  const analyser = audioContext.createAnalyser();
+  analyser.fftSize = 256;
+  const dataArray = new Uint8Array(analyser.fftSize);
+  let monitoring = true;
+
+  // Functions
   const addNewClient = useCallback(
     (newClient, cb) => {
       // if client is not present only then add new client
@@ -25,9 +33,22 @@ export const useWebRTC = (roomId, user) => {
     [setClients]
   );
 
-  useEffect(() => {
-    socket.current = socketInit();
-  }, []);
+  const monitorVolume = () => {
+    if (!monitoring) return;
+
+    requestAnimationFrame(monitorVolume);
+
+    analyser.getByteFrequencyData(dataArray);
+    const averageVolume =
+      dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+
+    if (averageVolume > 10) {
+      // Adjust the threshold value as needed
+      setisUserSpeaking(true);
+    } else {
+      setisUserSpeaking(false);
+    }
+  };
 
   const handleVideo = (userId) => {
     try {
@@ -61,10 +82,26 @@ export const useWebRTC = (roomId, user) => {
     }
   };
 
-  const handleAudio = () => {
+  const handleAudio = (userId) => {
     try {
       const audioTrack = localMediaStream.current.getAudioTracks()[0];
       audioTrack.enabled = !audioTrack.enabled;
+
+      setClients((clients) =>
+        clients.map((client) => {
+          console.log({ client });
+          if (client.id === userId) {
+            return { ...client, isAudioOn: audioTrack.enabled };
+          }
+          return client;
+        })
+      );
+
+      // Broadcast the audio status change to all peers
+      socket.current.emit(ACTIONS.TOGGLE_AUDIO, {
+        userId,
+        isAudioOn: audioTrack.enabled,
+      });
 
       // Update the local video element
       const localElement = videoElements.current[user.id];
@@ -159,6 +196,11 @@ export const useWebRTC = (roomId, user) => {
     return { startScreenSharing, stopScreenSharing };
   };
 
+  // useEffects
+  useEffect(() => {
+    socket.current = socketInit();
+  }, []);
+
   // Get the video & audio of user as soon as user gets connected
   useEffect(() => {
     const startCapture = async () => {
@@ -197,11 +239,16 @@ export const useWebRTC = (roomId, user) => {
     return () => {
       localMediaStream.current.getTracks().forEach((track) => track.stop());
       socket.current.emit(ACTIONS.LEAVE, { roomId });
+      if (audioContext.state !== "closed") {
+        audioContext.close().then(() => {
+          console.log("Audio context closed");
+        });
+        monitoring = false;
+      }
     };
   }, []);
 
   // Handle new peer
-
   useEffect(() => {
     const handleNewPeer = async ({ peerId, createOffer, user: remoteUser }) => {
       // If already connected then prevent connecting again
@@ -320,6 +367,26 @@ export const useWebRTC = (roomId, user) => {
     };
   }, []);
 
+  // If audio status is changed of any user let all other user know it
+  useEffect(() => {
+    const handleAudioStatusChanged = ({ userId, isAudioOn }) => {
+      setClients((clients) =>
+        clients.map((client) => {
+          if (client.id === userId) {
+            return { ...client, isAudioOn };
+          }
+          return client;
+        })
+      );
+    };
+
+    socket.current.on(ACTIONS.AUDIO_STATUS, handleAudioStatusChanged);
+
+    return () => {
+      socket.current.off(ACTIONS.AUDIO_STATUS, handleAudioStatusChanged);
+    };
+  }, []);
+
   // If video status is changed of any user let all other user know it
   useEffect(() => {
     const handleVideoStatusChanged = ({ userId, isVideoOn }) => {
@@ -390,5 +457,6 @@ export const useWebRTC = (roomId, user) => {
     leaveRoom,
     handleAudio,
     clientIds,
+    isUserSpeaking,
   };
 };
