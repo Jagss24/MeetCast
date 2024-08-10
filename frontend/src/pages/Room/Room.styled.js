@@ -6,8 +6,7 @@ export const RoomConatiner = styled.div`
   align-items: center;
   flex-direction: column;
   gap: 30px;
-  margin: 0 auto;
-  width: 1300px;
+
   margin-bottom: 50px;
 `;
 

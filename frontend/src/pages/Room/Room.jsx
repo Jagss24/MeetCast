@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from "react-router-dom"
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { RoomConatiner, Title, About, UserContainers, EachSpeaker, ButtonConatiners, Spinner, LoadingContainer, SpeakerContainer, AllowContainer, DeclinedText, ShareContainer, SuccessText } from './Room.styled'
 import Meet from '../../components/Meet/Meet'
 import Podcast from '../../components/Podcast/Podcast'
@@ -9,6 +9,7 @@ import { useQuery, useMutation } from '@tanstack/react-query'
 import DummyImage from '../../components/DummyImage'
 import { ThreeDots } from 'react-loading-icons'
 import { IoShareSocialSharp } from "react-icons/io5";
+import { setIsNavbarVisible } from '../../slices/utilitySlice'
 
 const Room = () => {
     const { id: roomId } = useParams()
@@ -18,6 +19,7 @@ const Room = () => {
     const [userisInMemberList, setuserisInMemberList] = useState(false)
     const [userisInRemovedList, setuserisInRemovedList] = useState(false)
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
 
     // Queries & Mutations
@@ -176,7 +178,10 @@ const Room = () => {
                         <ButtonConatiners>
                             {room?.accessibility === "public" || user?.id === room?.ownerId?._id || userisInMemberList ?
                                 <button disabled={isLoading || !roomId || !user?.id}
-                                    onClick={() => setRoomType(room?.roomType)}>Join the Room
+                                    onClick={() => {
+                                        setRoomType(room?.roomType)
+                                        dispatch(setIsNavbarVisible(false))
+                                    }}>Join the Room
                                     {(isLoading || !roomId || !user?.id) && <span> <Spinner width={15} height={15} /> </span>}
                                 </button>
                                 : <button disabled={isLoading || !roomId || !user?.id || isSuccess || userisAlreadyinWaitingList}
@@ -209,6 +214,7 @@ const Room = () => {
                             avatar: user?.avatar
                         }}
                         roomId={roomId}
+                        roomTopic={room.topic}
                     />
                 }
                 {
