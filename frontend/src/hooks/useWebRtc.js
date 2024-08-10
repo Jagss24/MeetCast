@@ -6,6 +6,7 @@ import { useStateWithCallback } from "./useStateWithCallback";
 
 export const useWebRTC = ({ roomId, user }) => {
   const [clients, setClients] = useStateWithCallback([]);
+  const [clientMessages, setClientMessages] = useState([]);
   const videoElements = useRef({});
   const connections = useRef({});
   const screenShareStream = useRef(null);
@@ -52,13 +53,19 @@ export const useWebRTC = ({ roomId, user }) => {
 
   const handleVideo = (userId) => {
     try {
+      const audioTrack = localMediaStream.current.getAudioTracks()[0];
+
       const videoTrack = localMediaStream.current.getVideoTracks()[0];
       videoTrack.enabled = !videoTrack.enabled;
 
       setClients((clients) =>
         clients.map((client) => {
           if (client.id === userId) {
-            return { ...client, isVideoOn: videoTrack.enabled };
+            return {
+              ...client,
+              isAudioOn: audioTrack.enabled,
+              isVideoOn: videoTrack.enabled,
+            };
           }
           return client;
         })
@@ -68,6 +75,7 @@ export const useWebRTC = ({ roomId, user }) => {
       socket.current.emit(ACTIONS.TOGGLE_VIDEO, {
         userId,
         isVideoOn: videoTrack.enabled,
+        isAudioOn: audioTrack.enabled,
       });
       // Update the local video element
       const localElement = videoElements.current[user.id];
@@ -87,11 +95,17 @@ export const useWebRTC = ({ roomId, user }) => {
       const audioTrack = localMediaStream.current.getAudioTracks()[0];
       audioTrack.enabled = !audioTrack.enabled;
 
+      const videoTrack = localMediaStream.current.getVideoTracks()[0];
+
       setClients((clients) =>
         clients.map((client) => {
           console.log({ client });
           if (client.id === userId) {
-            return { ...client, isAudioOn: audioTrack.enabled };
+            return {
+              ...client,
+              isAudioOn: audioTrack.enabled,
+              isVideoOn: videoTrack.enabled,
+            };
           }
           return client;
         })
@@ -101,6 +115,7 @@ export const useWebRTC = ({ roomId, user }) => {
       socket.current.emit(ACTIONS.TOGGLE_AUDIO, {
         userId,
         isAudioOn: audioTrack.enabled,
+        isVideoOn: videoTrack.enabled,
       });
 
       // Update the local video element
@@ -118,6 +133,7 @@ export const useWebRTC = ({ roomId, user }) => {
 
   const screenSharing = () => {
     let screenTrack;
+    const audioTrack = localMediaStream.current?.getAudioTracks()[0];
     //start sharing the screen
     async function startScreenSharing(setscreenIsSharing) {
       try {
@@ -145,6 +161,7 @@ export const useWebRTC = ({ roomId, user }) => {
         socket.current.emit(ACTIONS.TOGGLE_VIDEO, {
           userId: user?.id,
           isVideoOn: true,
+          isAudioOn: audioTrack.enabled,
         });
         // Get the screentrack and replace with your video track.
         senders.current
@@ -186,6 +203,7 @@ export const useWebRTC = ({ roomId, user }) => {
       socket.current.emit(ACTIONS.TOGGLE_VIDEO, {
         userId: user?.id,
         isVideoOn: false,
+        isAudioOn: audioTrack.enabled,
       });
       const localElement = videoElements.current[user.id];
       if (localElement) localElement.srcObject = localMediaStream.current;
@@ -196,6 +214,21 @@ export const useWebRTC = ({ roomId, user }) => {
     return { startScreenSharing, stopScreenSharing };
   };
 
+  const sendMessage = ({ userId, msgContent, userFullName, userAvatar }) => {
+    if (!userId && !msgContent && !userFullName) return;
+
+    setClientMessages((prev) => [
+      ...prev,
+      { userId, userFullName, userAvatar, msgContent },
+    ]);
+
+    socket.current.emit(ACTIONS.SEND_MSG, {
+      userId,
+      userFullName,
+      userAvatar,
+      msgContent,
+    });
+  };
   // useEffects
   useEffect(() => {
     socket.current = socketInit();
@@ -369,11 +402,11 @@ export const useWebRTC = ({ roomId, user }) => {
 
   // If audio status is changed of any user let all other user know it
   useEffect(() => {
-    const handleAudioStatusChanged = ({ userId, isAudioOn }) => {
+    const handleAudioStatusChanged = ({ userId, isAudioOn, isVideoOn }) => {
       setClients((clients) =>
         clients.map((client) => {
           if (client.id === userId) {
-            return { ...client, isAudioOn };
+            return { ...client, isAudioOn, isVideoOn };
           }
           return client;
         })
@@ -389,11 +422,11 @@ export const useWebRTC = ({ roomId, user }) => {
 
   // If video status is changed of any user let all other user know it
   useEffect(() => {
-    const handleVideoStatusChanged = ({ userId, isVideoOn }) => {
+    const handleVideoStatusChanged = ({ userId, isVideoOn, isAudioOn }) => {
       setClients((clients) =>
         clients.map((client) => {
           if (client.id === userId) {
-            return { ...client, isVideoOn };
+            return { ...client, isVideoOn, isAudioOn };
           }
           return client;
         })
@@ -404,6 +437,26 @@ export const useWebRTC = ({ roomId, user }) => {
 
     return () => {
       socket.current.off(ACTIONS.VIDEO_STATUS, handleVideoStatusChanged);
+    };
+  }, []);
+
+  // Get the messages sent by other clients
+  useEffect(() => {
+    const handleRecivedMsg = ({
+      userId,
+      userFullName,
+      userAvatar,
+      msgContent,
+    }) => {
+      setClientMessages((prev) => [
+        ...prev,
+        { userId, userFullName, userAvatar, msgContent },
+      ]);
+    };
+    socket.current.on(ACTIONS.RECEIVE_MSG, handleRecivedMsg);
+
+    return () => {
+      socket.current.off(ACTIONS.RECEIVE_MSG, handleRecivedMsg);
     };
   }, []);
 
@@ -458,5 +511,7 @@ export const useWebRTC = ({ roomId, user }) => {
     handleAudio,
     clientIds,
     isUserSpeaking,
+    sendMessage,
+    clientMessages,
   };
 };

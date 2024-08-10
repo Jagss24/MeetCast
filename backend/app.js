@@ -88,7 +88,7 @@ io.on("connection", (socket) => {
   });
 
   // Video Status changed so let all users know it
-  socket.on(ACTIONS.TOGGLE_VIDEO, ({ userId, isVideoOn }) => {
+  socket.on(ACTIONS.TOGGLE_VIDEO, ({ userId, isVideoOn, isAudioOn }) => {
     let userFound = false;
 
     // Iterate over the socketUserMap to find the user by userId
@@ -96,27 +96,6 @@ io.on("connection", (socket) => {
       if (socketUserMap[clientId].id === userId) {
         // Update the isAudioOn status for the found user
         socketUserMap[clientId].isVideoOn = isVideoOn;
-        userFound = true;
-        break;
-      }
-    }
-
-    if (userFound) {
-      // Broadcast the updated audio status to all clients
-      socket.broadcast.emit(ACTIONS.VIDEO_STATUS, { userId, isVideoOn });
-    } else {
-      console.warn(`User with ID ${userId} not found in socketUserMap.`);
-    }
-  });
-
-  // Audio Status changed so let all users know it
-  socket.on(ACTIONS.TOGGLE_AUDIO, ({ userId, isAudioOn }) => {
-    let userFound = false;
-
-    // Iterate over the socketUserMap to find the user by userId
-    for (const clientId in socketUserMap) {
-      if (socketUserMap[clientId].id === userId) {
-        // Update the isAudioOn status for the found user
         socketUserMap[clientId].isAudioOn = isAudioOn;
         userFound = true;
         break;
@@ -125,11 +104,55 @@ io.on("connection", (socket) => {
 
     if (userFound) {
       // Broadcast the updated audio status to all clients
-      socket.broadcast.emit(ACTIONS.AUDIO_STATUS, { userId, isAudioOn });
+      socket.broadcast.emit(ACTIONS.VIDEO_STATUS, {
+        userId,
+        isVideoOn,
+        isAudioOn,
+      });
     } else {
       console.warn(`User with ID ${userId} not found in socketUserMap.`);
     }
   });
+
+  // Audio Status changed so let all users know it
+  socket.on(ACTIONS.TOGGLE_AUDIO, ({ userId, isAudioOn, isVideoOn }) => {
+    let userFound = false;
+
+    // Iterate over the socketUserMap to find the user by userId
+    for (const clientId in socketUserMap) {
+      if (socketUserMap[clientId].id === userId) {
+        // Update the isAudioOn status for the found user
+        socketUserMap[clientId].isAudioOn = isAudioOn;
+        socketUserMap[clientId].isVideoOn = isVideoOn;
+        userFound = true;
+        break;
+      }
+    }
+
+    if (userFound) {
+      // Broadcast the updated audio status to all clients
+      socket.broadcast.emit(ACTIONS.AUDIO_STATUS, {
+        userId,
+        isAudioOn,
+        isVideoOn,
+      });
+    } else {
+      console.warn(`User with ID ${userId} not found in socketUserMap.`);
+    }
+  });
+
+  // Handle message to send to all clients
+  socket.on(
+    ACTIONS.SEND_MSG,
+    ({ userId, userFullName, userAvatar, msgContent }) => {
+      socket.broadcast.emit(ACTIONS.RECEIVE_MSG, {
+        userId,
+        userFullName,
+        userAvatar,
+        msgContent,
+      });
+    }
+  );
 
   const leaveRoom = ({ roomId }) => {
     const clients = Array.from(io.sockets.adapter.rooms.get(roomId) || []);

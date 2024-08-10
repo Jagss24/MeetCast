@@ -11,4 +11,6 @@ export const ACTIONS = {
   VIDEO_STATUS: "video-status-changed", // This will broadcast to everyone which user has on the video
   TOGGLE_AUDIO: "toggle-audio", // This will let the user toggle the audio status
   AUDIO_STATUS: "video-status-changed", // This will broadcast to everyone which user enabled the audio
+  SEND_MSG: "send-msg", //This will be used to send the message
+  RECEIVE_MSG: "receive-msg", // This will be used to receive the message
 };
