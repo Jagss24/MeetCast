@@ -11,6 +11,7 @@ export const usePodCast = ({
   isOwner = false,
 }) => {
   const [clients, setClients] = useStateWithCallback([]);
+  const [clientMessages, setClientMessages] = useState([]);
   const audioElements = useRef({});
   const connections = useRef({});
   const socket = useRef(null);
@@ -100,6 +101,22 @@ export const usePodCast = ({
       setisUserSpeaking(false);
       console.log("User is not speaking");
     }
+  };
+
+  const sendMessage = ({ userId, msgContent, userFullName, userAvatar }) => {
+    if (!userId && !msgContent && !userFullName) return;
+
+    setClientMessages((prev) => [
+      ...prev,
+      { userId, userFullName, userAvatar, msgContent },
+    ]);
+
+    socket.current.emit(ACTIONS.SEND_MSG, {
+      userId,
+      userFullName,
+      userAvatar,
+      msgContent,
+    });
   };
 
   // useEffects
@@ -296,6 +313,26 @@ export const usePodCast = ({
       socket.current.off(ACTIONS.AUDIO_STATUS, handleAudioStatusChanged);
     };
   }, []);
+
+  // Get the messages sent by other clients
+  useEffect(() => {
+    const handleRecivedMsg = ({
+      userId,
+      userFullName,
+      userAvatar,
+      msgContent,
+    }) => {
+      setClientMessages((prev) => [
+        ...prev,
+        { userId, userFullName, userAvatar, msgContent },
+      ]);
+    };
+    socket.current.on(ACTIONS.RECEIVE_MSG, handleRecivedMsg);
+
+    return () => {
+      socket.current.off(ACTIONS.RECEIVE_MSG, handleRecivedMsg);
+    };
+  }, []);
   // If browser is close directly then this will be triggered
   useEffect(() => {
     window.addEventListener("unload", function () {
@@ -345,5 +382,7 @@ export const usePodCast = ({
     handleAudio,
     clientIds,
     isUserSpeaking,
+    sendMessage,
+    clientMessages,
   };
 };
