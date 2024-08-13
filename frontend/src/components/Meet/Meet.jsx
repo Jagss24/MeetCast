@@ -9,7 +9,7 @@ import DummyImage from '../DummyImage';
 import { MeetContainer, VideoContainer, VideoElement, ClientContainer, AvtarContainer, Controls, TopicStyle, VideoAndChatContainer, ChatContainer, ChatInputContainer, ChatInnerContainer, OptionsContainer, EachOption, PariticiPantContainer, PariticiPantInnerContainer, ClientNameContainer, ChatMessageContainer } from './Meet.styled';
 import { setIsNavbarVisible } from '../../slices/utilitySlice';
 
-const Meet = ({ roomId, user, roomTopic }) => {
+const Meet = ({ roomId, user, roomTopic, roomType }) => {
     const navigate = useNavigate()
     const { clients, provideRef, screenSharing, handleVideo, leaveRoom, handleAudio, clientIds, isUserSpeaking, sendMessage, clientMessages } = useWebRTC({ roomId, user })
     const { startScreenSharing, stopScreenSharing } = screenSharing()

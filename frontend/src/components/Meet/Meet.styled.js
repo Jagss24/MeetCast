@@ -117,8 +117,8 @@ const pulse = keyframes`
 export const AvtarContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => !["audioElem", "isUserSpeaking"].includes(prop),
 })`
-  width: ${(props) => (props?.audioElem ? "50px" : "100%")};
-  height: ${(props) => (props?.audioElem ? "50px" : "100%")};
+  width: ${(props) => (props?.audioElem ? "fit-content" : "100%")};
+  height: ${(props) => (props?.audioElem ? "fit-content" : "100%")};
   display: flex;
   justify-content: center;
   align-items: center;

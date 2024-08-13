@@ -46,12 +46,6 @@ const Login = () => {
     }
   }, [isSuccess])
 
-  useEffect(() => {
-    const user = sessionStorage.getItem("isLoggedIn")
-    if (user !== "true") {
-      navigate("/")
-    }
-  }, [])
   return (
     <MainStyled>
       <CardStyled>
