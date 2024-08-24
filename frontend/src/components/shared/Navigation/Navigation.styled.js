@@ -19,9 +19,7 @@ export const NavigationContainer = styled.div`
   }
 `;
 
-export const SearchInput = styled.input.withConfig({
-  shouldForwardProp: (prop) => prop !== "fullWidth",
-})`
+export const SearchInput = styled.input`
   padding: 8px 10px 8px 30px;
   border-radius: 20px;
   border: none;
@@ -29,7 +27,6 @@ export const SearchInput = styled.input.withConfig({
   color: #838282;
   line-height: 18px;
   background-color: #d9d9d9;
-  width: ${(props) => (props.fullWidth ? "100%" : "")};
 `;
 export const InputWrapper = styled.div`
   position: relative;

@@ -1,12 +1,14 @@
 import styled, { keyframes } from "styled-components";
 
-export const RoomConatiner = styled.div`
+export const RoomConatiner = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "notAllowPadding",
+})`
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   gap: 30px;
-
+  padding: ${(props) => (props?.notAllowPadding ? "0" : "0 100px")};
   margin-bottom: 50px;
 `;
 
@@ -37,7 +39,7 @@ export const UserContainers = styled.div.withConfig({
     width: 45%;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     gap: 30px;
     flex-direction: column;
   }
@@ -47,6 +49,10 @@ export const EachSpeaker = styled.div`
   width: 100%;
   justify-content: space-between;
   align-items: center;
+  border: 1px solid #c0c0c080;
+  box-shadow: 0px 4px 4px 0px #00000066;
+  padding: 0.5rem;
+  border-radius: 22px;
   & > div {
     display: flex;
     gap: 20px;
@@ -59,23 +65,23 @@ export const EachSpeaker = styled.div`
   }
   .buttons {
     .decline {
-      background-color: red;
-      &:hover {
-        background-color: rgba(255, 0, 0, 0.8);
-      }
+      color: #ff0000;
+      background: #ff00003d;
     }
     & > button {
       display: flex;
       gap: 5px;
-      background-color: #0077ff;
       padding: 12px 16px;
       border-radius: 22px;
       border: none;
       cursor: pointer;
-      color: #fff;
-      transition: background-color 0.2s;
+      color: #20bd5f;
+      background: #20bd5f33;
+      font-weight: 600;
+      transition: background 0.2s;
+
       &:hover {
-        background-color: rgba(0, 119, 255, 0.8);
+        opacity: 0.8;
       }
       &:disabled {
         background-color: gray;
@@ -111,14 +117,14 @@ export const ButtonConatiners = styled.div`
   }
 `;
 export const SpeakerContainer = styled.div`
-  background-color: rgba(0, 0, 0, 0.6);
+  box-shadow: 4px 4px 6.6px 0px #d9d9d926;
+  background: #131313;
   border-radius: 22px;
   & > h3 {
     text-align: center;
-    border-radius: 22px;
-    background-color: rgba(0, 0, 0, 0.2);
     padding: 10px 0;
     width: 100%;
+    border-bottom: 1px solid #83828299;
   }
   & > div {
     width: 90%;
@@ -132,31 +138,33 @@ export const SpeakerContainer = styled.div`
 `;
 
 export const AllowContainer = styled.div`
-  background-color: rgba(0, 0, 0, 0.6);
+  box-shadow: 4px 4px 6.6px 0px #d9d9d926;
+  background: #131313;
   border-radius: 22px;
-  min-height: auto;
-  max-height: 350px;
-  overflow-y: auto;
+  scrollbar-width: none;
   display: flex;
   flex-direction: column;
+  margin-bottom: 2rem;
   & > h3 {
     position: sticky;
     text-align: center;
-    border-radius: 22px;
     top: 0;
-    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid #83828299;
     z-index: 1;
     padding: 10px 0;
     width: 100%;
   }
   & > div {
-    width: 90%;
+    width: 80%;
     display: flex;
-    gap: 20px;
-    justify-content: space-between;
+    gap: 1.5rem;
     align-items: center;
     flex-direction: column;
-    padding: 0 20px 20px;
+    margin-bottom: 2.5rem;
+    max-height: 350px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding: 0 1rem;
   }
 `;
 const spin = keyframes`

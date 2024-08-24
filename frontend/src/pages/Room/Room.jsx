@@ -119,13 +119,11 @@ const Room = () => {
                 <ThreeDots />
                 <h3>Setting you up please wait</h3>
             </LoadingContainer> :
-            <RoomConatiner>
+            <RoomConatiner notAllowPadding={roomType === "meet" || roomType === "podcast"}>
                 {!roomType && (
                     <>
                         <Title>{room?.topic}</Title>
-                        <About>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iste obcaecati nihil quaerat maxime, voluptates, corporis culpa magni facilis nobis voluptatibus natus quis placeat unde, dolores assumenda. Suscipit voluptates expedita blanditiis minima, ab
-                            ero qui vel perspiciatis eos magni aperiam autem, nostrum quae deleniti accusamus voluptate aliquam.
-                        </About>
+                        <About>Step into the ultimate destination for music lovers!!</About>
                         <UserContainers isCenter={room?.accessibility === "public" || user?.id !== room?.ownerId?._id}>
                             <SpeakerContainer>
                                 <h3>Speakers</h3>
@@ -147,7 +145,7 @@ const Room = () => {
                                 </div>
 
                             </SpeakerContainer>
-                            {user?.id === room?.ownerId?._id && room?.accessibility !== "public" && < AllowContainer >
+                            {user?.id === room?.ownerId?._id && room?.accessibility !== "public" && <AllowContainer >
                                 <h3>Waiting List</h3>
                                 <div>
                                     {room?.waitingList?.length ? room?.waitingList.map((eachUser) => <EachSpeaker key={eachUser?._id}>
@@ -187,7 +185,7 @@ const Room = () => {
                                 : <button disabled={isLoading || !roomId || !user?.id || isSuccess || userisAlreadyinWaitingList}
                                     onClick={() => handleRequestiontoJoinRoom(roomId, user?.id)}>
                                     {userisAlreadyinWaitingList ? "Already requested" : isSuccess ? "Request Sent" : userisInRemovedList ? "Request Again" : userisInMemberList ? "Join the Room" : "Request to Join the room"}
-                                    {(isLoading || !roomId || !user?.id || isPending) && <span><Spinner width={15} height={15} /> </span>}
+                                    {(isLoading || !roomId || !user?.id || isPending) && <span><Spinner width={15} height={15} />  </span>}
                                 </button>
                             }
 
