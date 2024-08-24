@@ -10,15 +10,18 @@ export const StartRoomContainer = styled.div`
   justify-content: center;
   align-items: center;
   background: rgba(0, 0, 0, 0.6);
+  height: auto;
 `;
 
 export const StartRoomBody = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
+  align-items: center;
   width: 50%;
   max-width: 500px;
-  background: #1d1d1d;
+  background: #000000;
+  box-shadow: 4px 4px 6.5px 0px #20bd5f33;
   border-radius: 20px;
   position: relative;
   & > span {
@@ -30,18 +33,45 @@ export const StartRoomBody = styled.div`
   }
 `;
 
+export const TopicDiv = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 export const StartRoomHeader = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 30px 30px 0;
+  & > input {
+    margin: 15px 0px;
+  }
+`;
+
+export const StartRoomBase = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  padding: 30px;
-  border-bottom: 2px solid #262626;
-  & > span {
+  width: 85%;
+  gap: 0.5rem;
+  & > h3 {
     align-self: flex-start;
+    font-size: 1rem;
   }
   & > input {
+    width: 100%;
     margin: 15px 0px;
+    border: none;
+    outline: none;
+    line-height: 18px;
+    background-color: #fff;
+    padding: 13px 11px 13px 11px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    margin: 0;
   }
 `;
 
@@ -68,8 +98,9 @@ export const StartRoomFooter = styled.div`
 
 export const RoomTypes = styled.div`
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
+  gap: 2.5rem;
   width: 100%;
   margin-top: 20px;
 `;
@@ -82,15 +113,17 @@ export const RoomType = styled.div.withConfig({
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  background-color: ${(prop) => (prop.roomType ? "#262626" : "")};
+  background-color: ${(prop) => (prop.roomType ? "#20BD5F33" : "")};
+  color: ${(prop) => (prop.roomType ? "#20BD5F" : "")};
   width: 100px;
   padding: 10px;
   border-radius: 12px;
+  transition: all 0.3s;
   img {
     width: 50px;
   }
   &:hover {
-    background-color: #262626;
+    background-color: #20bd5f33;
   }
 `;
 
@@ -99,70 +132,36 @@ export const RoomTitle = styled.span`
 `;
 
 export const AccessiBility = styled.div`
-  margin-top: 15px;
+  margin: 1rem 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 0 30px;
-  gap: 30px;
-`;
-
-export const AccessiBilityOptions = styled.div`
-  display: flex;
-  gap: 20px;
-  span {
+  padding: 0 1.5rem;
+  gap: 0.75rem;
+  & > span {
+    margin-top: 0.75rem;
+    font-weight: 500;
+  }
+  & > div {
     display: flex;
-    flex-direction: row !important;
-    /* position: relative; */
-    margin: 0.5rem;
-    input[type="radio"] {
-      position: absolute;
-      opacity: 0;
-      & + label {
-        &:before {
-          content: "";
-          background: #f4f4f4;
-          border-radius: 100%;
-          border: 1px solid darken(#f4f4f4, 25%);
-          display: inline-block;
-          width: 1.2em;
-          height: 1.2em;
-          position: relative;
-          top: 0.2em;
-          margin-right: 0.5em;
-          vertical-align: top;
-          cursor: pointer;
-          text-align: center;
-          transition: all 250ms ease;
-        }
-      }
-      &:checked + label:before {
-        background-color: #3197ee;
-        box-shadow: inset 0 0 0 4px #f4f4f4;
-      }
-      &:focus + label:before {
-        outline: none;
-        border-color: #3197ee;
-      }
-      &:disabled + label:before {
-        box-shadow: inset 0 0 0 4px #f4f4f4;
-        border-color: darken(#f4f4f4, 25%);
-        background: darken(#f4f4f4, 25%);
-      }
-      & + label:empty:before {
-        margin-right: 0;
-      }
-    }
+    gap: 20px;
   }
 `;
 
-export const AccessiBilityText = styled.div`
+export const AccessibilityType = styled.div.withConfig({
+  shouldForwardProp: (prop) => prop !== "accessibility",
+})`
   display: flex;
   justify-content: center;
   align-items: center;
-  p {
-    font-size: 1rem;
-    font-weight: 500;
-  }
+  background: ${(props) => (props?.accessibility ? "#20bd5f33" : "none")};
+  color: ${(props) => (props?.accessibility ? "#fff" : "#20bd5f")};
+  font-weight: 600;
+  border: 1px solid #00ff6675;
+  padding: 8px 12px;
+  border-radius: 22px;
+  cursor: pointer;
+  transition: all 0.3s;
 `;
 
 export const OptionOuterStyled = styled.div`
@@ -176,8 +175,8 @@ export const AssignSpeakerConatiner = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
-  padding: 20px 20px 0;
   gap: 10px;
+  width: 100%;
   h6 {
     font-size: 0.9rem;
   }

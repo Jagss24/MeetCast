@@ -1,6 +1,5 @@
 import React, { memo, useEffect, useState } from 'react'
-import { StartRoomContainer, StartRoomBody, StartRoomHeader, StartRoomFooter, RoomTypes, RoomType, RoomTitle, AccessiBility, AccessiBilityOptions, AccessiBilityText, OptionOuterStyled, AssignSpeakerConatiner } from './StartRoom.styled'
-import { SearchInput } from '../shared/Navigation/Navigation.styled';
+import { StartRoomContainer, StartRoomBody, StartRoomHeader, StartRoomFooter, RoomTypes, RoomType, RoomTitle, AccessiBility, OptionOuterStyled, AssignSpeakerConatiner, AccessibilityType, StartRoomBase, TopicDiv } from './StartRoom.styled'
 import { HiXMark } from "react-icons/hi2";
 import { useMutation } from "@tanstack/react-query"
 import { createRoom, searchUser } from '../../api/api';
@@ -8,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { FaPodcast } from "react-icons/fa6";
 import { MdVideoCall } from "react-icons/md";
 import AsyncSelect from 'react-select/async';
-import { components } from "react-select"
+import Select, { components } from "react-select"
 import DummyImage from '../DummyImage';
 import { useSelector } from 'react-redux';
 
@@ -19,6 +18,7 @@ const StartRoom = ({ closeModal }) => {
     const [activeRoom, setActiveRoom] = useState(roomType[0])
     const [topic, setTopic] = useState("")
     const [accessibility, setAccessibility] = useState("public")
+    const [openTopicOptions, setOpenTopicOptions] = useState(false)
     const [selectedUser, setSelectedUser] = useState([])
     const { user } = useSelector(state => state.user)
 
@@ -38,12 +38,34 @@ const StartRoom = ({ closeModal }) => {
         mutationFn: createRoom,
 
     })
-    useEffect(() => {
-        if (data?.data) {
-            const roomId = data?.data?.roomDtos?.id
-            navigate(`/room/${roomId}`)
-        }
-    }, [data])
+
+    const topicOptions = [{
+        label: "Health",
+        value: "Health"
+    },
+    {
+        label: "Art",
+        value: "Art"
+    },
+    {
+        label: "Fitness",
+        value: "Fitness"
+    }, {
+        label: "Finance",
+        value: "Finance"
+    }, {
+        label: "Medical",
+        value: "Medical"
+    },
+    {
+        label: "Engineering",
+        value: "Engineering"
+    },
+    {
+        label: "Politics",
+        value: "Politics"
+    }
+    ]
 
     const loadOptions = async (inputValue, callback) => {
         if (!inputValue) {
@@ -73,14 +95,27 @@ const StartRoom = ({ closeModal }) => {
         }
         setSelectedUser(selected);
     };
+    useEffect(() => {
+        if (data?.data) {
+            const roomId = data?.data?.roomDtos?.id
+            navigate(`/room/${roomId}`)
+        }
+    }, [data])
 
+    useEffect(() => {
+
+        document.body.style.overflow = 'hidden';
+
+        // Cleanup on component unmount or when modal closes
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, []);
     return (
         <StartRoomContainer>
             <StartRoomBody>
                 <StartRoomHeader>
-                    <h3>Enter the topic to be discussed</h3>
-                    <SearchInput fullWidth={true} value={topic} onChange={(e) => setTopic(e.target.value)} />
-                    <span>Room types</span>
+                    <span>Room Type</span>
                     <RoomTypes>
                         <div>
                             <RoomType roomType={activeRoom === "podcast"} onClick={() => setActiveRoom(roomType[0])}>
@@ -95,107 +130,161 @@ const StartRoom = ({ closeModal }) => {
                             </RoomType>
                         </div>
                     </RoomTypes>
+                    <AccessiBility>
+                        {activeRoom === "meet" && <AccessibilityType>
+                            If room type is Meet then it will always be private
+                        </AccessibilityType>}
+                        {activeRoom === "podcast" && <div>
+                            <AccessibilityType accessibility={accessibility === "public"} onClick={() => setAccessibility("public")}>
+                                Public
+                            </AccessibilityType>
+                            <AccessibilityType accessibility={accessibility === "private"} onClick={() => setAccessibility("private")}>
+                                Private
+                            </AccessibilityType>
+                        </div>}
+                        <span>{activeRoom === "podcast" ? `Start a podcast, ${accessibility === "public" ? "open to everyone" : "private with your people"} ` : "Start a Meet, with your people"}</span>
+                        <TopicDiv>
+                            <h4>About What? </h4>
+                            <Select
+                                options={topicOptions}
+                                styles={{
+                                    control: (provided, state) => ({
+                                        ...provided,
+                                        background: "#000000",
+                                        border: "1px solid #20bd5f",
+                                        borderRadius: "22px",
+                                        outline: "none",
+                                        cursor: state.isDisabled ? 'not-allowed' : 'text',
+                                        width: "12rem",
+
+                                    }),
+                                    valueContainer: (provided, state) => ({
+                                        ...provided,
+                                        color: "#20bd5f"
+                                    }),
+                                    singleValue: (provided, state) => ({
+                                        ...provided,
+                                        color: "#20bd5f"
+                                    }),
+                                    menu: (provided) => ({
+                                        ...provided,
+                                        cursor: "pointer",
+                                        background: "#000000",
+                                        width: "100%",
+                                    }),
+                                    multiValue: (provided) => ({
+                                        ...provided,
+                                        borderRadius: "20px",
+                                        background: " #353535",
+                                        "&>div": {
+                                            color: "#fff",
+
+                                        },
+                                        "&>div[role=button]": {
+                                            cursor: "pointer",
+                                            "&:hover": {
+                                                color: "#fff",
+                                                backgroundColor: "#ababaa",
+                                                borderRadius: "20px",
+                                            }
+                                        }
+                                    }),
+                                    option: (provided, state) => ({
+                                        ...provided,
+                                        color: '#20bd5f',
+                                        backgroundColor: state.isFocused ? "#353535" : "",
+                                        cursor: "pointer",
+                                        "&:hover": {
+                                            backgroundColor: state.isFocused ? "#353535" : "",
+
+                                        },
+                                    }),
+                                    indicatorSeparator: (provided) => ({
+                                        ...provided,
+                                        display: 'none',  // Hide indicator separator
+                                    }),
+
+                                }}
+                            />
+                        </TopicDiv>
+                    </AccessiBility>
                 </StartRoomHeader>
-                {activeRoom === "podcast" && <AccessiBility>
-                    <h4>Accessibility Options:</h4>
-                    <AccessiBilityOptions>
-                        <span>
-                            <input
-                                type='radio'
-                                name="accessibility"
-                                id="public"
-                                value="public"
-                                checked={accessibility === "public"}
-                                onChange={(e) => setAccessibility(e.target.value)}
-                            />
-                            <label htmlFor='public'>Public</label>
-                        </span>
-                        <span>
-                            <input
-                                type='radio'
-                                name="accessibility"
-                                id="private"
-                                value="private"
-                                checked={accessibility === "private"}
-                                onChange={(e) => setAccessibility(e.target.value)}
-                            />
-                            <label htmlFor='private'>Private</label>
-                        </span>
-                    </AccessiBilityOptions>
-                </AccessiBility>}
-                {activeRoom === "meet" && <AccessiBilityText>
-                    <p>If room type is Meet then it will always be private</p>
-                </AccessiBilityText>}
-                <AssignSpeakerConatiner>
-                    <h6>Assign speakers to your podcast :</h6>
-                    <AsyncSelect
-                        isSearchable={true}
-                        isMulti={true}
-                        onChange={handleChange}
-                        value={selectedUser}
-                        menuPortalTarget={document.body}
-                        placeholder={"Search users"}
-                        components={{ Option, NoOptionsMessage }}
-                        loadOptions={loadOptions}
-                        styles={{
-                            control: (provided, state) => ({
-                                ...provided,
-                                background: "#262626",
-                                border: "none",
-                                outline: "none",
-                                cursor: state.isDisabled ? 'not-allowed' : 'text'
-                            }),
+                <StartRoomBase>
+                    <h3>Title of the room</h3>
+                    <input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder='Enter your room title...' />
+                    <h3>Description of the room</h3>
+                    <input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder='Say something about your room...' />
+                    <AssignSpeakerConatiner>
+                        <h6>Assign speakers to your podcast :</h6>
+                        <AsyncSelect
+                            isSearchable={true}
+                            isMulti={true}
+                            onChange={handleChange}
+                            value={selectedUser}
+                            menuPlacement='top'
+                            placeholder={"Search users"}
+                            components={{ Option, NoOptionsMessage }}
+                            loadOptions={loadOptions}
+                            styles={{
+                                control: (provided, state) => ({
+                                    ...provided,
+                                    background: "#fff",
+                                    border: "none",
+                                    outline: "none",
+                                    cursor: state.isDisabled ? 'not-allowed' : 'text',
+                                    borderRadius: "11px",
+                                }),
+                                input: (provided, state) => ({
+                                    ...provided,
+                                    color: "#20bd5f",
+                                    padding: "5px 0"
+                                }),
+                                menu: (provided) => ({
+                                    ...provided,
+                                    color: '#262626',
+                                    cursor: "pointer",
+                                    background: "#fff",
+                                }),
+                                multiValue: (provided) => ({
+                                    ...provided,
+                                    borderRadius: "20px",
+                                    background: " #353535",
+                                    "&>div": {
+                                        color: "#fff",
 
-                            menu: (provided) => ({
-                                ...provided,
-                                color: '#fff',
-                                cursor: "pointer",
-                                background: "#262626",
-                            }),
-                            input: (provided) => ({
-                                ...provided,
-                                color: '#fff',  // Change text color of the input field
-                            }),
-                            multiValue: (provided) => ({
-                                ...provided,
-                                borderRadius: "20px",
-                                background: " #353535",
-                                "&>div": {
-                                    color: "#fff",
-
-                                },
-                                "&>div[role=button]": {
+                                    },
+                                    "&>div[role=button]": {
+                                        cursor: "pointer",
+                                        "&:hover": {
+                                            color: "#fff",
+                                            backgroundColor: "#ababaa",
+                                            borderRadius: "20px",
+                                        }
+                                    }
+                                }),
+                                option: (provided, state) => ({
+                                    ...provided,
+                                    color: 'black',
+                                    backgroundColor: state.isFocused ? "#20bd5f33" : "",
                                     cursor: "pointer",
                                     "&:hover": {
-                                        color: "#fff",
-                                        backgroundColor: "#ababaa",
-                                        borderRadius: "20px",
+                                        backgroundColor: state.isFocused ? "#20bd5f33" : ""
                                     }
-                                }
-                            }),
-                            option: (provided, state) => ({
-                                ...provided,
-                                color: 'black',
-                                backgroundColor: state.isFocused ? "#353535" : "",
-                                cursor: "pointer",
-                                "&:hover": {
-                                    backgroundColor: state.isFocused ? "#353535" : ""
-                                }
-                            }),
-                            indicatorsContainer: (provided) => ({
-                                ...provided,
-                                display: 'none',  // Hide indicators
-                            }),
-                            indicatorSeparator: (provided) => ({
-                                ...provided,
-                                display: 'none',  // Hide indicator separator
-                            }),
+                                }),
+                                indicatorsContainer: (provided) => ({
+                                    ...provided,
+                                    display: 'none',  // Hide indicators
+                                }),
+                                indicatorSeparator: (provided) => ({
+                                    ...provided,
+                                    display: 'none',  // Hide indicator separator
+                                }),
 
-                        }}
-                    />
-                </AssignSpeakerConatiner>
+                            }}
+                        />
+                    </AssignSpeakerConatiner>
+                </StartRoomBase>
                 <StartRoomFooter>
-                    <span>{activeRoom === "podcast" ? `Start a podcast, ${accessibility === "public" ? "open to everyone" : "private with your people"} ` : "Start a Meet, with your people"}</span>
                     <button onClick={handleCreateRoom}>
                         <span >Let's go</span></button>
                 </StartRoomFooter>
