@@ -72,13 +72,40 @@ export const TopicStyle = styled.div`
     border-radius: 50%;
   }
 `;
-export const ClientContainer = styled.div`
-  width: 85%;
+
+export const HoverLayer = styled.div.withConfig({
+  shouldForwardProp: (prop) => !["show"].includes(prop),
+})`
+  display: ${({ show }) => (show ? "flex" : "none")};
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
+  background-color: transparent;
+  cursor: pointer;
+  & > span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+`;
+
+export const ClientContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => !["isFullScreen"].includes(prop),
+})`
+  width: ${({ isFullScreen }) => (isFullScreen ? "100vw" : "85%")};
+  height: ${({ isFullScreen }) => (isFullScreen ? "100vh" : "100%")};
   border-radius: 20px;
-  position: relative;
+  position: ${({ isFullScreen }) => (isFullScreen ? "fixed" : "relative")};
+  top: ${({ isFullScreen }) => (isFullScreen ? "0" : "auto")};
+  left: ${({ isFullScreen }) => (isFullScreen ? "0" : "auto")};
+  z-index: ${({ isFullScreen }) => (isFullScreen ? "999" : "auto")};
   text-align: center;
   overflow: hidden;
+  transition: all 0.3s;
   & > p {
     position: absolute;
     text-align: center;
@@ -88,7 +115,7 @@ export const ClientContainer = styled.div`
   }
 `;
 export const VideoElement = styled.video.withConfig({
-  shouldForwardProp: (prop) => prop !== "isVideoOn",
+  shouldForwardProp: (prop) => !["isVideoOn", "isFullScreen"].includes(prop),
 })`
   position: absolute;
   top: 0;
@@ -97,7 +124,7 @@ export const VideoElement = styled.video.withConfig({
   height: 100% !important;
   display: ${(props) => (props.isVideoOn ? "block" : "none")};
   margin: 0 auto;
-  object-fit: cover;
+  object-fit: ${(props) => (props.isFullScreen ? "contain" : "cover")};
 `;
 
 const pulse = keyframes`

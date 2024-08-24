@@ -51,6 +51,17 @@ export const useWebRTC = ({ roomId, user }) => {
     }
   };
 
+  const toggleFullScreen = (clientId) => {
+    setClients((clients) =>
+      clients.map((client) => {
+        if (client.id === clientId) {
+          return { ...client, isFullScreen: !client?.isFullScreen };
+        }
+        return client;
+      })
+    );
+  };
+
   const handleVideo = (userId) => {
     try {
       const audioTrack = localMediaStream.current.getAudioTracks()[0];
@@ -131,6 +142,7 @@ export const useWebRTC = ({ roomId, user }) => {
     }
   };
 
+  // screenSharing will only work if there will be more than one paritipants.
   const screenSharing = () => {
     let screenTrack;
     const audioTrack = localMediaStream.current?.getAudioTracks()[0];
@@ -513,5 +525,6 @@ export const useWebRTC = ({ roomId, user }) => {
     isUserSpeaking,
     sendMessage,
     clientMessages,
+    toggleFullScreen,
   };
 };

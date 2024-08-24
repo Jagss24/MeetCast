@@ -3,15 +3,16 @@ import { useDispatch } from 'react-redux';
 import { useWebRTC } from '../../hooks/useWebRtc'
 import { FaVideo, FaVideoSlash, FaMicrophone, FaMicrophoneSlash, FaUsers } from "react-icons/fa";
 import { MdOutlineScreenShare, MdCallEnd, MdOutlineStopScreenShare, MdOutlineMessage, MdSend } from "react-icons/md";
-import { IoShieldCheckmarkOutline } from "react-icons/io5";
+import { IoShieldCheckmarkOutline, IoExpand } from "react-icons/io5";
+import { TbArrowsMinimize } from "react-icons/tb";
 import { useNavigate } from 'react-router-dom';
 import DummyImage from '../DummyImage';
-import { MeetContainer, VideoContainer, VideoElement, ClientContainer, AvtarContainer, Controls, TopicStyle, VideoAndChatContainer, ChatContainer, ChatInputContainer, ChatInnerContainer, OptionsContainer, EachOption, PariticiPantContainer, PariticiPantInnerContainer, ClientNameContainer, ChatMessageContainer } from './Meet.styled';
+import { MeetContainer, VideoContainer, VideoElement, ClientContainer, AvtarContainer, Controls, TopicStyle, VideoAndChatContainer, ChatContainer, ChatInputContainer, ChatInnerContainer, OptionsContainer, EachOption, PariticiPantContainer, PariticiPantInnerContainer, ClientNameContainer, ChatMessageContainer, HoverLayer } from './Meet.styled';
 import { setIsNavbarVisible } from '../../slices/utilitySlice';
 
 const Meet = ({ roomId, user, roomTopic, roomType }) => {
     const navigate = useNavigate()
-    const { clients, provideRef, screenSharing, handleVideo, leaveRoom, handleAudio, clientIds, isUserSpeaking, sendMessage, clientMessages } = useWebRTC({ roomId, user })
+    const { clients, provideRef, screenSharing, handleVideo, leaveRoom, handleAudio, sendMessage, clientMessages, toggleFullScreen } = useWebRTC({ roomId, user })
     const { startScreenSharing, stopScreenSharing } = screenSharing()
     const [isAudioOn, setIsAudioOn] = useState(false)
     const [isVideoOn, setIsVideoOn] = useState(false)
@@ -19,11 +20,9 @@ const Meet = ({ roomId, user, roomTopic, roomType }) => {
     const [screenIsSharing, setscreenIsSharing] = useState(false)
     const [chat, setChat] = useState(false)
     const [showParticipants, setShowParticipants] = useState(false)
+    const [hoverOnClient, setHoverOnClient] = useState(false);
+
     const dispatch = useDispatch()
-    console.log({ clients })
-    console.log({ clientIds })
-    console.log({ isUserSpeaking })
-    console.log({ clientMessages })
     const openChatorParitciPant = (toOpen) => {
         if (toOpen === "chat") {
             if (!chat && !showParticipants) {
@@ -70,9 +69,13 @@ const Meet = ({ roomId, user, roomTopic, roomType }) => {
                 </OptionsContainer>
                 <VideoContainer>
                     {
-                        clients.map((client, id) => <ClientContainer key={id}>
+                        clients.map((client) => <ClientContainer key={client?.id}
+                            isFullScreen={client?.isFullScreen}
+                            onMouseEnter={() => setHoverOnClient(client?.id)}
+                            onMouseLeave={() => setHoverOnClient("")}
+                        >
 
-                            <VideoElement ref={(instance) => provideRef(instance, client?.id)} autoPlay isVideoOn={client?.isVideoOn} />
+                            <VideoElement ref={(instance) => provideRef(instance, client?.id)} autoPlay isVideoOn={client?.isVideoOn} isFullScreen={client?.isFullScreen} />
                             {!client?.isVideoOn && (
                                 <AvtarContainer isUserSpeaking={client?.isAudioOn}>
                                     {client?.avatar ?
@@ -81,6 +84,13 @@ const Meet = ({ roomId, user, roomTopic, roomType }) => {
                                             alt={`${client.fullName}'s avatar`}
                                         /> : <DummyImage userName={client?.fullName?.charAt(0).toUpperCase()} width={90} height={90} />}
                                 </AvtarContainer>
+                            )}
+                            {client?.isVideoOn && (
+                                <HoverLayer show={hoverOnClient === client?.id} >
+                                    <span onClick={() => toggleFullScreen(client?.id)}>
+                                        {client?.isFullScreen ? <TbArrowsMinimize /> : <IoExpand />}
+                                    </span>
+                                </HoverLayer>
                             )}
                             <p>{client?.fullName}</p>
                         </ClientContainer >)
@@ -97,14 +107,6 @@ const Meet = ({ roomId, user, roomTopic, roomType }) => {
                                 <h5>{eachClientMsg?.userFullName}</h5>
                                 <p>{eachClientMsg?.msgContent}</p>
                             </div>)}
-                            {/* <div>
-                                <h5>Jagannath Samantra</h5>
-                                <p>Hii everyone</p>
-                            </div>
-                            <div>
-                                <h5>Satyaa Samantra</h5>
-                                <p>Hii</p>
-                            </div> */}
                         </ChatMessageContainer>
                         <ChatInputContainer>
                             <input value={msgContent} onChange={(e) => setMsgContent(e.target.value)} placeholder='Send a message to everyone' />
