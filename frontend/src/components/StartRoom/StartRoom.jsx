@@ -17,19 +17,34 @@ const StartRoom = ({ closeModal }) => {
     const roomType = ["podcast", "meet"]
     const [activeRoom, setActiveRoom] = useState(roomType[0])
     const [topic, setTopic] = useState("")
+    const [description, setDescription] = useState("")
     const [accessibility, setAccessibility] = useState("public")
-    const [openTopicOptions, setOpenTopicOptions] = useState(false)
+    const [openTopicOptions, setOpenTopicOptions] = useState({
+        label: "",
+        value: ""
+    })
     const [selectedUser, setSelectedUser] = useState([])
     const { user } = useSelector(state => state.user)
 
     const handleCreateRoom = () => {
         if (topic.split(" ").length < 2) {
-            return alert("Topic should be atleast of 2 words")
+            alert("Topic should be atleast of 2 words")
+            return
+        }
+        if (description.length < 50) {
+            alert("Description should be of minimum 50 words")
+            return
+        }
+        if (activeRoom === "podcast" && !openTopicOptions?.value) {
+            alert("Select any option that you want to speak about")
+            return;
         }
         mutate({
-            topic: topic,
+            topic,
+            description,
             roomType: activeRoom,
             accessibility: activeRoom === "meet" ? "private" : accessibility,
+            aboutWhat: activeRoom === "podcast" && openTopicOptions.value,
             speakers: selectedUser
         })
     }
@@ -111,6 +126,7 @@ const StartRoom = ({ closeModal }) => {
             document.body.style.overflow = '';
         };
     }, []);
+    console.log({ openTopicOptions })
     return (
         <StartRoomContainer>
             <StartRoomBody>
@@ -143,9 +159,17 @@ const StartRoom = ({ closeModal }) => {
                             </AccessibilityType>
                         </div>}
                         <span>{activeRoom === "podcast" ? `Start a podcast, ${accessibility === "public" ? "open to everyone" : "private with your people"} ` : "Start a Meet, with your people"}</span>
-                        <TopicDiv>
+                        {activeRoom === "podcast" && <TopicDiv>
                             <h4>About What? </h4>
                             <Select
+                                onChange={(selected) => {
+                                    console.log({ selected })
+                                    return setOpenTopicOptions({
+                                        label: selected.label,
+                                        value: selected.value
+                                    })
+                                }}
+                                value={openTopicOptions.label && openTopicOptions.value ? openTopicOptions : null}
                                 options={topicOptions}
                                 styles={{
                                     control: (provided, state) => ({
@@ -172,23 +196,6 @@ const StartRoom = ({ closeModal }) => {
                                         background: "#000000",
                                         width: "100%",
                                     }),
-                                    multiValue: (provided) => ({
-                                        ...provided,
-                                        borderRadius: "20px",
-                                        background: " #353535",
-                                        "&>div": {
-                                            color: "#fff",
-
-                                        },
-                                        "&>div[role=button]": {
-                                            cursor: "pointer",
-                                            "&:hover": {
-                                                color: "#fff",
-                                                backgroundColor: "#ababaa",
-                                                borderRadius: "20px",
-                                            }
-                                        }
-                                    }),
                                     option: (provided, state) => ({
                                         ...provided,
                                         color: '#20bd5f',
@@ -205,16 +212,23 @@ const StartRoom = ({ closeModal }) => {
                                     }),
 
                                 }}
+
                             />
-                        </TopicDiv>
+                        </TopicDiv>}
                     </AccessiBility>
                 </StartRoomHeader>
                 <StartRoomBase>
                     <h3>Title of the room</h3>
                     <input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder='Enter your room title...' />
-                    <h3>Description of the room</h3>
-                    <input value={topic} onChange={(e) => setTopic(e.target.value)} placeholder='Say something about your room...' />
-                    <AssignSpeakerConatiner>
+                    <div className='desc_div'>
+                        <h3>Description of the room</h3>
+                        <input value={description} onChange={(e) => {
+                            if (e.target.value.length > 200) return
+                            setDescription(e.target.value)
+                        }} placeholder='Say something about your room...' />
+                        <span>{description?.length}/200</span>
+                    </div>
+                    {activeRoom === "podcast" && accessibility === "public" && <AssignSpeakerConatiner>
                         <h6>Assign speakers to your podcast :</h6>
                         <AsyncSelect
                             isSearchable={true}
@@ -282,11 +296,17 @@ const StartRoom = ({ closeModal }) => {
 
                             }}
                         />
-                    </AssignSpeakerConatiner>
+                    </AssignSpeakerConatiner>}
+                    {activeRoom === "meet" &&
+                        <AccessibilityType>If room type is meet those users who can join the room will be allowed to speak</AccessibilityType>
+                    }
+                    {activeRoom === "podcast" && accessibility === "private" &&
+                        <AccessibilityType>If you will create private room eveyone will be allowed to speak</AccessibilityType>
+                    }
                 </StartRoomBase>
                 <StartRoomFooter>
                     <button onClick={handleCreateRoom}>
-                        <span >Let's go</span></button>
+                        <span >Create Room</span></button>
                 </StartRoomFooter>
 
                 <span onClick={closeModal}>

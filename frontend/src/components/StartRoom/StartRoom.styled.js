@@ -53,15 +53,15 @@ export const StartRoomHeader = styled.div`
 export const StartRoomBase = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   flex-direction: column;
   width: 85%;
   gap: 0.5rem;
-  & > h3 {
+  h3 {
     align-self: flex-start;
     font-size: 1rem;
   }
-  & > input {
+  input {
     width: 100%;
     margin: 15px 0px;
     border: none;
@@ -72,6 +72,17 @@ export const StartRoomBase = styled.div`
     border-radius: 10px;
     font-size: 0.9rem;
     margin: 0;
+  }
+  .desc_div {
+    position: relative;
+    width: 100%;
+    margin-bottom: 1rem;
+    & > span {
+      position: absolute;
+      right: 0;
+      bottom: -25%;
+      color: white;
+    }
   }
 `;
 
@@ -162,6 +173,7 @@ export const AccessibilityType = styled.div.withConfig({
   border-radius: 22px;
   cursor: pointer;
   transition: all 0.3s;
+  text-align: center;
 `;
 
 export const OptionOuterStyled = styled.div`

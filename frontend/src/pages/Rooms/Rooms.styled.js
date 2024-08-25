@@ -13,6 +13,7 @@ export const RoomCardContainer = styled.div.withConfig({
   gap: 20px;
   flex-wrap: wrap;
   margin-top: 30px;
+  margin-bottom: 80px;
   padding: ${(props) => (props.isProfile ? "0px" : "0 80px")};
 `;
 export const RoomNav = styled.div`

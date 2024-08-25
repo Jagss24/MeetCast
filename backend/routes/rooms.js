@@ -6,6 +6,7 @@ import {
   addUserinWaitingList,
   createRoom,
   getRooms,
+  getRoomsByTopic,
   getSingleRoom,
   getSpeakerRooms,
   getUserRoomsWithType,
@@ -16,11 +17,12 @@ import {
 const router = express.Router();
 
 router.post("/createRoom", async (req, res) => {
-  const { topic, roomType, accessibility, speakers } = req.body;
+  const { topic, description, roomType, accessibility, speakers, aboutWhat } =
+    req.body;
   const { refreshtoken } = req.cookies;
-  if (!topic || !roomType || !accessibility) {
+  if (!topic || !roomType || !accessibility || !description) {
     return res.status(200).json({
-      message: "Topic, roomType and it's accessibility is mandatory ",
+      message: "Some info about room is missing",
     });
   }
   if (refreshtoken) {
@@ -36,6 +38,8 @@ router.post("/createRoom", async (req, res) => {
       accessibility,
       ownerId,
       speakers,
+      description,
+      aboutWhat,
     });
     const roomDtos = await roomDto(room);
     res.status(200).json({ roomDtos });
@@ -48,16 +52,20 @@ router.post("/createRoom", async (req, res) => {
 
 router.get("/getRooms", async (req, res) => {
   const rooms = await getRooms("podcast");
-  res.status(200).json({ rooms });
+  const roomDtos = await Promise.all(
+    rooms.map(async (eachRoom) => await roomDto(eachRoom))
+  );
+  res.status(200).json({ roomDtos });
 });
 
 router.get("/getSingleRoom", async (req, res) => {
   const { roomId } = req.query;
   const room = await getSingleRoom(roomId);
+  const roomDtos = await roomDto(room);
   if (!room) {
     return res.status(404).json({ message: "Not a Valid Room Id " });
   }
-  res.status(200).json({ room });
+  res.status(200).json({ roomDtos });
 });
 
 router.get("/getUserRoom", async (req, res) => {
@@ -70,7 +78,10 @@ router.get("/getUserRoom", async (req, res) => {
     return res.status(400).json({ message: "Please Specify the room type" });
   }
   const rooms = await getUserRoomsWithType(roomType, user);
-  res.status(200).json({ rooms });
+  const roomDtos = await Promise.all(
+    rooms.map(async (eachRoom) => await roomDto(eachRoom))
+  );
+  res.status(200).json({ roomDtos });
 });
 
 router.get("/getSpeakers", async (req, res) => {
@@ -80,7 +91,31 @@ router.get("/getSpeakers", async (req, res) => {
     return res.status(404).json({ message: "user Not Found" });
   }
   const rooms = await getSpeakerRooms(user);
-  res.status(200).json({ rooms });
+  const roomDtos = await Promise.all(
+    rooms.map(async (eachRoom) => await roomDto(eachRoom))
+  );
+  res.status(200).json({ roomDtos });
+});
+
+router.get("/roomsBytTopic", async (req, res) => {
+  const { topic } = req.query;
+  const { refreshtoken } = req.cookies;
+  if (!topic) {
+    return res.status(500).json({ message: "Send the topic name" });
+  }
+  if (refreshtoken) {
+    const rooms = await getRoomsByTopic(topic);
+    if (rooms.length) {
+      const roomDtos = await Promise.all(
+        rooms.map(async (eachRoom) => await roomDto(eachRoom))
+      );
+      res.status(200).json({ roomDtos });
+    } else {
+      res.status(200).json({ message: "No rooms found" });
+    }
+  } else {
+    res.status(200).json({ message: "Your Session has expired" });
+  }
 });
 
 router.put("/requestToJoin", async (req, res) => {

@@ -7,6 +7,8 @@ export const createRoom = async ({
   ownerId,
   accessibility,
   speakers,
+  description,
+  aboutWhat,
 }) => {
   let speakersId = speakers?.map((eachSpeaker) => eachSpeaker.value);
   const room = await Rooms.create({
@@ -15,13 +17,39 @@ export const createRoom = async ({
     roomType,
     accessibility,
     speakers: speakersId ? [ownerId, ...speakersId] : [ownerId],
+    description,
+    aboutWhat,
   });
   return room;
 };
 
 export const roomDto = async (fields) => {
-  const { _id, ownerId, topic, roomType, speakers } = fields;
-  return { id: _id, ownerId, topic, roomType, speakers };
+  const {
+    _id,
+    ownerId,
+    topic,
+    roomType,
+    speakers,
+    description,
+    aboutWhat,
+    memberList,
+    removedList,
+    waitingList,
+    accessibility,
+  } = fields;
+  return {
+    id: _id,
+    ownerId,
+    topic,
+    roomType,
+    speakers,
+    description,
+    aboutWhat,
+    memberList,
+    removedList,
+    waitingList,
+    accessibility,
+  };
 };
 
 export const getRooms = async (type) => {
@@ -37,7 +65,22 @@ export const getRooms = async (type) => {
     .exec();
   return rooms;
 };
-
+export const getRoomsByTopic = async (topicName) => {
+  const rooms = await Rooms.find({
+    aboutWhat: topicName,
+    accessibility: "public",
+  })
+    .populate({
+      path: "speakers",
+      select: "fullName avatar _id",
+    })
+    .populate({
+      path: "ownerId",
+      select: "fullName avatar _id",
+    })
+    .exec();
+  return rooms;
+};
 export const getSingleRoom = async (roomId) => {
   if (!mongoose.Types.ObjectId.isValid(roomId)) {
     return null;

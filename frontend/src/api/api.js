@@ -49,4 +49,7 @@ export const addMemberToRoom = (payload) =>
 
 export const removeMemberFromRoom = (payload) =>
   api.put(`rooms/removeMemberFromRoom`, payload);
+
+export const getRoomsByTopic = (topicName) =>
+  api.get(`rooms/roomsBytTopic?topic=${topicName}`);
 export default api;
