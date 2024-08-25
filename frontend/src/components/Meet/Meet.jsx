@@ -110,7 +110,10 @@ const Meet = ({ roomId, user, roomTopic, roomType }) => {
                         </ChatMessageContainer>
                         <ChatInputContainer>
                             <input value={msgContent} onChange={(e) => setMsgContent(e.target.value)} placeholder='Send a message to everyone' />
-                            <span onClick={() => sendMessage({ userId: user?.id, userFullName: user?.fullName, msgContent, userAvatar: user?.avatar })}>
+                            <span onClick={() => {
+                                sendMessage({ userId: user?.id, userFullName: user?.fullName, msgContent, userAvatar: user?.avatar })
+                                setMsgContent("")
+                            }}>
                                 <MdSend size={"70"} />
                             </span>
                         </ChatInputContainer>

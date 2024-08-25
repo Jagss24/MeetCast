@@ -92,18 +92,13 @@ const Podcast = ({ roomId, user, isSpeaker, isOwner }) => {
                                 <h5>{eachClientMsg?.userFullName}</h5>
                                 <p>{eachClientMsg?.msgContent}</p>
                             </div>)}
-                            {/* <div>
-                                <h5>Jagannath Samantra</h5>
-                                <p>Hii everyone</p>
-                            </div>
-                            <div>
-                                <h5>Satyaa Samantra</h5>
-                                <p>Hii</p>
-                            </div> */}
                         </ChatMessageContainer>
                         <ChatInputContainer>
                             <input value={msgContent} onChange={(e) => setMsgContent(e.target.value)} placeholder='Send a message to everyone' />
-                            <span onClick={() => sendMessage({ userId: user?.id, userFullName: user?.fullName, msgContent, userAvatar: user?.avatar })}>
+                            <span onClick={() => {
+                                sendMessage({ userId: user?.id, userFullName: user?.fullName, msgContent, userAvatar: user?.avatar })
+                                setMsgContent("")
+                            }}>
                                 <MdSend size={"70"} />
                             </span>
                         </ChatInputContainer>

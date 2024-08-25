@@ -28,7 +28,7 @@ const Profile = ({ avatar }) => {
     })
     useEffect(() => {
         if (data?.data) {
-            setRooms(data?.data?.rooms)
+            setRooms(data?.data?.roomDtos)
         }
     }, [data])
 
@@ -39,7 +39,7 @@ const Profile = ({ avatar }) => {
 
     useEffect(() => {
         if (speakersRoomData?.data) {
-            setRooms(speakersRoomData?.data?.rooms)
+            setRooms(speakersRoomData?.data?.roomDtos)
         }
     }, [speakersRoomData])
     return (

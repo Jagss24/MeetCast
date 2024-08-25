@@ -11,7 +11,7 @@ const RoomCard = ({ room }) => {
         <RoomCardStyled>
             <RoomMain>
                 <Topic>{room?.topic}</Topic>
-                <About>Step into the ultimate music for lovers</About>
+                <About>{room?.description}</About>
                 <SpeakerContainers >
                     <HostContainer>
                         {room?.ownerId?.avatar ? <img src={room?.ownerId?.avatar} alt='host_pic' />
@@ -29,7 +29,7 @@ const RoomCard = ({ room }) => {
                                     : <DummyImage key={index} userName={speaker?.fullName?.charAt(0).toUpperCase()} />)}
                     </SpeakersAvatar>
                 </SpeakerContainers>
-                <JoinRoom onClick={() => navigate(`/room/${room?._id}`)}>
+                <JoinRoom onClick={() => navigate(`/room/${room?.id}`)}>
                     Join the Room
                 </JoinRoom>
             </RoomMain>

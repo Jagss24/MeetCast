@@ -44,7 +44,7 @@ const Room = () => {
         mutationKey: ["remove-member-to-room"],
         mutationFn: removeMemberFromRoom
     })
-    const room = data?.data?.room
+    const room = data?.data?.roomDtos
 
     //Functions
     const handleRequestiontoJoinRoom = async (roomId, userId) => {
@@ -93,7 +93,7 @@ const Room = () => {
     }, [isError])
 
     useEffect(() => {
-        if (room?._id && user?.id) {
+        if (room?.id && user?.id) {
             setuserisAlreadyinWaitingList(room?.waitingList?.some(eachUser => eachUser?._id === user?.id))
             setuserisInMemberList(room?.memberList?.some(eachUser => eachUser?._id === user?.id))
             setuserisInRemovedList(room?.removedList?.some(eachUser => eachUser?._id === user?.id))
@@ -123,7 +123,7 @@ const Room = () => {
                 {!roomType && (
                     <>
                         <Title>{room?.topic}</Title>
-                        <About>Step into the ultimate destination for music lovers!!</About>
+                        <About>{room?.description}</About>
                         <UserContainers isCenter={room?.accessibility === "public" || user?.id !== room?.ownerId?._id}>
                             <SpeakerContainer>
                                 <h3>Speakers</h3>
