@@ -57,6 +57,7 @@ export const EachSpeaker = styled.div`
     display: flex;
     gap: 20px;
     align-items: center;
+    cursor: pointer;
   }
   img {
     width: 50px;

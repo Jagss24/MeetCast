@@ -94,10 +94,9 @@ export const RoomTypeHeading = styled("h4").withConfig({
 export const NoRoomContainer = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   height: 500px;
   & > div {
-    text-align: center;
     .no-rooms {
       color: gray;
     }

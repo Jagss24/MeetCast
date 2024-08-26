@@ -69,7 +69,7 @@ function App() {
           element={<Rooms />}
         />
         <Route path="/room/:id" element={<Room />} />
-        <Route path="/profile/:userName" element={<Profile avatar={user?.avatar} />} />
+        <Route path="/profile/:userName" element={<Profile />} />
       </Routes>
     </Router>
   );

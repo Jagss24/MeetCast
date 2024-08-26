@@ -129,7 +129,7 @@ const Room = () => {
                                 <h3>Speakers</h3>
                                 <div>
                                     {room?.speakers.map((speaker) => <EachSpeaker key={speaker?._id}>
-                                        <div>
+                                        <div onClick={() => navigate(`/profile/${speaker?.userName}`)}>
                                             {speaker?.avatar ?
                                                 <img
                                                     src={speaker.avatar}

@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { ProfileWrapperStyled, ProfileContainer, RoomContainer, ImageContainer, UserInfoContainer, RoomTypes, RoomTypeHeading, NoRoomContainer, CoverContainer, AboutAndRoomContainer, SessionBox } from './Profile.styled'
-import { getUserRoom, getSpeakers } from '../../api/api'
+import { getUserRoom, getSpeakers, getUserbyUserName } from '../../api/api'
 import { useQuery } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import { RoomCardContainer } from '../Rooms/Rooms.styled'
 import RoomCard from '../../components/RoomCard/RoomCard'
 import DummyImage from '../../components/DummyImage'
 import { IoChevronBackSharp, IoCameraOutline, IoTimer } from "react-icons/io5";
+import { LoadingContainer } from '../Room/Room.styled'
+import { ThreeDots } from 'react-loading-icons'
 
-const Profile = ({ avatar }) => {
+const Profile = () => {
     const roomTypes = ["podcast", "meet", "speakingRooms"]
     const { userName } = useParams()
     const navigate = useNavigate()
     const [activeRoomtype, setActiveRoomtype] = useState(roomTypes[0])
+    const [userInfo, setUserInfo] = useState()
     const [rooms, setRooms] = useState([])
     const { data, isFetching, refetch } = useQuery({
         queryKey: [`get-${activeRoomtype}`],
@@ -26,6 +29,32 @@ const Profile = ({ avatar }) => {
         queryFn: () => getSpeakers(userName),
         enabled: false
     })
+
+    const { data: profileData, isLoading: userInfoLoading, refetch: userRefetch, isFetching: userFetching, isError } = useQuery({
+        queryKey: ["profile-data"],
+        queryFn: () => getUserbyUserName(userName),
+        refetchOnWindowFocus: false,
+        retry: 0,
+    })
+
+    useEffect(() => {
+        if (profileData?.data) {
+            setUserInfo(profileData?.data?.userData)
+        }
+    }, [profileData])
+
+    useEffect(() => {
+        if (isError) {
+            alert("This user doesn't exist")
+            navigate("/rooms")
+        }
+    }, [isError])
+
+    // In case the username in the url is changed
+    useEffect(() => {
+        userRefetch()
+    }, [userName])
+
     useEffect(() => {
         if (data?.data) {
             setRooms(data?.data?.roomDtos)
@@ -43,7 +72,10 @@ const Profile = ({ avatar }) => {
         }
     }, [speakersRoomData])
     return (
-        <ProfileWrapperStyled>
+        userInfoLoading || userFetching ? <LoadingContainer>
+            <ThreeDots />
+            <h3>Getting user info</h3>
+        </LoadingContainer> : <ProfileWrapperStyled>
             <CoverContainer >
                 <img src="/images/bgm.jpg" alt="cover_img" />
                 <span onClick={() => navigate("/rooms")} className='goBack'>
@@ -56,11 +88,11 @@ const Profile = ({ avatar }) => {
             </CoverContainer>
             <ProfileContainer>
                 <ImageContainer>
-                    {avatar ? <img src={avatar} alt="user-pic" /> : <DummyImage userName={"A"} width={150} height={150} />}
+                    {userInfo?.avatar ? <img src={userInfo?.avatar} alt="user-pic" /> : <DummyImage userName={"A"} width={150} height={150} />}
                 </ImageContainer>
                 <UserInfoContainer>
-                    <h3>Jagannath Samantra</h3>
-                    <p>@jagss</p>
+                    <h3>{userInfo?.fullName}</h3>
+                    <p>@{userInfo?.userName}</p>
                 </UserInfoContainer>
             </ProfileContainer>
             <AboutAndRoomContainer>

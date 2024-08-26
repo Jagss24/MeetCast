@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { RoomComponent, RoomCardContainer, RoomNav, FirstChild, Buttons, LoadingDiv } from './Rooms.styled'
-import { MdOutlineKeyboardArrowDown, MdVoiceChat } from "react-icons/md";
+import { MdVoiceChat } from "react-icons/md";
 import RoomCard from '../../components/RoomCard/RoomCard';
 import StartRoom from '../../components/StartRoom/StartRoom';
 import { useQuery } from '@tanstack/react-query';
