@@ -145,6 +145,16 @@ export const getUser = async (req, res) => {
     res.status(200).json({ message: "Not Found" });
   }
 };
+export const getUserbyUserName = async (req, res) => {
+  const { userName } = req.query;
+  const user = await findUser({ userName });
+  if (user) {
+    const userData = await userDto(user);
+    res.status(200).json({ userData });
+  } else {
+    res.status(404).json({ message: "Not Found" });
+  }
+};
 
 export const activateUser = async (req, res) => {
   const { userId, userName, fullName, password } = req.body;

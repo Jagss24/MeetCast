@@ -88,7 +88,7 @@ export const getSingleRoom = async (roomId) => {
   const rooms = await Rooms.findById(roomId)
     .populate({
       path: "speakers",
-      select: "fullName avatar _id",
+      select: "fullName userName avatar _id",
     })
     .populate({
       path: "ownerId",
