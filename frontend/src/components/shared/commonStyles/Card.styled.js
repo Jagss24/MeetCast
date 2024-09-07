@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { MAX } from "../../../typography/style";
 
 export const MainStyled = styled.div`
   display: flex;
@@ -12,17 +13,29 @@ export const CardStyled = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 1.25rem;
   background-color: #1d1d1d;
-  border-radius: 20px;
-  padding: 40px 0;
+  border-radius: 1.25rem;
+  padding: 2.5rem 0;
   flex-direction: column;
   position: relative;
   box-shadow: 4px 4px 9.5px 0px #d9d9d980;
+  .sub {
+    text-align: center;
+    padding: 0 1.8rem;
+    line-height: 1.5rem;
+  }
+  width: 400px;
+  ${MAX.sm} {
+    width: 85%;
+    .sub {
+      font-size: 14px;
+    }
+  }
 `;
 
 export const HeadingStyled = styled.p`
-  font-size: 22px;
+  font-size: 1.3rem;
   font-weight: bold;
 `;
 
@@ -32,10 +45,12 @@ export const HeadingWrapper = styled.div`
   align-items: center;
 `;
 
-export const HeadingImg = styled.img`
-  width: 30px;
-  height: 40px;
-  margin-right: 10px;
+export const HeadingLogo = styled.span`
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const ButtonWrapper = styled.button`
@@ -43,14 +58,14 @@ export const ButtonWrapper = styled.button`
   align-items: center;
   background-color: #20bd5f;
   color: #fff;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: normal;
   cursor: pointer;
   outline: none;
   border: none;
-  padding: 8px 16px;
-  border-radius: 22px;
-  margin-bottom: 10px;
+  padding: 0.5rem 1rem;
+  border-radius: 1.3rem;
+  margin-bottom: 0.625rem;
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;

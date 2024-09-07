@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { NavigationContainer, SearchInput, UserComponent, InputWrapper } from "./Navigation.styled.js"
-import { HeadingImg } from '../commonStyles/Card.styled'
+import { NavigationContainer, UserComponent } from "./Navigation.styled.js"
+import { HeadingLogo } from '../commonStyles/Card.styled'
 import { useQuery } from '@tanstack/react-query'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { logout } from '../../../api/api'
 import DummyImage from "../../DummyImage"
-import { FiSearch } from "react-icons/fi";
+import { useLocation } from 'react-router-dom'
+import { setIsNavbarVisible } from '../../../slices/utilitySlice.js'
+import { ImPodcast } from "react-icons/im";
 
 
 const Navigation = () => {
     const [{ user }, { isNavBarVisible }] = useSelector(state => [state.user, state.utility])
-    const [showNavBar, setShowNavBar] = useState("")
+    const dispatch = useDispatch();
     const navigate = useNavigate()
     const { refetch: logoutRefetch } = useQuery({
         queryKey: ["user-logout"],
@@ -22,20 +24,24 @@ const Navigation = () => {
         logoutRefetch()
         navigate("/")
     }
+    const location = useLocation()
+    useEffect(() => {
+        const pathName = location.pathname.split("/")[1]
+        if (pathName !== "room") {
+            dispatch(setIsNavbarVisible(true))
+            return
+        }
+    }, [location.pathname])
     return (
         isNavBarVisible ? <NavigationContainer>
             <Link to="/" className="logo_wrapper" >
-                <HeadingImg src='/images/logo.png' alt='logo' />
+                <HeadingLogo>
+                    <ImPodcast color='#20bd5f' />
+                </HeadingLogo>
                 <span>VoiceHub</span>
             </Link>
 
             {user?.userName && <UserComponent >
-                <InputWrapper >
-                    <SearchInput type="text" placeholder="Type here / to search" />
-                    <span>
-                        <FiSearch />
-                    </span>
-                </InputWrapper>
                 <div onClick={() => navigate(`/profile/${user?.userName}`)}>
                     {user?.avatar ? <img src={user?.avatar} alt="user_pic" /> : <DummyImage
                         width={40} height={40}

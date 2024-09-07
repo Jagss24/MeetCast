@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, HeadingImg, ButtonWrapper } from "../../shared/commonStyles/Card.styled"
+import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, HeadingLogo, ButtonWrapper } from "../../shared/commonStyles/Card.styled"
 import { TermStyled } from '../StepEmail/StepEmail.styled'
 import { OTPBox, OTPWrapper } from './StepOtp.styled'
 import { useSelector, useDispatch } from 'react-redux'
@@ -64,7 +64,7 @@ const StepOtp = () => {
       <MainStyled>
         <CardStyled>
           <HeadingWrapper>
-            <HeadingImg src='/images/lock.png' style={{ width: "20px", height: "25px" }}></HeadingImg>
+            <HeadingLogo src='/images/lock.png' style={{ width: "20px", height: "25px" }}></HeadingLogo>
             <HeadingStyled>Enter the code we just texted you</HeadingStyled>
           </HeadingWrapper>
           <OTPWrapper className='inputBoxWrapper'>

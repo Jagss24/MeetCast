@@ -1,4 +1,5 @@
 import styled, { keyframes } from "styled-components";
+import { MAX } from "../../typography/style";
 
 export const RoomConatiner = styled.div.withConfig({
   shouldForwardProp: (prop) => prop !== "notAllowPadding",
@@ -7,9 +8,12 @@ export const RoomConatiner = styled.div.withConfig({
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  gap: 30px;
-  padding: ${(props) => (props?.notAllowPadding ? "0" : "0 100px")};
-  margin-bottom: 50px;
+  gap: 1.875rem;
+  padding: ${(props) => (props?.notAllowPadding ? "0" : "0 6.25rem")};
+  margin-bottom: 3.125rem;
+  ${MAX.md} {
+    padding: ${(props) => (props?.notAllowPadding ? "0" : "0 1.25rem")};
+  }
 `;
 
 export const LoadingContainer = styled.div`
@@ -35,13 +39,21 @@ export const UserContainers = styled.div.withConfig({
   justify-content: ${(props) => (props.isCenter ? "center" : "space-between")};
   align-items: flex-start;
   width: 100%;
+  ${MAX.md} {
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+  }
   & > div {
     width: 45%;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 30px;
+    gap: 1.875rem;
     flex-direction: column;
+    ${MAX.md} {
+      width: 90%;
+    }
   }
 `;
 export const EachSpeaker = styled.div`
@@ -52,10 +64,10 @@ export const EachSpeaker = styled.div`
   border: 1px solid #c0c0c080;
   box-shadow: 0px 4px 4px 0px #00000066;
   padding: 0.5rem;
-  border-radius: 22px;
+  border-radius: 1.375rem;
   & > div {
     display: flex;
-    gap: 20px;
+    gap: 1.25rem;
     align-items: center;
     cursor: pointer;
   }
@@ -71,9 +83,9 @@ export const EachSpeaker = styled.div`
     }
     & > button {
       display: flex;
-      gap: 5px;
-      padding: 12px 16px;
-      border-radius: 22px;
+      gap: 0.4rem;
+      padding: 0.75rem 1rem;
+      border-radius: 1.375rem;
       border: none;
       cursor: pointer;
       color: #20bd5f;
@@ -95,19 +107,19 @@ export const ButtonConatiners = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 25px;
+  gap: 1.5rem;
   & > button {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 5px;
+    gap: 0.4rem;
     background-color: #0077ff;
     outline: none;
     border: none;
     cursor: pointer;
-    padding: 13px;
+    padding: 0.75rem;
     color: #fff;
-    border-radius: 10px;
+    border-radius: 0.625rem;
     &:hover {
       background-color: rgba(0, 119, 255, 0.8);
     }
@@ -120,28 +132,28 @@ export const ButtonConatiners = styled.div`
 export const SpeakerContainer = styled.div`
   box-shadow: 4px 4px 6.6px 0px #d9d9d926;
   background: #131313;
-  border-radius: 22px;
+  border-radius: 1.375rem;
   & > h3 {
     text-align: center;
-    padding: 10px 0;
+    padding: 0.625rem 0;
     width: 100%;
     border-bottom: 1px solid #83828299;
   }
   & > div {
     width: 90%;
     display: flex;
-    gap: 20px;
+    gap: 1.25rem;
     justify-content: space-between;
     align-items: center;
     flex-direction: column;
-    padding: 0 20px 20px;
+    padding: 0 1.25rem 1.25rem;
   }
 `;
 
 export const AllowContainer = styled.div`
   box-shadow: 4px 4px 6.6px 0px #d9d9d926;
   background: #131313;
-  border-radius: 22px;
+  border-radius: 1.375rem;
   scrollbar-width: none;
   display: flex;
   flex-direction: column;
@@ -152,7 +164,7 @@ export const AllowContainer = styled.div`
     top: 0;
     border-bottom: 1px solid #83828299;
     z-index: 1;
-    padding: 10px 0;
+    padding: 0.625rem 0;
     width: 100%;
   }
   & > div {
@@ -190,18 +202,18 @@ export const DeclinedText = styled.p`
 
 export const ShareContainer = styled.div`
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 1.25rem;
+  right: 1.25rem;
   cursor: pointer;
   span {
-    width: 20px;
-    height: 20px;
+    width: 1.25rem;
+    height: 1.25rem;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: #000;
-    padding: 15px;
+    padding: 1rem;
   }
 `;
 

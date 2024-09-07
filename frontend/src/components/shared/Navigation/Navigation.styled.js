@@ -4,8 +4,8 @@ export const NavigationContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 5px 30px;
-  height: 60px;
+  padding: 0.5rem 1rem;
+  height: 3.75rem;
   background-color: #131313;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   .logo_wrapper {

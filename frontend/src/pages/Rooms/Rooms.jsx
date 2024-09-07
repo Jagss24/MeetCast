@@ -110,6 +110,11 @@ const Rooms = () => {
                                         outline: "none",
                                         cursor: "pointer",
                                         width: "10rem",
+                                        "@media (max-width: 768px)": {
+                                            justifyContent: "start",
+                                            width: "fit-content",
+                                            flexWrap: "nowrap"
+                                        }
 
                                     }),
                                     placeholder: (provided) => ({
@@ -130,6 +135,9 @@ const Rooms = () => {
                                         cursor: "pointer",
                                         background: "#000000",
                                         width: "100%",
+                                        "@media (max-width: 768px)": {
+                                            width: "10rem"
+                                        }
                                     }),
                                     option: (provided, state) => ({
                                         ...provided,
@@ -153,7 +161,7 @@ const Rooms = () => {
                     </FirstChild>
                     <Buttons onClick={() => setShowModal(true)} active={true}>
                         <MdVoiceChat color='rgb(32, 189, 95)' size={18} />
-                        <span>Start a room</span>
+                        <span className='hide'>Start a room</span>
                     </Buttons>
                 </RoomNav>
                 {isLoading || isFetching ?

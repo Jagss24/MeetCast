@@ -1,7 +1,8 @@
 import React from 'react'
-import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, HeadingImg, ButtonWrapper } from '../../components/shared/commonStyles/Card.styled'
-import "./Home.styled.css"
+import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, HeadingLogo, ButtonWrapper } from '../../components/shared/commonStyles/Card.styled'
 import { Link, useNavigate } from 'react-router-dom'
+import { ImPodcast } from "react-icons/im";
+import { TermStyled } from '../../components/Steps/StepEmail/StepEmail.styled';
 
 const Home = () => {
     const navigate = useNavigate()
@@ -10,7 +11,9 @@ const Home = () => {
         <MainStyled>
             <CardStyled>
                 <HeadingWrapper>
-                    <HeadingImg src='/images/logo.png'></HeadingImg>
+                    <HeadingLogo>
+                        <ImPodcast size={24} color='#20bd5f' />
+                    </HeadingLogo>
                     <HeadingStyled>Welcome to VoiceHub</HeadingStyled>
                 </HeadingWrapper>
                 <p className='sub'>A Platform where you can your share your opinions on your favorite topic and can listen on your favorite topic.</p>
@@ -18,9 +21,10 @@ const Home = () => {
                     Get Started
                     <img src='/images/arrow_forward.png' />
                 </ButtonWrapper>
-                <div className="links">
-                    Have an invite text? <Link className='sign-in' to="/login">Sign in</Link>
-                </div>
+                <TermStyled>
+                    Have an invite text? <Link style={{ color: "#0077ff", textDecoration: "none" }} to="/login">Login</Link>
+                </TermStyled>
+
             </CardStyled>
         </MainStyled>
 

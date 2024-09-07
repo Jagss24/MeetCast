@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { MAX } from "../../typography/style";
 
 export const StartRoomContainer = styled.div`
   position: fixed;
@@ -22,14 +23,18 @@ export const StartRoomBody = styled.div`
   max-width: 500px;
   background: #000000;
   box-shadow: 4px 4px 6.5px 0px #20bd5f33;
-  border-radius: 20px;
+  border-radius: 1.25rem;
   position: relative;
   & > span {
     position: absolute;
     right: 0;
     top: 0;
-    padding: 10px;
+    padding: 0.625rem;
     cursor: pointer;
+  }
+  ${MAX.md} {
+    width: 90%;
+    max-width: 90%;
   }
 `;
 
@@ -44,10 +49,7 @@ export const StartRoomHeader = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  padding: 30px 30px 0;
-  & > input {
-    margin: 15px 0px;
-  }
+  padding: 1.875rem 1.875rem 0;
 `;
 
 export const StartRoomBase = styled.div`
@@ -63,13 +65,12 @@ export const StartRoomBase = styled.div`
   }
   input {
     width: 100%;
-    margin: 15px 0px;
     border: none;
     outline: none;
-    line-height: 18px;
+    line-height: 1.125rem;
     background-color: #fff;
     padding: 13px 11px 13px 11px;
-    border-radius: 10px;
+    border-radius: 0.625rem;
     font-size: 0.9rem;
     margin: 0;
   }
@@ -84,6 +85,9 @@ export const StartRoomBase = styled.div`
       color: white;
     }
   }
+  ${MAX.sm} {
+    width: 75%;
+  }
 `;
 
 export const StartRoomFooter = styled.div`
@@ -92,8 +96,8 @@ export const StartRoomFooter = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  gap: 10px;
-  margin: 20px 0;
+  gap: 0.625rem;
+  margin: 1.25rem 0;
   button {
     display: flex;
     justify-content: center;
@@ -101,8 +105,8 @@ export const StartRoomFooter = styled.div`
     background: #20bd5f;
     border: none;
     outline: none;
-    border-radius: 22px;
-    padding: 10px 14px;
+    border-radius: 1.375rem;
+    padding: 0.625rem 0.875rem;
     cursor: pointer;
   }
 `;
@@ -113,7 +117,10 @@ export const RoomTypes = styled.div`
   align-items: center;
   gap: 2.5rem;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 1.25rem;
+  ${MAX.sm} {
+    gap: 0.5rem;
+  }
 `;
 
 export const RoomType = styled.div.withConfig({
@@ -127,8 +134,8 @@ export const RoomType = styled.div.withConfig({
   background-color: ${(prop) => (prop.roomType ? "#20BD5F33" : "")};
   color: ${(prop) => (prop.roomType ? "#20BD5F" : "")};
   width: 100px;
-  padding: 10px;
-  border-radius: 12px;
+  padding: 0.625rem;
+  border-radius: 0.75rem;
   transition: all 0.3s;
   img {
     width: 50px;
@@ -139,7 +146,7 @@ export const RoomType = styled.div.withConfig({
 `;
 
 export const RoomTitle = styled.span`
-  margin-top: 10px;
+  margin-top: 0.625rem;
 `;
 
 export const AccessiBility = styled.div`
@@ -155,7 +162,7 @@ export const AccessiBility = styled.div`
   }
   & > div {
     display: flex;
-    gap: 20px;
+    gap: 1.25rem;
   }
 `;
 
@@ -169,8 +176,8 @@ export const AccessibilityType = styled.div.withConfig({
   color: ${(props) => (props?.accessibility ? "#fff" : "#20bd5f")};
   font-weight: 600;
   border: 1px solid #00ff6675;
-  padding: 8px 12px;
-  border-radius: 22px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 1.375rem;
   cursor: pointer;
   transition: all 0.3s;
   text-align: center;
@@ -180,14 +187,14 @@ export const OptionOuterStyled = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
 `;
 
 export const AssignSpeakerConatiner = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
   width: 100%;
   h6 {
     font-size: 0.9rem;

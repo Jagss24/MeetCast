@@ -1,17 +1,26 @@
-import React from 'react'
-import { RoomCardStyled, RoomMain, Topic, SpeakerContainers, SpeakersAvatar, SpeakersName, HostContainer, JoinRoom, About } from './RoomCard.styled'
-import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
+import React, { useState } from 'react'
+import { RoomCardStyled, RoomMain, Topic, SpeakerContainers, SpeakersAvatar, HostContainer, JoinRoom, About } from './RoomCard.styled'
 import { useNavigate } from 'react-router-dom';
 import DummyImage from '../DummyImage';
 
 const RoomCard = ({ room }) => {
     const borderColors = ["red", "green", "blue", "yellow"];
+    const [readMore, setReadMore] = useState(false)
     const navigate = useNavigate()
     return (
         <RoomCardStyled>
             <RoomMain>
                 <Topic>{room?.topic}</Topic>
-                <About>{room?.description}</About>
+                <About>{room?.description.length >= 98 ?
+                    (
+                        <>
+                            {readMore ? room?.description : `${room?.description.slice(0, 98)}...`}
+                            <span onClick={() => setReadMore(prev => !prev)}>
+                                {readMore ? ' Read Less' : ' Read More'}
+                            </span>
+                        </>
+                    )
+                    : room?.description}</About>
                 <SpeakerContainers >
                     <HostContainer>
                         {room?.ownerId?.avatar ? <img src={room?.ownerId?.avatar} alt='host_pic' />
@@ -33,7 +42,7 @@ const RoomCard = ({ room }) => {
                     Join the Room
                 </JoinRoom>
             </RoomMain>
-        </RoomCardStyled>
+        </RoomCardStyled >
     )
 }
 

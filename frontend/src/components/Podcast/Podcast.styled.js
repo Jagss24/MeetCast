@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { MAX } from "../../typography/style";
 
 export const PodContainer = styled.div`
   width: 100%;
@@ -19,7 +20,7 @@ export const AudioAndChatContainer = styled.div.withConfig({
   height: 92%;
   position: relative;
 
-  @media (max-width: 768px) {
+  ${MAX.md} {
     grid-template-columns: ${(props) => (props.fullScreen ? "1fr" : "1fr")};
     grid-template-rows: ${(props) => (props.fullScreen ? "auto" : "auto auto")};
   }

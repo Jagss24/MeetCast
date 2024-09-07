@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MainStyled, CardStyled, HeadingWrapper, HeadingImg, HeadingStyled, ButtonWrapper } from '../../shared/commonStyles/Card.styled'
+import { MainStyled, CardStyled, HeadingWrapper, HeadingLogo, HeadingStyled, ButtonWrapper } from '../../shared/commonStyles/Card.styled'
 import { TermStyled } from '../StepEmail/StepEmail.styled'
 import { ImgInput, BlueLineText, ImageWrapper, ErrorStyled, Buttons, ActivationStyled, SkipStyled } from './StepAvatar.styled'
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
@@ -43,7 +43,7 @@ const StepAvatar = ({ setStep }) => {
                 <CardStyled>
                     <SkipStyled onClick={() => navigate("/rooms")}>Skip</SkipStyled>
                     <HeadingWrapper>
-                        <HeadingImg src='/images/cool.png' style={{ width: "25px", height: "25px" }}></HeadingImg>
+                        <HeadingLogo src='/images/cool.png' style={{ width: "25px", height: "25px" }}></HeadingLogo>
                         <HeadingStyled>Okay {user?.fullName} ! </HeadingStyled>
                     </HeadingWrapper>
                     <TermStyled>Let's upload your profile Pic</TermStyled>

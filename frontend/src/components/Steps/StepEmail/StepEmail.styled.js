@@ -4,7 +4,7 @@ export const EmailPhoneWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 15px;
+  gap: 1rem;
   align-self: flex-end;
 `;
 
@@ -12,23 +12,23 @@ export const TermStyled = styled.span`
   color: #d9d9d9;
   text-align: center;
   font-weight: normal;
-  font-size: 13px;
+  font-size: 0.75rem;
   opacity: 0.8;
-  padding: 0 60px;
-  width: 400px;
+  padding: 0 3.75rem;
+  white-space: nowrap;
 `;
 
 export const InputStyled = styled.input`
   position: relative;
   background-color: #ffffff;
-  border-radius: 20px;
+  border-radius: 1.25rem;
   border: none;
   outline: none;
-  padding: 8px 10px 8px 30px;
-  color: #20bd5f;
-  font-size: 16px;
+  padding: 0.5rem 0.625rem 0.5rem 1.875rem;
+  color: #334155;
+  font-size: 1rem;
   &::placeholder {
-    color: #20bd5f;
+    color: #a1a1aa;
   }
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {

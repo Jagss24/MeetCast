@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, ButtonWrapper } from '../../components/shared/commonStyles/Card.styled'
+import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, ButtonWrapper, HeadingLogo } from '../../components/shared/commonStyles/Card.styled'
 import { InputStyled, TermStyled } from '../../components/Steps/StepEmail/StepEmail.styled'
 import { Link, useNavigate } from 'react-router-dom'
 import { useMutation } from "@tanstack/react-query"
@@ -8,7 +8,7 @@ import { SpinningCircles } from 'react-loading-icons';
 import { useDispatch } from 'react-redux'
 import { setUser } from '../../slices/userSlice'
 import { InputWrapper } from '../../components/shared/Navigation/Navigation.styled'
-import styled from 'styled-components'
+import { ImPodcast } from 'react-icons/im'
 import { MdOutlineMailOutline, MdKey } from "react-icons/md";
 
 const Login = () => {
@@ -50,6 +50,9 @@ const Login = () => {
     <MainStyled>
       <CardStyled>
         <HeadingWrapper>
+          <HeadingLogo>
+            <ImPodcast size={22} />
+          </HeadingLogo>
           <HeadingStyled>Login into your account</HeadingStyled>
         </HeadingWrapper>
         <InputWrapper>

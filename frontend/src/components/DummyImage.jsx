@@ -2,7 +2,7 @@ import React, { useState, useEffect, memo } from 'react'
 import styled from 'styled-components'
 
 const DummyImage = ({ width, height, userName }) => {
-    const colors = ["red", "yellow", "green", "blue", "orange", "pink", "violet", "gray"]
+    const colors = ["#ef4444", "#84cc16", "#06b6d4", "#ef4444", "#ec4899", "#8b5cf6"]
     const [backgroundColor, setBackgroundColor] = useState('');
 
     useEffect(() => {

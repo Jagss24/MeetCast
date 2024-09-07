@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, HeadingImg, ButtonWrapper } from '../../shared/commonStyles/Card.styled'
+import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, HeadingLogo, ButtonWrapper } from '../../shared/commonStyles/Card.styled'
 import { InputStyled, TermStyled } from '../StepEmail/StepEmail.styled'
 import { useMutation } from '@tanstack/react-query';
 import { activate } from "../../../api/api"
@@ -68,7 +68,7 @@ const StepName = ({ setStep }) => {
       <MainStyled>
         <CardStyled>
           <HeadingWrapper>
-            <HeadingImg src='/images/cool.png' style={{ width: "25px", height: "25px" }}></HeadingImg>
+            <HeadingLogo src='/images/cool.png' style={{ width: "25px", height: "25px" }}></HeadingLogo>
             <HeadingStyled>Let's activate your account</HeadingStyled>
           </HeadingWrapper>
           <InputWrapper>

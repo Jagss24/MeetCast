@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, HeadingImg, ButtonWrapper } from "../../shared/commonStyles/Card.styled"
+import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, HeadingLogo, ButtonWrapper } from "../../shared/commonStyles/Card.styled"
 import { TermStyled, InputStyled } from "./StepEmail.styled"
 import { setOtp } from '../../../slices/userSlice';
 import { useDispatch } from 'react-redux';
@@ -9,6 +9,7 @@ import { useMutation } from '@tanstack/react-query';
 import { sendOtp } from '../../../api/api';
 import { InputWrapper } from '../../shared/Navigation/Navigation.styled';
 import { MdOutlineMail } from 'react-icons/md';
+import { ImPodcast } from 'react-icons/im';
 
 const StepEmail = ({ setStep }) => {
     const dispatch = useDispatch()
@@ -36,7 +37,9 @@ const StepEmail = ({ setStep }) => {
         <MainStyled>
             <CardStyled>
                 <HeadingWrapper>
-                    <HeadingImg src='/images/msg.png' style={{ width: "25px", height: "20px" }}></HeadingImg>
+                    <HeadingLogo>
+                        <ImPodcast size={22} />
+                    </HeadingLogo>
                     <HeadingStyled>Enter your Email Id</HeadingStyled>
                 </HeadingWrapper>
                 <InputWrapper className='inputBoxWrapper'>
