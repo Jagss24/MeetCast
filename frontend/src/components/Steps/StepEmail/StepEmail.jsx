@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, HeadingLogo, ButtonWrapper } from "../../shared/commonStyles/Card.styled"
 import { TermStyled, InputStyled } from "./StepEmail.styled"
-import { setOtp } from '../../../slices/userSlice';
+import { setOtp, setUser } from '../../../slices/userSlice';
 import { useDispatch } from 'react-redux';
 import { SpinningCircles } from 'react-loading-icons';
-import { Link } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import { sendOtp } from '../../../api/api';
+import { Link, useNavigate } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { sendOtp, googleAuth } from '../../../api/api';
 import { InputWrapper } from '../../shared/Navigation/Navigation.styled';
 import { MdOutlineMail } from 'react-icons/md';
 import { ImPodcast } from 'react-icons/im';
+import { GoogleLogin, useGoogleOneTapLogin } from "@react-oauth/google"
 
 const StepEmail = ({ setStep }) => {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
+    const queryClient = useQueryClient()
     const [email, setEmail] = useState("")
-
+    const [cred, setCred] = useState("")
     const handleEmailSubmission = () => {
         mutate({
             emailId: email
@@ -33,6 +36,35 @@ const StepEmail = ({ setStep }) => {
         }
     }, [isSuccess])
 
+    const { data: googleData, refetch: gooleRefetch } = useQuery({
+        queryKey: ["signup-user-google"],
+        queryFn: () => googleAuth({ cred, mode: "register" }),
+        enabled: false,
+        retry: 0,
+    })
+
+    useEffect(() => {
+        if (cred) {
+            gooleRefetch()
+            setCred("")
+        }
+    }, [cred])
+
+    useEffect(() => {
+        if (googleData?.data?.userData) {
+            dispatch(setUser(googleData?.data?.userData))
+            navigate("/activate")
+        } else if (googleData?.data?.message === "EmailId is already in use") {
+            alert(googleData?.data?.message)
+        }
+    }, [googleData])
+
+    useEffect(() => {
+        return () => {
+            queryClient.removeQueries({ queryKey: ["signup-user-google"] })
+        }
+    }, [])
+
     return (
         <MainStyled>
             <CardStyled>
@@ -42,7 +74,7 @@ const StepEmail = ({ setStep }) => {
                     </HeadingLogo>
                     <HeadingStyled>Enter your Email Id</HeadingStyled>
                 </HeadingWrapper>
-                <InputWrapper className='inputBoxWrapper'>
+                <InputWrapper>
                     <span>
                         < MdOutlineMail />
                     </span>
@@ -53,6 +85,20 @@ const StepEmail = ({ setStep }) => {
                     {isPending && <SpinningCircles speed={2} width={16} height={16} />}
 
                 </ButtonWrapper>
+                <GoogleLogin
+                    onSuccess={credentialResponse =>
+                        setCred(credentialResponse?.credential)
+                    }
+                    onError={() => {
+                        alert("Some Error Occured while Login")
+                    }}
+                    theme='filled_white'
+                    logo_alignment='left'
+                    useOneTap
+                    shape='square'
+                    text="continue_with"
+                    use_fedcm_for_prompt={true}
+                />
                 <TermStyled>Already have an account? <Link to="/login" style={{ color: "#0077ff", textDecoration: "none" }}>Login</Link></TermStyled>
             </CardStyled>
         </MainStyled>

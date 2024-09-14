@@ -67,7 +67,7 @@ const StepOtp = () => {
             <HeadingLogo src='/images/lock.png' style={{ width: "20px", height: "25px" }}></HeadingLogo>
             <HeadingStyled>Enter the code we just texted you</HeadingStyled>
           </HeadingWrapper>
-          <OTPWrapper className='inputBoxWrapper'>
+          <OTPWrapper>
             <div style={{ alignSelf: "center" }}>
               {inputs.map((value, i) => (
                 <OTPBox

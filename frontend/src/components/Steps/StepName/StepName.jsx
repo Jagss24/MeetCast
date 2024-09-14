@@ -7,10 +7,12 @@ import { useDispatch, useSelector } from "react-redux"
 import { setUser } from '../../../slices/userSlice';
 import { FaRegUser, FaRegKeyboard, FaKey } from "react-icons/fa";
 import { InputWrapper } from '../../shared/Navigation/Navigation.styled';
+import { useNavigate } from 'react-router-dom';
 
 
 const StepName = ({ setStep }) => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { user } = useSelector(state => state.user)
   const [data, setData] = useState({
     fullName: "",
@@ -18,8 +20,17 @@ const StepName = ({ setStep }) => {
     password: ""
   })
   const activateUser = () => {
-    if (!data.fullName || !data.name || !data.password) {
-      alert("Please fill all the details")
+    if (user.signedUpwithGoogle) {
+      if (!data.name) {
+        alert("Pleaset set your UserName")
+        return
+      }
+    }
+    else {
+      if ((!data.fullName || !data.name || !data.password)) {
+        alert("Please fill all the details")
+        return
+      }
     }
     mutate({
       userId: user?.id,
@@ -49,20 +60,27 @@ const StepName = ({ setStep }) => {
   })
 
   useEffect(() => {
-    if (isSuccess) {
-      dispatch(setUser(activatedData?.data?.userData))
+    if (user?.activated && user?.signedUpwithGoogle) {
       setStep(2)
+    }
+  }, [user])
+
+  useEffect(() => {
+    if (isSuccess) {
+      if (activatedData?.data?.signedUpwithGoogle) {
+        dispatch(setUser(activatedData?.data?.userData))
+        navigate("/rooms")
+      }
+      else {
+        dispatch(setUser(activatedData?.data?.userData))
+        setStep(2)
+      }
     }
     if (isError) {
       return alert("Your account is already activated")
     }
   }, [isSuccess || isError])
 
-  useEffect(() => {
-    if (user?.activated) {
-      setStep(2)
-    }
-  }, [user])
   return (
     <>
       <MainStyled>
@@ -71,26 +89,26 @@ const StepName = ({ setStep }) => {
             <HeadingLogo src='/images/cool.png' style={{ width: "25px", height: "25px" }}></HeadingLogo>
             <HeadingStyled>Let's activate your account</HeadingStyled>
           </HeadingWrapper>
-          <InputWrapper>
+          {!user.signedUpwithGoogle && <InputWrapper>
             <span>
               <FaRegKeyboard />
             </span>
             <InputStyled placeholder="Enter your FullName" value={data.fullName} name="fullName" onChange={handleChange} />
-          </InputWrapper>
+          </InputWrapper>}
           <InputWrapper>
             <span>
               <FaRegUser />
             </span>
             <InputStyled placeholder="Set your username" value={data.name} name="name" onChange={handleChange} />
           </InputWrapper>
-          <InputWrapper>
+          {!user?.signedUpwithGoogle && <InputWrapper>
             <span>
               <FaKey />
             </span>
             <InputStyled placeholder="Enter your password" value={data.password} name="password" onChange={handleChange} />
           </InputWrapper>
-
-          <TermStyled>Your username & password, we’re all set to go!</TermStyled>
+          }
+          <TermStyled>{user?.signedUpwithGoogle ? "Just your username and we’re all set to go!" : "Your username & password, we’re all set to go!"}</TermStyled>
           <ButtonWrapper onClick={activateUser} disabled={!data}>
             Next
             <img src='/images/arrow_forward.png' />
