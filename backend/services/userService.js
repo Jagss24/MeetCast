@@ -16,8 +16,24 @@ export const findUserById = async (data) => {
 };
 
 export const userDto = async (fields) => {
-  const { _id, activated, emailId, userName, fullName, avatar } = fields;
-  return { id: _id, userName, fullName, activated, emailId, avatar };
+  const {
+    _id,
+    activated,
+    emailId,
+    userName,
+    fullName,
+    avatar,
+    signedUpwithGoogle,
+  } = fields;
+  return {
+    id: _id,
+    userName,
+    fullName,
+    activated,
+    emailId,
+    avatar,
+    signedUpwithGoogle,
+  };
 };
 export const searchUser = async (searchText) => {
   const users = User.find({

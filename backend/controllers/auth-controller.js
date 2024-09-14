@@ -14,6 +14,7 @@ import {
 import Refresh from "../models/refreshModel.js";
 import bcryptjs from "bcryptjs";
 import nodemailer from "nodemailer";
+import { verifyCreds } from "../utils/googleConfig.js";
 
 export const authenticateOtpEmail = async (req, res) => {
   const { emailId } = req.body;
@@ -105,7 +106,7 @@ export const verifyOtpEmail = async (req, res) => {
   try {
     user = await findUser({ emailId }); //Finding user
     if (!user) {
-      user = await creatUser({ emailId }); //If not then create
+      user = await creatUser({ emailId, signedUpwithGoogle: false }); //If not then create
     }
   } catch (error) {
     console.log(error);
@@ -162,11 +163,16 @@ export const activateUser = async (req, res) => {
   if (user && user.activated) {
     res.status(200).json({ message: "User is already activate" });
   } else if (user) {
-    const hashPassword = bcryptjs.hashSync(password);
-    user.userName = userName;
-    user.fullName = fullName;
-    user.password = hashPassword;
-    user.activated = true;
+    if (user?.signedUpwithGoogle) {
+      user.userName = userName;
+      usre.activated = true;
+    } else {
+      const hashPassword = bcryptjs.hashSync(password);
+      user.userName = userName;
+      user.fullName = fullName;
+      user.password = hashPassword;
+      user.activated = true;
+    }
     await user.save();
     const userData = await userDto(user);
     res.cookie("accesstoken", "", {
@@ -174,7 +180,11 @@ export const activateUser = async (req, res) => {
       httpOnly: true,
       path: "/",
     });
-    res.status(200).json({ userData });
+    if (user.signedUpwithGoogle)
+      res.status(200).json({ userData, signedUpwithGoogle: true });
+    else {
+      res.status(200).json({ userData });
+    }
   } else {
     res.status(404).json({ message: "No user found" });
   }
@@ -203,10 +213,13 @@ export const autoReLoginFunctionality = async (req, res) => {
 };
 export const loginUser = async (req, res) => {
   try {
-    const { emailId, password } = req.body;
+    const { emailId, password } = req.query;
     const user = await findUser({ emailId });
     if (!user) {
       return res.status(200).json({ message: "No user found" });
+    }
+    if (user.signedUpwithGoogle) {
+      return res.status(200).json({ message: "Please Login with Google" });
     }
     const isPasswordCorrect = bcryptjs.compareSync(password, user.password);
     if (!isPasswordCorrect) {
@@ -259,5 +272,67 @@ export const searchUserFunctionality = async (req, res) => {
     res
       .status(500)
       .json({ error: "An error occurred while searching for users" });
+  }
+};
+
+export const googleLogin = async (req, res) => {
+  try {
+    const { cred, mode } = req.query;
+
+    const { email, name, picture } = await verifyCreds(cred);
+    if (mode === "login") {
+      const user = await findUser({ emailId: email });
+
+      if (!user) {
+        return res.status(200).json({ message: "No user found" });
+      }
+      const refreshToken = await getUserToken(user?.id);
+      const userDtos = await userDto(user);
+      if (refreshToken) {
+        res.cookie("refreshtoken", refreshToken, {
+          maxAge: 1000 * 60 * 60 * 24 * 30,
+          httpOnly: true,
+        });
+      }
+      res.status(200).json({ userDtos });
+    }
+    if (mode === "register") {
+      let user;
+
+      user = await findUser({ emailId: email });
+      if (user) {
+        return res.status(200).json({ message: "EmailId is already in use" });
+      }
+      user = await creatUser({
+        emailId: email,
+        fullName: name,
+        avatar: picture,
+        signedUpwithGoogle: true,
+      });
+
+      //Token Generation
+
+      const { accessToken, refereshToken } = generateTokens({
+        id: user?._id,
+        activated: false,
+      });
+
+      //Stroing refresh Token
+      await storeRefereshToken(refereshToken, user?._id);
+      //Sending refreshtoken in cookie & accessotken in JSON
+      res.cookie("refreshtoken", refereshToken, {
+        maxAge: 1000 * 60 * 60 * 24 * 30,
+        httpOnly: true,
+      });
+      res.cookie("accesstoken", accessToken, {
+        maxAge: 1000 * 60 * 60 * 24 * 30,
+        httpOnly: true,
+      });
+      const userData = await userDto(user);
+      res.status(200).json({ userData, auth: true });
+    }
+  } catch (error) {
+    console.log("Error occured", error);
+    res.status(500).json({ error });
   }
 };

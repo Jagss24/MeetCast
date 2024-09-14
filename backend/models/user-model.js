@@ -23,6 +23,10 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: String,
     },
+    signedUpwithGoogle: {
+      type: Boolean,
+      required: true,
+    },
   },
   {
     timestamps: true,

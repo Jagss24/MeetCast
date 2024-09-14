@@ -9,6 +9,7 @@ import {
   logoutFunctionality,
   searchUserFunctionality,
   getUserbyUserName,
+  googleLogin,
 } from "../controllers/auth-controller.js";
 import { authMiddleWarefunc } from "../middlewares/authMiddleWare.js";
 
@@ -22,7 +23,7 @@ router.get("/getUser", getUser);
 
 router.post("/activate", authMiddleWarefunc, activateUser);
 
-router.post("/login", loginUser);
+router.get("/login", loginUser);
 
 router.get("/autoReLogin", autoReLoginFunctionality);
 
@@ -31,5 +32,7 @@ router.get("/logout", logoutFunctionality);
 router.get("/searchUser", searchUserFunctionality);
 
 router.get("/getUserbyUserName", getUserbyUserName);
+
+router.get("/google", googleLogin);
 
 export default router;
