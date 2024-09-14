@@ -1,5 +1,5 @@
 import styled, { keyframes, css } from "styled-components";
-import { MAX } from "../../typography/style";
+import { MAX, VIEW } from "../../typography/style";
 
 export const MeetContainer = styled.div`
   width: 100%;
@@ -18,6 +18,16 @@ export const VideoContainer = styled.div`
   max-width: 100%;
   padding: 0 100px;
   height: 100%;
+  ${MAX.lg} {
+    width: 90% !important;
+    padding: 0px;
+    max-width: none;
+
+    ${MAX.sm} {
+      grid-template-columns: 100%;
+      grid-template-rows: auto;
+    }
+  }
 `;
 
 export const Controls = styled.div`
@@ -27,18 +37,26 @@ export const Controls = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 15px 0;
   & > div {
     width: 30%;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    padding: 15px;
     border-radius: 22px;
-
+    gap: 1rem;
+    ${MAX.sm} {
+      width: 100%;
+    }
+    ${MAX.md} {
+      width: 50%;
+    }
     & > button {
       cursor: pointer;
       background: #1d1d1d;
-      padding: 12px;
+      padding: 1rem;
       border-radius: 50%;
       border: none;
       outline: none;
@@ -60,17 +78,29 @@ export const TopicStyle = styled.div`
     font-weight: 600;
     font-size: 18px;
     text-transform: capitalize;
+    width: 80%;
+    text-align: center;
   }
-  & > span {
+  .icon > span {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: absolute;
-    left: 20px;
     background: #20bd5f33;
     width: 40px;
     height: 40px;
     border-radius: 50%;
+  }
+  .icon {
+    position: absolute;
+    left: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    ${MAX.sm} {
+      width: 10%;
+      position: relative;
+      left: 0;
+    }
   }
 `;
 
@@ -97,7 +127,7 @@ export const HoverLayer = styled.div.withConfig({
 export const ClientContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => !["isFullScreen"].includes(prop),
 })`
-  width: ${({ isFullScreen }) => (isFullScreen ? "100vw" : "85%")};
+  width: ${({ isFullScreen }) => (isFullScreen ? "100vw" : "100%")};
   height: ${({ isFullScreen }) => (isFullScreen ? "100vh" : "100%")};
   border-radius: 20px;
   position: ${({ isFullScreen }) => (isFullScreen ? "fixed" : "relative")};
@@ -114,6 +144,9 @@ export const ClientContainer = styled.div.withConfig({
     bottom: 0;
     user-select: none;
   }
+  ${VIEW.xl} {
+    width: ${({ isFullScreen }) => (isFullScreen ? "100vw" : "85%")};
+  }
 `;
 export const VideoElement = styled.video.withConfig({
   shouldForwardProp: (prop) => !["isVideoOn", "isFullScreen"].includes(prop),
@@ -126,6 +159,9 @@ export const VideoElement = styled.video.withConfig({
   display: ${(props) => (props.isVideoOn ? "block" : "none")};
   margin: 0 auto;
   object-fit: ${(props) => (props.isFullScreen ? "contain" : "cover")};
+  ${MAX.lg} {
+    object-fit: contain;
+  }
 `;
 
 const pulse = keyframes`
@@ -190,10 +226,14 @@ export const VideoAndChatContainer = styled.div.withConfig({
   justify-content: center;
   height: 92%;
   position: relative;
-
-  ${MAX.md} {
+  margin: 1rem 0 0;
+  ${MAX.lg} {
     grid-template-columns: ${(props) => (props.fullScreen ? "1fr" : "1fr")};
     grid-template-rows: ${(props) => (props.fullScreen ? "auto" : "auto auto")};
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 `;
 
@@ -203,6 +243,9 @@ export const ChatContainer = styled.div`
   height: 90%;
   background: #ffffff;
   border-radius: 20px;
+  ${MAX.lg} {
+    display: none;
+  }
 `;
 
 export const PariticiPantContainer = styled.div`
@@ -211,6 +254,9 @@ export const PariticiPantContainer = styled.div`
   height: 90%;
   background: #ffffff;
   border-radius: 20px;
+  ${MAX.lg} {
+    display: none;
+  }
 `;
 
 export const ChatInnerContainer = styled.div`
@@ -233,6 +279,9 @@ export const ChatInnerContainer = styled.div`
     & > p {
       font-size: 0.7rem;
       text-align: center;
+      ${MAX.lg} {
+        font-size: 0.9rem;
+      }
     }
   }
 `;
@@ -242,23 +291,30 @@ export const ChatMessageContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
-  max-height: 400px;
+  padding-bottom: 20px;
   overflow: auto;
+  flex-grow: 1;
   & > div {
     & > h5 {
       font-weight: 500;
       font-size: 0.85rem;
+      ${MAX.lg} {
+        font-size: 1rem;
+      }
     }
     & > p {
       font-weight: 400;
       font-size: 0.8rem;
+      ${MAX.lg} {
+        font-size: 1rem;
+      }
     }
   }
 `;
 
 export const ChatInputContainer = styled.div`
-  position: absolute;
-  bottom: 10px;
+  padding: 10px 0 20px;
+  background: white;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -296,6 +352,15 @@ export const OptionsContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  ${MAX.lg} {
+    position: relative;
+    top: 0;
+    left: 0;
+    align-self: start;
+    padding-left: 1rem;
+    flex-direction: row;
+    margin-bottom: 0.5rem;
+  }
 `;
 
 export const EachOption = styled.span`
@@ -332,6 +397,9 @@ export const ClientNameContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow-y: auto;
+  flex-grow: 1;
+  padding-bottom: 20px;
   & > div {
     display: flex;
     justify-content: flex-start;
@@ -346,5 +414,22 @@ export const ClientNameContainer = styled.div`
       font-weight: 400;
       font-size: 0.9rem;
     }
+  }
+`;
+
+export const MobileChatAndPariticipantContainer = styled.div.withConfig({
+  shouldForwardProp: (prop) => !["fullScreen"].includes(prop),
+})`
+  background: #fff;
+  width: 90%;
+  height: 450px;
+  position: fixed;
+  left: 50%;
+  bottom: 5rem;
+  transform: translateX(-50%);
+  border-radius: 1.375rem;
+  display: ${(props) => (props?.fullScreen ? "block" : "none")};
+  ${VIEW.lg} {
+    display: none;
   }
 `;

@@ -7,7 +7,7 @@ import { IoShieldCheckmarkOutline, IoExpand } from "react-icons/io5";
 import { TbArrowsMinimize } from "react-icons/tb";
 import { useNavigate } from 'react-router-dom';
 import DummyImage from '../DummyImage';
-import { MeetContainer, VideoContainer, VideoElement, ClientContainer, AvtarContainer, Controls, TopicStyle, VideoAndChatContainer, ChatContainer, ChatInputContainer, ChatInnerContainer, OptionsContainer, EachOption, PariticiPantContainer, PariticiPantInnerContainer, ClientNameContainer, ChatMessageContainer, HoverLayer } from './Meet.styled';
+import { MeetContainer, VideoContainer, VideoElement, ClientContainer, AvtarContainer, Controls, TopicStyle, VideoAndChatContainer, ChatContainer, ChatInputContainer, ChatInnerContainer, OptionsContainer, EachOption, PariticiPantContainer, PariticiPantInnerContainer, ClientNameContainer, ChatMessageContainer, HoverLayer, MobileChatAndPariticipantContainer } from './Meet.styled';
 import { setIsNavbarVisible } from '../../slices/utilitySlice';
 
 const Meet = ({ roomId, user, roomTopic, roomType }) => {
@@ -53,9 +53,11 @@ const Meet = ({ roomId, user, roomTopic, roomType }) => {
     return (
         <MeetContainer>
             <TopicStyle>
-                <span>
-                    <IoShieldCheckmarkOutline color="20bd5f" size={"50%"} />
-                </span>
+                <div className='icon'>
+                    <span>
+                        <IoShieldCheckmarkOutline color="20bd5f" size={"50%"} />
+                    </span>
+                </div>
                 <h4>website redesign project kickoff</h4>
             </TopicStyle>
             <VideoAndChatContainer fullScreen={chat || showParticipants}>
@@ -133,6 +135,44 @@ const Meet = ({ roomId, user, roomTopic, roomType }) => {
                     </PariticiPantInnerContainer>
                 </PariticiPantContainer>}
             </VideoAndChatContainer>
+            <MobileChatAndPariticipantContainer fullScreen={chat || showParticipants}>
+                {chat &&
+                    <ChatInnerContainer>
+                        <h3>Chat With other users</h3>
+                        <div className={"infoContainer"}>
+                            <p>Messages sent here are visible to everyone in the meeting. Please use proper language and be respectful in your communication. </p>
+                        </div>
+                        <ChatMessageContainer>
+                            {clientMessages?.map(eachClientMsg => <div>
+                                <h5>{eachClientMsg?.userFullName}</h5>
+                                <p>{eachClientMsg?.msgContent}</p>
+                            </div>)}
+                        </ChatMessageContainer>
+                        <ChatInputContainer>
+                            <input value={msgContent} onChange={(e) => setMsgContent(e.target.value)} placeholder='Send a message to everyone' />
+                            <span onClick={() => {
+                                sendMessage({ userId: user?.id, userFullName: user?.fullName, msgContent, userAvatar: user?.avatar })
+                                setMsgContent("")
+                            }}>
+                                <MdSend size={"70"} />
+                            </span>
+                        </ChatInputContainer>
+
+                    </ChatInnerContainer>
+                }
+                {showParticipants &&
+                    <PariticiPantInnerContainer>
+                        <h3>ParticiPants</h3>
+                        <h5>In meet</h5>
+                        <ClientNameContainer>
+                            {clients?.map(client => <div>
+                                {client?.avatar ? <img src={client?.avatar} alt="user_pic" /> : <DummyImage userName={client?.fullName?.charAt(0).toUpperCase()} width={30} height={30} />}
+                                <p>{client?.fullName}</p>
+                            </div>)}
+                        </ClientNameContainer>
+                    </PariticiPantInnerContainer>
+                }
+            </MobileChatAndPariticipantContainer>
             <Controls>
                 <div>
                     <button onClick={() => {
