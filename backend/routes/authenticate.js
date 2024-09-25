@@ -12,6 +12,7 @@ import {
   googleLogin,
 } from "../controllers/auth-controller.js";
 import { authMiddleWarefunc } from "../middlewares/authMiddleWare.js";
+import { photoUpdation } from "../services/userService.js";
 
 const router = express.Router();
 
@@ -34,5 +35,7 @@ router.get("/searchUser", searchUserFunctionality);
 router.get("/getUserbyUserName", getUserbyUserName);
 
 router.get("/google", googleLogin);
+
+router.patch("/photoUpdation", photoUpdation);
 
 export default router;
