@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ProfileWrapperStyled, ProfileContainer, RoomContainer, ImageContainer, UserInfoContainer, RoomTypes, RoomTypeHeading, NoRoomContainer, CoverContainer, AboutAndRoomContainer, SessionBox } from './Profile.styled'
-import { getUserRoom, getSpeakers, getUserbyUserName } from '../../api/api'
-import { useQuery } from '@tanstack/react-query'
+import { getUserRoom, getSpeakers, getUserbyUserName, photoUpdation } from '../../api/api'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import { RoomCardContainer } from '../Rooms/Rooms.styled'
 import RoomCard from '../../components/RoomCard/RoomCard'
@@ -10,13 +10,19 @@ import { IoChevronBackSharp, IoCameraOutline, IoTimer } from "react-icons/io5";
 import { LoadingContainer } from '../Room/Room.styled'
 import { ThreeDots } from 'react-loading-icons'
 
-const Profile = () => {
+const Profile = ({ user }) => {
     const roomTypes = ["podcast", "meet", "speakingRooms"]
     const { userName } = useParams()
     const navigate = useNavigate()
     const [activeRoomtype, setActiveRoomtype] = useState(roomTypes[0])
     const [userInfo, setUserInfo] = useState()
+    const [pics, setPics] = useState({
+        avatar: "",
+        coverPhoto: "",
+    })
     const [rooms, setRooms] = useState([])
+    const [wrongImgType, setWrongImgType] = useState(false)
+
     const { data, isFetching, refetch } = useQuery({
         queryKey: [`get-${activeRoomtype}`],
         queryFn: () => getUserRoom(activeRoomtype, userName),
@@ -30,6 +36,11 @@ const Profile = () => {
         enabled: false
     })
 
+    const { data: photoUpdatedData, mutate, isPending } = useMutation({
+        mutationKey: ["update-pic"],
+        mutationFn: photoUpdation,
+        retry: 0,
+    })
     const { data: profileData, isLoading: userInfoLoading, refetch: userRefetch, isFetching: userFetching, isError } = useQuery({
         queryKey: ["profile-data"],
         queryFn: () => getUserbyUserName(userName),
@@ -37,11 +48,49 @@ const Profile = () => {
         retry: 0,
     })
 
+    const uploadImage = (e, type, savedAt) => {
+        const file = e.target.files[0]
+        if (file?.type === "image/png" || file?.type === "image/jpeg") {
+            setWrongImgType(false)
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPics(prev => ({ ...prev, [savedAt]: reader.result }))
+                mutate({
+                    userId: user?.id,
+                    photo: reader.result,
+                    type
+                })
+            }
+            reader.readAsDataURL(file)
+
+        }
+        else {
+            setWrongImgType(true)
+        }
+    }
+
     useEffect(() => {
         if (profileData?.data) {
             setUserInfo(profileData?.data?.userData)
+            setPics({
+                avatar: profileData?.data?.userData?.avatar,
+                coverPhoto: profileData?.data?.userData?.coverPhoto
+            })
         }
     }, [profileData])
+
+    useEffect(() => {
+        if (photoUpdatedData?.data?.message) {
+            alert(photoUpdatedData?.data?.message)
+        }
+    }, [photoUpdatedData])
+
+    useEffect(() => {
+        if (wrongImgType) {
+            alert("Wrong Image type, Please Select only JPG or PNG files")
+            setWrongImgType(false)
+        }
+    }, [wrongImgType])
 
     useEffect(() => {
         if (isError) {
@@ -77,18 +126,27 @@ const Profile = () => {
             <h3>Getting user info</h3>
         </LoadingContainer> : <ProfileWrapperStyled>
             <CoverContainer >
-                <img src="/images/bgm.jpg" alt="cover_img" />
+                <img src={pics?.coverPhoto ? pics?.coverPhoto : "/images/bgm.jpg"} alt="cover_img" />
                 <span onClick={() => navigate("/rooms")} className='goBack'>
                     <IoChevronBackSharp size={20} />
                 </span>
-                <label className='camera' htmlFor='cover_picker'>
-                    <IoCameraOutline size={20} />
-                </label>
-                <input type='file' id="cover_picker" />
+                {user?.id === userInfo?.id &&
+                    <>
+                        <label className='camera' htmlFor='cover_picker'>
+                            <IoCameraOutline size={20} />
+                        </label>
+                        <input type='file' id="cover_picker" onChange={(e) => uploadImage(e, "Cover Photo", "coverPhoto")} />
+                    </>}
             </CoverContainer>
             <ProfileContainer>
                 <ImageContainer>
-                    {userInfo?.avatar ? <img src={userInfo?.avatar} alt="user-pic" /> : <DummyImage userName={"A"} width={150} height={150} />}
+                    {pics?.avatar ? <img src={pics?.avatar} alt="user-pic" /> : <DummyImage userName={userInfo?.fullName?.charAt(0)} width={160} height={160} fontSize={2.5} />}
+                    {user?.id === userInfo?.id && <>
+                        <label htmlFor='avatar_picker'>
+                            <IoCameraOutline size={"100%"} />
+                        </label>
+                        <input type='file' id="avatar_picker" onChange={(e) => uploadImage(e, "Profile Photo", "avatar")} style={{ display: "none" }} />
+                    </>}
                 </ImageContainer>
                 <UserInfoContainer>
                     <h3>{userInfo?.fullName}</h3>

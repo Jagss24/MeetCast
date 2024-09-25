@@ -62,4 +62,7 @@ export const getRoomsByTopic = (topicName) =>
 export const googleAuth = ({ cred, mode }) =>
   api.get(`authenticate/google?cred=${cred}&mode=${mode}`);
 
+export const photoUpdation = (data) =>
+  api.patch(`authenticate/photoUpdation`, data);
+
 export default api;

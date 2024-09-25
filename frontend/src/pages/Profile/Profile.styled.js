@@ -26,11 +26,34 @@ export const ImageContainer = styled.div`
   justify-content: center;
   align-items: center;
   transform: translateY(-50%);
+  position: relative;
   img {
     width: 10rem;
     height: 10rem;
     border-radius: 1.375rem;
     object-fit: cover;
+  }
+  div {
+    border-radius: 1.375rem;
+  }
+  label {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    transform: translateX(50%);
+    background-color: #000;
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 1.5rem;
+    height: 1.5rem;
+    cursor: pointer;
+  }
+  ${MAX.md} {
+    label {
+      right: -10px;
+      bottom: -10px;
+      transform: none;
+    }
   }
 `;
 

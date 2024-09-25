@@ -1,7 +1,7 @@
 import React, { useState, useEffect, memo } from 'react'
 import styled from 'styled-components'
 
-const DummyImage = ({ width, height, userName }) => {
+const DummyImage = ({ width, height, userName, fontSize }) => {
     const colors = ["#ef4444", "#84cc16", "#06b6d4", "#ef4444", "#ec4899", "#8b5cf6"]
     const [backgroundColor, setBackgroundColor] = useState('');
 
@@ -10,7 +10,7 @@ const DummyImage = ({ width, height, userName }) => {
         setBackgroundColor(randomColor);
     }, []);
     return (
-        <DummyWrapperImage width={width} height={height} backgroundColor={backgroundColor}>
+        <DummyWrapperImage width={width} height={height} backgroundColor={backgroundColor} fontSize={fontSize}>
             <span>{userName}</span>
         </DummyWrapperImage>
     )
@@ -26,6 +26,6 @@ align-items: center;
 border-radius: 50%;
 background-color: ${props => props?.backgroundColor ? props.backgroundColor : "transparent"};
 span{
-    font-size: 1.2rem;
+    font-size: ${props => props?.fontSize ? props?.fontSize + "rem" : "1.2rem"};
 }`
 export default memo(DummyImage)

@@ -41,7 +41,7 @@ function App({ isAuth, user }) {
             } />
             <Route path="/profile/:userName" element={
               <PrivateRoute isAuth={isAuth} isActivated={user.activated}>
-                <ProfilePage />
+                <ProfilePage user={user} />
               </PrivateRoute>
             } />
 
