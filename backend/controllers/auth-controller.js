@@ -158,35 +158,38 @@ export const getUserbyUserName = async (req, res) => {
 };
 
 export const activateUser = async (req, res) => {
-  const { userId, userName, fullName, password } = req.body;
+  const { userId, userName, fullName, password, avatar } = req.body;
   const user = await findUserById(userId);
-  if (user && user.activated) {
-    res.status(200).json({ message: "User is already activate" });
-  } else if (user) {
-    if (user?.signedUpwithGoogle) {
-      user.userName = userName;
-      usre.activated = true;
-    } else {
-      const hashPassword = bcryptjs.hashSync(password);
-      user.userName = userName;
-      user.fullName = fullName;
-      user.password = hashPassword;
-      user.activated = true;
-    }
-    await user.save();
-    const userData = await userDto(user);
-    res.cookie("accesstoken", "", {
-      expires: new Date(0),
-      httpOnly: true,
-      path: "/",
-    });
-    if (user.signedUpwithGoogle)
-      res.status(200).json({ userData, signedUpwithGoogle: true });
-    else {
+  try {
+    if (user && user.activated) {
+      res.status(200).json({ message: "User is already activate" });
+    } else if (user) {
+      if (user?.signedUpwithGoogle) {
+        user.userName = userName;
+        user.activated = true;
+        user.avatar = avatar;
+      } else {
+        const hashPassword = bcryptjs.hashSync(password);
+        user.userName = userName;
+        user.fullName = fullName;
+        user.password = hashPassword;
+        user.activated = true;
+        user.avatar = avatar;
+      }
+      await user.save();
+      const userData = await userDto(user);
+      res.cookie("accesstoken", "", {
+        expires: new Date(0),
+        httpOnly: true,
+        path: "/",
+      });
       res.status(200).json({ userData });
+    } else {
+      res.status(200).json({ message: "No user found" });
     }
-  } else {
-    res.status(404).json({ message: "No user found" });
+  } catch (error) {
+    res.status(500).json({ message: "Some internal Server Error" });
+    console.log({ error });
   }
 };
 
@@ -303,10 +306,11 @@ export const googleLogin = async (req, res) => {
       if (user) {
         return res.status(200).json({ message: "EmailId is already in use" });
       }
+      const modifiedAvatar = picture?.split("=")[0];
       user = await creatUser({
         emailId: email,
         fullName: name,
-        avatar: picture,
+        avatar: modifiedAvatar,
         signedUpwithGoogle: true,
       });
 

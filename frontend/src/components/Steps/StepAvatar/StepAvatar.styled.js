@@ -8,8 +8,8 @@ export const ImgInput = styled.img`
   outline: none;
   overflow: hidden;
 `;
-export const BlueLineText = styled.label`
-  font-size: 0.8rem;
+export const UploadText = styled.label`
+  font-size: 1rem;
   color: #20bd5f;
   cursor: pointer;
 `;
@@ -36,18 +36,20 @@ export const Buttons = styled.div`
   align-items: center;
 `;
 
-export const ActivationStyled = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: 80px;
-`;
-
 export const SkipStyled = styled.span`
   position: absolute;
   top: 3%;
   right: 3%;
   cursor: pointer;
   color: #20bd5f;
+  font-size: 0.85rem;
+`;
+
+export const GoBackStyled = styled.span`
+  position: absolute;
+  top: 3%;
+  left: 3%;
+  cursor: pointer;
+  color: #20bd5f;
+  font-size: 0.85rem;
 `;
