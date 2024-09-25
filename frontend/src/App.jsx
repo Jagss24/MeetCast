@@ -1,92 +1,74 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import Home from './pages/Home/Home';
+import { lazy, Suspense } from "react"
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Navigation from './components/shared/Navigation/Navigation';
-import Register from "./pages/Register/Register";
-import Login from "./pages/Login/Login";
-import Activate from "./pages/Activate/Activate";
-import Rooms from "./pages/Rooms/Rooms";
-import { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useQuery } from "@tanstack/react-query";
-import { autoReLogin } from "./api/api";
-import { setUser } from "./slices/userSlice";
-import Room from "./pages/Room/Room";
-import Profile from "./pages/Profile/Profile";
-import NotFound from "./components/NotFound";
-import { GoogleOAuthProvider } from "@react-oauth/google"
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import AppLoader from "./AppLoader";
 
+const HomePage = lazy(() => import("./pages/Home/Home"))
+const RegisterPage = lazy(() => import("./pages/Register/Register"))
+const LoginPage = lazy(() => import("./pages/Login/Login"))
+const ActivationPage = lazy(() => import("./pages/Activate/Activate"))
+const RoomsPage = lazy(() => import("./pages/Rooms/Rooms"))
+const SingleRoomPage = lazy(() => import("./pages/Room/Room"))
+const ProfilePage = lazy(() => import("./pages/Profile/Profile"))
+const NotFoundPage = lazy(() => import("./components/NotFound"))
 
-// function AuthHandler({ isAuth, user }) {
-//   const navigate = useNavigate();
-//   useEffect(() => {
-//     const navigateFunc = () => {
-//       if (isAuth && user?.activated) {
-//         navigate(`/rooms`);
-//       } else if (isAuth) {
-//         if (!user?.activated) {
-//           navigate(`/activate`);
-//         }
-//       }
-//     };
-//     navigateFunc();
-//   }, [navigate, isAuth, user?.activated, user?.id]);
-
-//   return null;
-// }
-
-function App() {
-  const { isAuth, user } = useSelector(state => state.user)
-  const dispatch = useDispatch()
-  const { data, isSuccess, refetch } = useQuery({
-    queryKey: ["user-login"],
-    queryFn: () => autoReLogin(),
-    enabled: false
-  })
-  useEffect(() => {
-    if (!user?.userName) {
-      refetch()
-    }
-  }, [])
-
-  useEffect(() => {
-    if (data?.data?.userData) {
-      dispatch(setUser(data?.data?.userData))
-    }
-  }, [isSuccess])
-
-  const GoogleAuthWrapper = ({ children }) => {
-    return (
-      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-        {children}
-      </GoogleOAuthProvider>
-    )
-  }
+function App({ isAuth, user }) {
   return (
-    <Router>
-      <Navigation />
-      {/* <AuthHandler isAuth={isAuth} user={user} /> This component handles the navigation logic */}
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path="/register" element={<GoogleAuthWrapper>
-          <Register />
-        </GoogleAuthWrapper>} />
-        <Route path="/login" element={<GoogleAuthWrapper>
-          <Login />
-        </GoogleAuthWrapper>} />
-        <Route
-          path="/activate"
-          element={<Activate />}
-        />
-        <Route
-          path="/rooms"
-          element={<Rooms />}
-        />
-        <Route path="/room/:id" element={<Room />} />
-        <Route path="/profile/:userName" element={<Profile />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <Suspense fallback={<AppLoader />}>
+        <Router>
+          <Navigation />
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/login" element={<LoginPage />} />
+
+            {/* Restricted Route for Non-Activated Users */}
+            <Route path="/activate" element={!isAuth ? <Navigate to="/login" /> : !user.activated ? <ActivationPage /> : <Navigate to="/rooms" />} />
+
+            {/* Private Routes for Authenticated and Activated Users */}
+            <Route path="/rooms" element={
+              <PrivateRoute isAuth={isAuth} isActivated={user.activated}>
+                <RoomsPage />
+              </PrivateRoute>
+            } />
+            <Route path="/room/:id" element={
+              <PrivateRoute isAuth={isAuth} isActivated={user.activated}>
+                <SingleRoomPage />
+              </PrivateRoute>
+            } />
+            <Route path="/profile/:userName" element={
+              <PrivateRoute isAuth={isAuth} isActivated={user.activated}>
+                <ProfilePage />
+              </PrivateRoute>
+            } />
+
+            {/* Catch All for 404 */}
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Router>
+      </Suspense>
+    </GoogleOAuthProvider>
   );
 }
 
 export default App;
+
+// Component for routes where only authenticated users can access
+
+//But in this they are authenticated but are non-activated they will thrown to activate page
+const PrivateRoute = ({ isAuth, isActivated, children }) => {
+  console.log({ isAuth, isActivated })
+  if (!isAuth) {
+    return <Navigate to="/login" />;
+  }
+
+  if (isAuth && !isActivated) {
+    return <Navigate to="/activate" />;
+  }
+
+  return children;
+};
+
