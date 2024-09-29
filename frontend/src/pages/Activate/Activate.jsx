@@ -7,6 +7,7 @@ import { useMutation } from '@tanstack/react-query';
 import { activate } from '../../api/api';
 import { setUser } from '../../slices/userSlice';
 import AppLoader from '../../AppLoader';
+import toast from 'react-hot-toast';
 
 const steps = {
     1: StepName,
@@ -49,12 +50,12 @@ const Activate = () => {
                 setUserActivated(true)
             }
             else {
-                alert("No user Found")
+                toast.er("No user Found")
                 return
             }
         }
         if (isError) {
-            return alert("Some internal server Error")
+            return toast.error("Some internal server Error")
         }
     }, [isSuccess || isError || activatedData])
 

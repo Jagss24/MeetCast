@@ -25,14 +25,14 @@ const StepName = ({ setStep, data, setData, user }) => {
   const handleNext = () => {
     if (user?.signedUpwithGoogle) {
       if (!data.name) {
-        alert("Pleaset set your UserName")
+        toast("Pleaset set your UserName")
         return
       }
       setStep(2)
     }
     else {
       if ((!data.fullName || !data.name || !data.password)) {
-        alert("Please fill all the details")
+        toast("Please fill all the details")
         return
       }
       setStep(2)

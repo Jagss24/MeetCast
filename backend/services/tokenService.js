@@ -19,7 +19,6 @@ export const storeRefereshToken = async (token, userId) => {
   try {
     const refreshTokenExist = await Refresh.findOne({ userId });
     if (refreshTokenExist) {
-      console.log("true");
       return;
     }
     await Refresh.create({

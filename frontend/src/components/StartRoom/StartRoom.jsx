@@ -10,6 +10,7 @@ import AsyncSelect from 'react-select/async';
 import Select, { components } from "react-select"
 import DummyImage from '../DummyImage';
 import { useSelector } from 'react-redux';
+import toast from 'react-hot-toast';
 
 
 const StartRoom = ({ closeModal }) => {
@@ -28,15 +29,15 @@ const StartRoom = ({ closeModal }) => {
 
     const handleCreateRoom = () => {
         if (topic.split(" ").length < 2) {
-            alert("Topic should be atleast of 2 words")
+            toast.error("Topic should be atleast of 2 words")
             return
         }
         if (description.length < 50) {
-            alert("Description should be of minimum 50 words")
+            toast.error("Description should be of minimum 50 words")
             return
         }
         if (activeRoom === "podcast" && !openTopicOptions?.value) {
-            alert("Select any option that you want to speak about")
+            toast.error("Select any option that you want to speak about")
             return;
         }
         mutate({
@@ -97,7 +98,6 @@ const StartRoom = ({ closeModal }) => {
                     }))
                 callback(fetchedUsers);
             } catch (error) {
-                console.error("Error searching users:", error);
                 callback([]);
             }
         }
@@ -105,7 +105,7 @@ const StartRoom = ({ closeModal }) => {
 
     const handleChange = (selected) => {
         if (selected.length > 3) {
-            alert("You can only select up to 3 options.");
+            toast.error("You can only select up to 3 options.");
             return; // Prevent updating state with more than 3 options
         }
         setSelectedUser(selected);
@@ -126,7 +126,7 @@ const StartRoom = ({ closeModal }) => {
             document.body.style.overflow = '';
         };
     }, []);
-    console.log({ openTopicOptions })
+
     return (
         <StartRoomContainer>
             <StartRoomBody>
@@ -163,7 +163,6 @@ const StartRoom = ({ closeModal }) => {
                             <h4>About What? </h4>
                             <Select
                                 onChange={(selected) => {
-                                    console.log({ selected })
                                     return setOpenTopicOptions({
                                         label: selected.label,
                                         value: selected.value

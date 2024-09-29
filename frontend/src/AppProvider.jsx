@@ -17,7 +17,7 @@ const AppProvider = () => {
         enabled: false,
         retry: 0,
     });
-    console.log({ isAuth })
+
     useEffect(() => {
         if (!user?.userName) {
             refetch();

@@ -10,6 +10,7 @@ import DummyImage from '../../components/DummyImage'
 import { ThreeDots } from 'react-loading-icons'
 import { IoShareSocialSharp } from "react-icons/io5";
 import { setIsNavbarVisible } from '../../slices/utilitySlice'
+import toast from 'react-hot-toast'
 
 const Room = () => {
     const { id: roomId } = useParams()
@@ -40,7 +41,7 @@ const Room = () => {
         mutationFn: addMemberToRoom
     })
 
-    const { isPending: isRemoveMemberPending, isSuccess: isRemoveMemberSuccess, mutate: removeMemberMutate } = useMutation({
+    const { isSuccess: isRemoveMemberSuccess, mutate: removeMemberMutate } = useMutation({
         mutationKey: ["remove-member-to-room"],
         mutationFn: removeMemberFromRoom
     })
@@ -49,7 +50,7 @@ const Room = () => {
     //Functions
     const handleRequestiontoJoinRoom = async (roomId, userId) => {
         if (!roomId && !userId) {
-            alert("Some error occured")
+            toast("Some error occured")
             return
         }
         mutate({
@@ -59,7 +60,7 @@ const Room = () => {
 
     const handleAddMemberToRoom = async (roomId, userId) => {
         if (!roomId && !userId) {
-            alert("Some error occured")
+            toast("Some error occured")
         }
         addMemberMutate({
             userId, roomId
@@ -68,7 +69,7 @@ const Room = () => {
 
     const handleRemoveMemberFromRoom = async (roomId, userId) => {
         if (!roomId && !userId) {
-            alert("Some error occured")
+            toast("Some error occured")
         }
         removeMemberMutate({
             userId, roomId
@@ -87,7 +88,7 @@ const Room = () => {
     //useEffects
     useEffect(() => {
         if (isError) {
-            alert("Not a Valid room Id")
+            toast.error("Not a Valid room Id")
             navigate("/rooms")
         }
     }, [isError])
@@ -195,7 +196,9 @@ const Room = () => {
                         </ButtonConatiners>
                         <ShareContainer onClick={() => {
                             navigator.clipboard.writeText(window.location.href)
-                            alert("Link copied to your Clipboard")
+                            toast.success("Link copied to your Clipboard", {
+                                position: "bottom-right"
+                            })
                         }}>
                             <span>
                                 <IoShareSocialSharp size={20} />

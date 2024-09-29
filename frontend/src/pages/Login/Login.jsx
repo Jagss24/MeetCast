@@ -11,6 +11,7 @@ import { InputWrapper } from '../../components/shared/Navigation/Navigation.styl
 import { ImPodcast } from 'react-icons/im'
 import { MdOutlineMailOutline, MdKey } from "react-icons/md";
 import { GoogleLogin } from "@react-oauth/google"
+import toast from 'react-hot-toast'
 
 const Login = () => {
   const [data, setData] = useState({
@@ -39,7 +40,7 @@ const Login = () => {
   })
   const handleLogin = () => {
     if (!data.emailId || !data.password) {
-      alert("Fill all the details")
+      toast("Fill all the details")
       return
     }
     refetch();
@@ -63,12 +64,12 @@ const Login = () => {
     }
     else if (userData?.data?.message === "No user found") {
       queryClient.removeQueries({ queryKey: ['login-user-google'] })
-      alert(userData?.data?.message)
+      toast.error(userData?.data?.message)
       return
     }
     else if (userData?.data?.message === "Please Login with Google") {
       queryClient.removeQueries({ queryKey: ['login-user-google'] })
-      alert(userData?.data?.message)
+      toast.error(userData?.data?.message)
       return
     }
   }, [userData])
@@ -80,7 +81,7 @@ const Login = () => {
       navigate("/rooms")
     } else if (googleData?.data?.message === "No user found") {
       queryClient.removeQueries({ queryKey: ['login-user'] })
-      alert(googleData?.data?.message)
+      toast.error(googleData?.data?.message)
       return
     }
   }, [googleData])
@@ -125,7 +126,7 @@ const Login = () => {
             setCred(credentialResponse?.credential)
           }
           onError={() => {
-            alert("Some Error Occured while Login")
+            toast.error("Some Error Occured while Login")
           }}
           theme='filled_white'
           logo_alignment='left'

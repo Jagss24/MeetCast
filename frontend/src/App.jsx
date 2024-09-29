@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Navigation from './components/shared/Navigation/Navigation';
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import AppLoader from "./AppLoader";
+import { Toaster } from "react-hot-toast"
 
 const HomePage = lazy(() => import("./pages/Home/Home"))
 const RegisterPage = lazy(() => import("./pages/Register/Register"))
@@ -49,6 +50,10 @@ function App({ isAuth, user }) {
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Router>
+        <Toaster
+          position="top-center"
+          reverseOrder={false}
+        />
       </Suspense>
     </GoogleOAuthProvider>
   );
@@ -60,7 +65,6 @@ export default App;
 
 //But in this they are authenticated but are non-activated they will thrown to activate page
 const PrivateRoute = ({ isAuth, isActivated, children }) => {
-  console.log({ isAuth, isActivated })
   if (!isAuth) {
     return <Navigate to="/login" />;
   }

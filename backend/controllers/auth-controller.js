@@ -30,7 +30,6 @@ export const authenticateOtpEmail = async (req, res) => {
       .status(200)
       .json({ message: "EmailId already in use try another one" });
   }
-  console.log(gmail, gmailpass);
   //Generate the Otp
   const otp = await generateOtp();
 
@@ -72,7 +71,6 @@ export const authenticateOtpEmail = async (req, res) => {
             .json({ message: "There's some error in sending mail" });
         }
       } else {
-        console.log("Email sent: " + info.response);
         return res
           .status(200)
           .json({ hash: `${hash}.${expires}`, otp, emailId });

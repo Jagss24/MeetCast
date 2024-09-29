@@ -9,6 +9,7 @@ import DummyImage from '../../components/DummyImage'
 import { IoChevronBackSharp, IoCameraOutline, IoTimer } from "react-icons/io5";
 import { LoadingContainer } from '../Room/Room.styled'
 import { ThreeDots } from 'react-loading-icons'
+import toast from 'react-hot-toast'
 
 const Profile = ({ user }) => {
     const roomTypes = ["podcast", "meet", "speakingRooms"]
@@ -81,20 +82,20 @@ const Profile = ({ user }) => {
 
     useEffect(() => {
         if (photoUpdatedData?.data?.message) {
-            alert(photoUpdatedData?.data?.message)
+            toast(photoUpdatedData?.data?.message)
         }
     }, [photoUpdatedData])
 
     useEffect(() => {
         if (wrongImgType) {
-            alert("Wrong Image type, Please Select only JPG or PNG files")
+            toast.error("Wrong Image type, Please Select only JPG or PNG files")
             setWrongImgType(false)
         }
     }, [wrongImgType])
 
     useEffect(() => {
         if (isError) {
-            alert("This user doesn't exist")
+            toast.error("This user doesn't exist")
             navigate("/rooms")
         }
     }, [isError])

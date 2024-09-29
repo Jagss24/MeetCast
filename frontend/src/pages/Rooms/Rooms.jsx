@@ -76,7 +76,6 @@ const Rooms = () => {
         }
     }, [roomsByTopicData])
 
-    console.log({ rooms })
     return (
         <>
             <RoomComponent>
@@ -91,7 +90,6 @@ const Rooms = () => {
                         <TopicDiv>
                             <Select
                                 onChange={(selected) => {
-                                    console.log({ selected })
                                     setOpenTopicOptions({
                                         label: selected.label,
                                         value: selected.value

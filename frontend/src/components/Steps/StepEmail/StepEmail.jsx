@@ -10,7 +10,8 @@ import { sendOtp, googleAuth } from '../../../api/api';
 import { InputWrapper } from '../../shared/Navigation/Navigation.styled';
 import { MdOutlineMail } from 'react-icons/md';
 import { ImPodcast } from 'react-icons/im';
-import { GoogleLogin, useGoogleOneTapLogin } from "@react-oauth/google"
+import { GoogleLogin } from "@react-oauth/google"
+import toast from 'react-hot-toast';
 
 const StepEmail = ({ setStep }) => {
     const dispatch = useDispatch()
@@ -55,7 +56,7 @@ const StepEmail = ({ setStep }) => {
             dispatch(setUser(googleData?.data?.userData))
             navigate("/activate")
         } else if (googleData?.data?.message === "EmailId is already in use") {
-            alert(googleData?.data?.message)
+            toast(googleData?.data?.message)
         }
     }, [googleData])
 
@@ -90,7 +91,7 @@ const StepEmail = ({ setStep }) => {
                         setCred(credentialResponse?.credential)
                     }
                     onError={() => {
-                        alert("Some Error Occured while Login")
+                        toast.error("Some Error Occured while Login")
                     }}
                     theme='filled_white'
                     logo_alignment='left'
