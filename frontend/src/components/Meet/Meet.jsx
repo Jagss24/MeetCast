@@ -7,13 +7,15 @@ import { IoShieldCheckmarkOutline, IoExpand } from "react-icons/io5";
 import { TbArrowsMinimize } from "react-icons/tb";
 import { useNavigate } from 'react-router-dom';
 import DummyImage from '../DummyImage';
-import { MeetContainer, VideoContainer, VideoElement, ClientContainer, AvtarContainer, Controls, TopicStyle, VideoAndChatContainer, ChatContainer, ChatInputContainer, ChatInnerContainer, OptionsContainer, EachOption, PariticiPantContainer, PariticiPantInnerContainer, ClientNameContainer, ChatMessageContainer, HoverLayer, MobileChatAndPariticipantContainer } from './Meet.styled';
+import { MeetContainer, VideoContainer, VideoElement, ClientContainer, AvtarContainer, Controls, TopicStyle, VideoAndChatContainer, ChatContainer, ChatInputContainer, ChatInnerContainer, OptionsContainer, EachOption, PariticiPantContainer, PariticiPantInnerContainer, ClientNameContainer, ChatMessageContainer, HoverLayer, MobileChatAndPariticipantContainer, UserToast } from './Meet.styled';
 import { setIsNavbarVisible } from '../../slices/utilitySlice';
+import toast from 'react-hot-toast';
 
-const Meet = ({ roomId, user, roomTopic, roomType }) => {
+const Meet = ({ roomId, user, roomTopic }) => {
     const navigate = useNavigate()
-    const { clients, provideRef, screenSharing, handleVideo, leaveRoom, handleAudio, sendMessage, clientMessages, toggleFullScreen } = useWebRTC({ roomId, user })
-    const { startScreenSharing, stopScreenSharing } = screenSharing()
+    const dispatch = useDispatch()
+
+    // State's
     const [isAudioOn, setIsAudioOn] = useState(false)
     const [isVideoOn, setIsVideoOn] = useState(false)
     const [msgContent, setMsgContent] = useState("")
@@ -22,7 +24,7 @@ const Meet = ({ roomId, user, roomTopic, roomType }) => {
     const [showParticipants, setShowParticipants] = useState(false)
     const [hoverOnClient, setHoverOnClient] = useState(false);
 
-    const dispatch = useDispatch()
+    //Functions
     const openChatorParitciPant = (toOpen) => {
         if (toOpen === "chat") {
             if (!chat && !showParticipants) {
@@ -50,6 +52,24 @@ const Meet = ({ roomId, user, roomTopic, roomType }) => {
         }
     }
 
+    const showToastFunc = ({ remoteUser }) => {
+        toast.custom(() => <UserToast>
+            <div>
+                {remoteUser?.avatar
+                    ? <img src={remoteUser?.avatar} alt="user_pic" />
+                    : <DummyImage width={40} height={40}
+                        userName={remoteUser?.fullName?.charAt(0)} fontSize={1.1} />}
+            </div>
+            <div className='userName'>
+                <span>{remoteUser?.fullName} joined the room</span>
+            </div>
+        </UserToast>, { position: "bottom-right" })
+    }
+
+    //Hook
+    const { clients, provideRef, screenSharing, handleVideo, leaveRoom, handleAudio, sendMessage, clientMessages, toggleFullScreen } = useWebRTC({ roomId, user, showToastFunc })
+    const { startScreenSharing, stopScreenSharing } = screenSharing()
+
     return (
         <MeetContainer>
             <TopicStyle>
@@ -58,7 +78,7 @@ const Meet = ({ roomId, user, roomTopic, roomType }) => {
                         <IoShieldCheckmarkOutline color="20bd5f" size={"50%"} />
                     </span>
                 </div>
-                <h4>website redesign project kickoff</h4>
+                <h4>{roomTopic}</h4>
             </TopicStyle>
             <VideoAndChatContainer fullScreen={chat || showParticipants}>
                 <OptionsContainer>

@@ -3,12 +3,14 @@ import { ACTIONS } from "../actions";
 import { socketInit } from "../socket";
 import freeice from "freeice";
 import { useStateWithCallback } from "./useStateWithCallback";
+import toast from "react-hot-toast";
 
 export const usePodCast = ({
   roomId,
   user,
   isSpeaker = false,
   isOwner = false,
+  showToastFunc = () => {},
 }) => {
   const [clients, setClients] = useStateWithCallback([]);
   const [clientMessages, setClientMessages] = useState([]);
@@ -18,7 +20,9 @@ export const usePodCast = ({
   const localMediaStream = useRef(null);
   const senders = useRef([]);
   const clientIds = useRef(new Set());
-  const [isUserSpeaking, setisUserSpeaking] = useState(false);
+  //this state is used to check whther the user has joined and added all the remote users that were present earlier if yes then it will becomes true
+  //usecase:- to show toast message
+  const [userJoinedSuccessFully, setUserJoinedSuccessFully] = useState(false);
 
   const audioContext = new window.AudioContext();
   const analyser = audioContext.createAnalyser();
@@ -80,7 +84,7 @@ export const usePodCast = ({
         localElement.srcObject = new MediaStream([audioTrack]);
       }
     } catch (error) {
-      console.error("Error starting audio: ", error);
+      toast("Some issue occured in starting audio");
     }
   };
 
@@ -90,17 +94,6 @@ export const usePodCast = ({
     requestAnimationFrame(monitorVolume);
 
     analyser.getByteFrequencyData(dataArray);
-    const averageVolume =
-      dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
-
-    if (averageVolume > 10) {
-      // Adjust the threshold value as needed
-      setisUserSpeaking(true);
-      console.log("User is speaking");
-    } else {
-      setisUserSpeaking(false);
-      console.log("User is not speaking");
-    }
   };
 
   const sendMessage = ({ userId, msgContent, userFullName, userAvatar }) => {
@@ -167,9 +160,8 @@ export const usePodCast = ({
       socket.current.emit(ACTIONS.LEAVE, { roomId });
       if (audioContext.state !== "closed") {
         audioContext.close().then(() => {
-          console.log("Audio context closed");
+          monitoring = false;
         });
-        monitoring = false;
       }
     };
   }, []);
@@ -180,9 +172,7 @@ export const usePodCast = ({
     const handleNewPeer = async ({ peerId, createOffer, user: remoteUser }) => {
       // If already connected then prevent connecting again
       if (peerId in connections.current) {
-        return console.warn(
-          `You are already connected with ${peerId} (${user.name})`
-        );
+        return;
       }
 
       // If user is new then store it to connections
@@ -200,6 +190,9 @@ export const usePodCast = ({
 
       // Handle on track event on this connection
       connections.current[peerId].ontrack = ({ streams: [remoteStream] }) => {
+        if (userJoinedSuccessFully) {
+          showToastFunc({ remoteUser });
+        }
         addNewClient(remoteUser, () => {
           if (audioElements.current[remoteUser?.id]) {
             audioElements.current[remoteUser?.id].srcObject = remoteStream;
@@ -241,6 +234,7 @@ export const usePodCast = ({
           sessionDescription: offer,
         });
       }
+      setUserJoinedSuccessFully(true);
     };
 
     // Listen for add peer event from ws
@@ -346,9 +340,7 @@ export const usePodCast = ({
 
   // To remove the peer from connection.
   useEffect(() => {
-    const handleRemovePeer = ({ peerID, userId, userName }) => {
-      console.log("leaving", peerID, userId, userName);
-
+    const handleRemovePeer = ({ peerID, userId }) => {
       if (connections.current[peerID]) {
         connections.current[peerID].close();
       }
@@ -380,8 +372,6 @@ export const usePodCast = ({
     provideRef,
     leaveRoom,
     handleAudio,
-    clientIds,
-    isUserSpeaking,
     sendMessage,
     clientMessages,
   };

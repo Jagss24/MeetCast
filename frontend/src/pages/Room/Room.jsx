@@ -224,6 +224,7 @@ const Room = () => {
                         roomId={roomId}
                         isSpeaker={handleIsSpeaker(user?.id)}
                         isOwner={user?.id === room?.ownerId?._id}
+                        roomTopic={room?.topic}
                     />
                 }
             </RoomConatiner >

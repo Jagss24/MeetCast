@@ -124,6 +124,39 @@ export const HoverLayer = styled.div.withConfig({
   }
 `;
 
+export const UserToast = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  border-radius: 0.8rem;
+  color: #000;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  & > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem 1rem;
+  }
+  .userName {
+    border-left: 1px solid #e5e7eb;
+    height: 100%;
+    padding: 0;
+  }
+  & > div > img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50px;
+  }
+
+  & > div > span {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+`;
+
 export const ClientContainer = styled.div.withConfig({
   shouldForwardProp: (prop) => !["isFullScreen"].includes(prop),
 })`

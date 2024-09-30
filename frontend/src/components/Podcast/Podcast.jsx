@@ -7,20 +7,21 @@ import { MdCallEnd, MdOutlineMessage, MdSend } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
 import DummyImage from '../DummyImage';
 import { AudioConatiner, AudioElement, PodContainer, AudioAndChatContainer } from './Podcast.styled';
-import { Controls, AvtarContainer, TopicStyle, ChatContainer, OptionsContainer, EachOption, ChatInnerContainer, ChatInputContainer, ChatMessageContainer, PariticiPantContainer, PariticiPantInnerContainer, ClientNameContainer, MobileChatAndPariticipantContainer } from '../Meet/Meet.styled';
+import { Controls, AvtarContainer, TopicStyle, ChatContainer, OptionsContainer, EachOption, ChatInnerContainer, ChatInputContainer, ChatMessageContainer, PariticiPantContainer, PariticiPantInnerContainer, ClientNameContainer, MobileChatAndPariticipantContainer, UserToast } from '../Meet/Meet.styled';
 import { setIsNavbarVisible } from '../../slices/utilitySlice';
-const Podcast = ({ roomId, user, isSpeaker, isOwner }) => {
+import toast from 'react-hot-toast';
+const Podcast = ({ roomId, roomTopic, user, isSpeaker, isOwner }) => {
     const navigate = useNavigate()
-    const { clients, provideRef, leaveRoom, handleAudio, clientIds, isUserSpeaking, sendMessage, clientMessages } = usePodCast({ roomId, user, isSpeaker, isOwner })
+    const dispatch = useDispatch()
+
+    //state's
     const [isAudioOn, setIsAudioOn] = useState(false)
     const [chat, setChat] = useState(false)
     const [showParticipants, setShowParticipants] = useState(false)
     const [msgContent, setMsgContent] = useState("")
-    const dispatch = useDispatch()
-    console.log({ clients })
-    console.log({ clientIds })
-    console.log({ isUserSpeaking })
-    console.log({ isSpeaker, isOwner })
+
+
+    //function's
     const openChatorParitciPant = (toOpen) => {
         if (toOpen === "chat") {
             if (!chat && !showParticipants) {
@@ -47,6 +48,22 @@ const Podcast = ({ roomId, user, isSpeaker, isOwner }) => {
             }
         }
     }
+    const showToastFunc = ({ remoteUser }) => {
+        toast.custom(() => <UserToast>
+            <div>
+                {remoteUser?.avatar
+                    ? <img src={remoteUser?.avatar} alt="user_pic" />
+                    : <DummyImage width={40} height={40}
+                        userName={remoteUser?.fullName?.charAt(0)} fontSize={1.1} />}
+            </div>
+            <div className='userName'>
+                <span>{remoteUser?.fullName} joined the room</span>
+            </div>
+        </UserToast>, { position: "bottom-right" })
+    }
+
+    //Hook
+    const { clients, provideRef, leaveRoom, handleAudio, sendMessage, clientMessages } = usePodCast({ roomId, user, isSpeaker, isOwner, showToastFunc })
     return (
         <PodContainer>
             <TopicStyle>
@@ -55,7 +72,7 @@ const Podcast = ({ roomId, user, isSpeaker, isOwner }) => {
                         <IoShieldCheckmarkOutline color="20bd5f" size={"50%"} />
                     </span>
                 </div>
-                <h4>website redesign project kickoff</h4>
+                <h4>{roomTopic}</h4>
             </TopicStyle>
             <AudioAndChatContainer fullScreen={chat || showParticipants}>
                 <OptionsContainer>

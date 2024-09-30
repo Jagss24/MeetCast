@@ -3,8 +3,9 @@ import { ACTIONS } from "../actions";
 import { socketInit } from "../socket";
 import freeice from "freeice";
 import { useStateWithCallback } from "./useStateWithCallback";
+import toast from "react-hot-toast";
 
-export const useWebRTC = ({ roomId, user }) => {
+export const useWebRTC = ({ roomId, user, showToastFunc = () => {} }) => {
   const [clients, setClients] = useStateWithCallback([]);
   const [clientMessages, setClientMessages] = useState([]);
   const videoElements = useRef({});
@@ -14,7 +15,10 @@ export const useWebRTC = ({ roomId, user }) => {
   const localMediaStream = useRef(null);
   const senders = useRef([]);
   const clientIds = useRef(new Set());
-  const [isUserSpeaking, setisUserSpeaking] = useState(false);
+
+  //this state is used to check whther the user has joined and added all the remote users that were present earlier if yes then it will becomes true
+  //usecase:- to show toast message
+  const [userJoinedSuccessFully, setUserJoinedSuccessFully] = useState(false);
 
   const audioContext = new window.AudioContext();
   const analyser = audioContext.createAnalyser();
@@ -40,15 +44,6 @@ export const useWebRTC = ({ roomId, user }) => {
     requestAnimationFrame(monitorVolume);
 
     analyser.getByteFrequencyData(dataArray);
-    const averageVolume =
-      dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
-
-    if (averageVolume > 10) {
-      // Adjust the threshold value as needed
-      setisUserSpeaking(true);
-    } else {
-      setisUserSpeaking(false);
-    }
   };
 
   const toggleFullScreen = (clientId) => {
@@ -97,7 +92,7 @@ export const useWebRTC = ({ roomId, user }) => {
         ]);
       }
     } catch (error) {
-      console.error("Error starting video: ", error);
+      toast("Some issue occured in starting video");
     }
   };
 
@@ -110,7 +105,6 @@ export const useWebRTC = ({ roomId, user }) => {
 
       setClients((clients) =>
         clients.map((client) => {
-          console.log({ client });
           if (client.id === userId) {
             return {
               ...client,
@@ -138,7 +132,7 @@ export const useWebRTC = ({ roomId, user }) => {
         ]);
       }
     } catch (error) {
-      console.error("Error starting audio: ", error);
+      toast("Some error occured in starting audio ");
     }
   };
 
@@ -190,7 +184,7 @@ export const useWebRTC = ({ roomId, user }) => {
           stopScreenSharing();
         };
       } catch (error) {
-        console.error("Error in screen sharing: ", error);
+        toast("Some error occured while sharing screen");
         setscreenIsSharing(false);
       }
     }
@@ -286,9 +280,8 @@ export const useWebRTC = ({ roomId, user }) => {
       socket.current.emit(ACTIONS.LEAVE, { roomId });
       if (audioContext.state !== "closed") {
         audioContext.close().then(() => {
-          console.log("Audio context closed");
+          monitoring = false;
         });
-        monitoring = false;
       }
     };
   }, []);
@@ -298,9 +291,7 @@ export const useWebRTC = ({ roomId, user }) => {
     const handleNewPeer = async ({ peerId, createOffer, user: remoteUser }) => {
       // If already connected then prevent connecting again
       if (peerId in connections.current) {
-        return console.warn(
-          `You are already connected with ${peerId} (${user.name})`
-        );
+        return;
       }
 
       // If user is new then store it to connections
@@ -318,6 +309,10 @@ export const useWebRTC = ({ roomId, user }) => {
 
       // Handle on track event on this connection
       connections.current[peerId].ontrack = ({ streams: [remoteStream] }) => {
+        if (userJoinedSuccessFully && !clientIds.current.has(remoteUser.id)) {
+          showToastFunc({ remoteUser });
+        }
+
         addNewClient(remoteUser, () => {
           if (videoElements.current[remoteUser.id]) {
             videoElements.current[remoteUser.id].srcObject = remoteStream;
@@ -359,6 +354,7 @@ export const useWebRTC = ({ roomId, user }) => {
           sessionDescription: offer,
         });
       }
+      setUserJoinedSuccessFully(true);
     };
 
     // Listen for add peer event from ws
@@ -485,9 +481,7 @@ export const useWebRTC = ({ roomId, user }) => {
 
   // To remove the peer from connection.
   useEffect(() => {
-    const handleRemovePeer = ({ peerID, userId, userName }) => {
-      console.log("leaving", peerID, userId, userName);
-
+    const handleRemovePeer = ({ peerID, userId }) => {
       if (connections.current[peerID]) {
         connections.current[peerID].close();
       }
@@ -521,8 +515,6 @@ export const useWebRTC = ({ roomId, user }) => {
     handleVideo,
     leaveRoom,
     handleAudio,
-    clientIds,
-    isUserSpeaking,
     sendMessage,
     clientMessages,
     toggleFullScreen,
