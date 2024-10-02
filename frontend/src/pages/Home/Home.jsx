@@ -14,7 +14,7 @@ const Home = () => {
                     <HeadingLogo>
                         <ImPodcast size={24} color='#20bd5f' />
                     </HeadingLogo>
-                    <HeadingStyled>Welcome to VoiceHub</HeadingStyled>
+                    <HeadingStyled>Welcome to MeetCast</HeadingStyled>
                 </HeadingWrapper>
                 <p className='sub'>A Platform where you can your share your opinions on your favorite topic and can listen on your favorite topic.</p>
                 <ButtonWrapper onClick={() => navigate("/register")}>

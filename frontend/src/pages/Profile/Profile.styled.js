@@ -64,7 +64,7 @@ export const UserInfoContainer = styled.div`
     font-size: 1.5rem;
   }
   & > p {
-    color: #20bd5f;
+    color: var(--button-color);
     font-size: 1.125rem;
   }
 `;
@@ -108,8 +108,8 @@ export const SessionBox = styled.div`
   & > span {
     width: 1.875rem;
   }
-  background-color: rgba(32, 189, 95, 0.2);
-  color: #20bd5f;
+  background-color: var(--navbar-color);
+  color: var(--button-color);
   border-radius: 1.125rem;
   padding: 0.5rem 0;
 `;
@@ -126,15 +126,12 @@ export const RoomTypeHeading = styled("h4").withConfig({
   shouldForwardProp: (prop) => prop !== "active",
 })`
   background-color: ${(props) =>
-    props.active ? "rgba(32, 189, 95, 0.2)" : "rgba(131,130,130,0.2)"};
-  color: ${(props) => (props.active ? " #20BD5F" : "#fff")};
+    props.active ? "var(--navbar-color)" : "rgba(131,130,130,0.1)"};
+  color: ${(props) => (props.active ? "var(--button-color)" : "#B0B0B0")};
   border-radius: 1.25rem;
   padding: 0.625rem;
   cursor: pointer;
   user-select: none;
-  &:hover {
-    opacity: 0.8;
-  }
 `;
 
 export const NoRoomContainer = styled.div`

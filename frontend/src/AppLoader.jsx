@@ -7,9 +7,9 @@ const AppLoader = () => {
         <FullScreenLoader aria-label='loading'>
             <div>
                 <span className='logo'>
-                    <ImPodcast color='#20bd5f' size={"100%"} />
+                    <ImPodcast style={{ color: "var(--button-color)" }} size={"100%"} />
                 </span>
-                <h4>VoiceHub</h4>
+                <h4>MeetCast</h4>
             </div>
             <span className='loader' />
         </FullScreenLoader>
@@ -62,7 +62,7 @@ const FullScreenLoader = styled.div`
         left: 0;
         height: 4px;
         width: 50%;
-        background-color: #20bd5f;
+        background-color: var(--button-color);
         animation: ${loadingAnimation} 2s linear infinite;
     }
 }

@@ -37,9 +37,9 @@ const Navigation = () => {
         isNavBarVisible ? <NavigationContainer>
             <Link to="/" className="logo_wrapper" >
                 <HeadingLogo>
-                    <ImPodcast color='#20bd5f' />
+                    <ImPodcast style={{ color: "var(--button-color)" }} />
                 </HeadingLogo>
-                <span>VoiceHub</span>
+                <span>MeetCast</span>
             </Link>
 
             {user?.userName && <UserComponent >

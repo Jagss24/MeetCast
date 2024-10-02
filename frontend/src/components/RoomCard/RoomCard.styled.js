@@ -6,16 +6,12 @@ export const RoomCardStyled = styled.div`
   justify-content: center;
   align-items: flex-start;
   padding: 0.75rem 0;
-  background: linear-gradient(
-    72.8deg,
-    rgba(32, 189, 95, 0.5) 1.12%,
-    rgba(19, 19, 19, 0.5) 98.64%
-  );
   border-radius: 10px;
   min-width: 400px;
   max-width: 400px;
   min-height: 210px;
   height: auto;
+  border: 1px solid var(--border-color);
   ${MAX.sm} {
     width: 90%;
     max-width: 90%;
@@ -89,8 +85,8 @@ export const About = styled.p`
 `;
 export const JoinRoom = styled.button`
   text-align: center;
-  color: #20bd5f;
-  background-color: #000;
+  color: var(--text-color);
+  background-color: var(--button-color);
   max-width: fit-content;
   border: none;
   outline: none;
@@ -100,7 +96,6 @@ export const JoinRoom = styled.button`
   cursor: pointer;
   transition: all 0.1s;
   &:hover {
-    color: #fff;
     opacity: 0.8;
   }
 `;

@@ -173,31 +173,36 @@ const StartRoom = ({ closeModal }) => {
                                 styles={{
                                     control: (provided, state) => ({
                                         ...provided,
-                                        background: "#000000",
-                                        border: "1px solid #20bd5f",
+                                        background: "var(--navbar-color)",
+                                        border: "1px solid var(--border-color)",
                                         borderRadius: "22px",
                                         outline: "none",
                                         cursor: state.isDisabled ? 'not-allowed' : 'text',
                                         width: "12rem",
 
                                     }),
-                                    valueContainer: (provided, state) => ({
+                                    valueContainer: (provided) => ({
                                         ...provided,
-                                        color: "#20bd5f"
+                                        color: "var(--button-color)"
                                     }),
-                                    singleValue: (provided, state) => ({
+                                    singleValue: (provided) => ({
                                         ...provided,
-                                        color: "#20bd5f"
+                                        color: "var(--button-color)"
+                                    }),
+                                    input: (provided) => ({
+                                        ...provided,
+                                        color: "var(--button-color)",
+                                        padding: "5px 0"
                                     }),
                                     menu: (provided) => ({
                                         ...provided,
                                         cursor: "pointer",
-                                        background: "#000000",
+                                        background: "var(--primary-color)",
                                         width: "100%",
                                     }),
                                     option: (provided, state) => ({
                                         ...provided,
-                                        color: '#20bd5f',
+                                        color: 'var(--button-color)',
                                         backgroundColor: state.isFocused ? "#353535" : "",
                                         cursor: "pointer",
                                         "&:hover": {
@@ -247,9 +252,9 @@ const StartRoom = ({ closeModal }) => {
                                     cursor: state.isDisabled ? 'not-allowed' : 'text',
                                     borderRadius: "11px",
                                 }),
-                                input: (provided, state) => ({
+                                input: (provided) => ({
                                     ...provided,
-                                    color: "#20bd5f",
+                                    color: "var(--text-color)",
                                     padding: "5px 0"
                                 }),
                                 menu: (provided) => ({

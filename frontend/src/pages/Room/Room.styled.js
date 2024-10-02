@@ -113,15 +113,15 @@ export const ButtonConatiners = styled.div`
     justify-content: center;
     align-items: center;
     gap: 0.4rem;
-    background-color: #0077ff;
+    background-color: var(--button-color);
     outline: none;
     border: none;
     cursor: pointer;
     padding: 0.75rem;
-    color: #fff;
+    color: var(--text-color);
     border-radius: 0.625rem;
     &:hover {
-      background-color: rgba(0, 119, 255, 0.8);
+      opacity: 0.9;
     }
     &:disabled {
       background-color: gray;
@@ -131,7 +131,8 @@ export const ButtonConatiners = styled.div`
 `;
 export const SpeakerContainer = styled.div`
   box-shadow: 4px 4px 6.6px 0px #d9d9d926;
-  background: #131313;
+  background: var(--primary-color);
+  border: 1px solid var(--border-color);
   border-radius: 1.375rem;
   & > h3 {
     text-align: center;
@@ -152,7 +153,8 @@ export const SpeakerContainer = styled.div`
 
 export const AllowContainer = styled.div`
   box-shadow: 4px 4px 6.6px 0px #d9d9d926;
-  background: #131313;
+  background: var(--primary-color);
+  border: 1px solid var(--border-color);
   border-radius: 1.375rem;
   scrollbar-width: none;
   display: flex;
@@ -219,5 +221,5 @@ export const ShareContainer = styled.div`
 
 export const SuccessText = styled.p`
   margin: 0;
-  color: #0fcd0f;
+  color: var(--button-color);
 `;

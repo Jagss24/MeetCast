@@ -50,9 +50,9 @@ export const authenticateOtpEmail = async (req, res) => {
       },
     });
     let mailOptions = {
-      from: `"VoiceHub" ${process.env.GMAIL_ADDRESS}`,
+      from: `"MeetCast" ${process.env.GMAIL_ADDRESS}`,
       to: emailId,
-      subject: "VoiceHub Signup OTP",
+      subject: "MeetCast Signup OTP",
       text: `
       Hello User,
       This is your OTP ${otp} to signup your account on WATCHME.

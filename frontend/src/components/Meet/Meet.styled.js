@@ -55,18 +55,21 @@ export const Controls = styled.div`
     }
     & > button {
       cursor: pointer;
-      background: #1d1d1d;
+      background: var(--navbar-color);
       padding: 1rem;
       border-radius: 50%;
       border: none;
       outline: none;
+    }
+    svg {
+      color: var(--button-color);
     }
   }
 `;
 
 export const TopicStyle = styled.div`
   width: 100%;
-  background-color: #131313;
+  background-color: var(--navbar-color);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -85,7 +88,7 @@ export const TopicStyle = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #20bd5f33;
+    background: var(--navbar-color);
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -219,7 +222,7 @@ export const AvtarContainer = styled.div.withConfig({
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #1d1d1d;
+  background: var(--navbar-color);
   border-radius: ${(props) => (props?.audioElem ? "50%" : "0")};
   user-select: none;
   img,
@@ -365,7 +368,6 @@ export const ChatInputContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #20bd5f45;
     width: 20px;
     height: 20px;
     border-radius: 50%;
@@ -400,7 +402,7 @@ export const EachOption = styled.span`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #20bd5f45;
+  background: var(--navbar-color);
   width: 30px;
   height: 30px;
   border-radius: 50%;

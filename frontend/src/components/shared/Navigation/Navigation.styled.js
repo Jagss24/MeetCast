@@ -6,7 +6,7 @@ export const NavigationContainer = styled.div`
   align-items: center;
   padding: 0.5rem 1rem;
   height: 3.75rem;
-  background-color: #131313;
+  background: var(--navbar-color);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   .logo_wrapper {
     display: flex;

@@ -83,10 +83,10 @@ const Meet = ({ roomId, user, roomTopic }) => {
             <VideoAndChatContainer fullScreen={chat || showParticipants}>
                 <OptionsContainer>
                     <EachOption onClick={() => openChatorParitciPant("chat")}>
-                        <MdOutlineMessage size={"70%"} color={chat ? "#20bd5f" : "#fff"} />
+                        <MdOutlineMessage size={"70%"} style={{ color: chat ? "#B0B0B0" : "var(--button-color)" }} />
                     </EachOption>
                     <EachOption onClick={() => openChatorParitciPant("showParticipants")}>
-                        <FaUsers size={"70%"} color={showParticipants ? "#20bd5f" : "#fff"} />
+                        <FaUsers size={"70%"} style={{ color: showParticipants ? "#B0B0B0" : "var(--button-color)" }} />
                     </EachOption>
                 </OptionsContainer>
                 <VideoContainer>

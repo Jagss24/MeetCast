@@ -47,26 +47,26 @@ export const Buttons = styled.button.withConfig({
   justify-content: center;
   align-items: center;
   gap: 0.3rem;
-  background-color: ${(props) =>
-    props.active ? "rgba(32, 189, 95, 0.2)" : "rgba(131, 130, 130, 0.2)"};
+  border: ${(props) => {
+    return props.active ? "none" : "1px solid var(--border-color)";
+  }};
+  background-color: ${(props) => {
+    return props.active ? "var(--button-color)" : "var(--primary-color)";
+  }};
 
   span {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: ${(props) => (props.active ? "#20bd5f" : "#fff")};
-    font-weight: 600;
+    color: ${(props) =>
+      props.active ? "var(--text-color)" : "var(--button-color)"};
     line-height: 1.375rem;
     white-space: nowrap;
   }
   border-radius: 1.25rem;
   padding: 0.625rem 0.875rem;
   cursor: pointer;
-  border: none;
   outline: none;
-  &:hover {
-    opacity: 0.9;
-  }
   .hide {
     ${MAX.md} {
       display: none;

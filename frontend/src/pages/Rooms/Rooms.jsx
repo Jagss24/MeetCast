@@ -100,11 +100,11 @@ const Rooms = () => {
                                 options={topicOptions}
                                 placeholder="Topics"
                                 styles={{
-                                    control: (provided, state) => ({
+                                    control: (provided) => ({
                                         ...provided,
-                                        background: "rgba(131, 130, 130, 0.2)",
+                                        background: "var(--primary-color)",
                                         borderRadius: "22px",
-                                        border: "none",
+                                        border: "1px solid var(--border-color)",
                                         outline: "none",
                                         cursor: "pointer",
                                         width: "10rem",
@@ -122,16 +122,17 @@ const Rooms = () => {
                                     }),
                                     valueContainer: (provided, state) => ({
                                         ...provided,
-                                        color: "#20bd5f"
+                                        color: "#fff"
                                     }),
                                     singleValue: (provided, state) => ({
                                         ...provided,
-                                        color: "#20bd5f"
+                                        color: "#fff"
                                     }),
                                     menu: (provided) => ({
                                         ...provided,
                                         cursor: "pointer",
-                                        background: "#000000",
+                                        background: "var(--primary-color)",
+                                        border: "1px solid var(--border-color)",
                                         width: "100%",
                                         "@media (max-width: 768px)": {
                                             width: "10rem"
@@ -139,7 +140,7 @@ const Rooms = () => {
                                     }),
                                     option: (provided, state) => ({
                                         ...provided,
-                                        color: '#20bd5f',
+                                        color: "#fff",
                                         backgroundColor: state.isFocused ? "#353535" : "",
                                         cursor: "pointer",
                                         "&:hover": {
@@ -158,7 +159,7 @@ const Rooms = () => {
                         </TopicDiv>
                     </FirstChild>
                     <Buttons onClick={() => setShowModal(true)} active={true}>
-                        <MdVoiceChat color='rgb(32, 189, 95)' size={18} />
+                        <MdVoiceChat size={18} />
                         <span className='hide'>Start a room</span>
                     </Buttons>
                 </RoomNav>

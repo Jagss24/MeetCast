@@ -14,7 +14,6 @@ export const CardStyled = styled.div`
   justify-content: center;
   align-items: center;
   gap: 1.25rem;
-  background-color: #1d1d1d;
   border-radius: 1.25rem;
   padding: 2.5rem 0;
   flex-direction: column;
@@ -56,15 +55,15 @@ export const HeadingLogo = styled.span`
 export const ButtonWrapper = styled.button`
   display: flex;
   align-items: center;
-  background-color: #20bd5f;
-  color: #fff;
+  background-color: var(--button-color);
+  color: var(--text-color);
   font-size: 1rem;
   font-weight: normal;
   cursor: pointer;
   outline: none;
   border: none;
   padding: 0.5rem 1rem;
-  border-radius: 1.3rem;
+  border-radius: 0.5rem;
   margin-bottom: 0.625rem;
   &:disabled {
     opacity: 0.5;

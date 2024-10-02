@@ -21,8 +21,7 @@ export const StartRoomBody = styled.div`
   align-items: center;
   width: 50%;
   max-width: 500px;
-  background: #000000;
-  box-shadow: 4px 4px 6.5px 0px #20bd5f33;
+  background: var(--primary-color);
   border-radius: 1.25rem;
   position: relative;
   & > span {
@@ -102,12 +101,15 @@ export const StartRoomFooter = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #20bd5f;
+    background: var(--button-color);
     border: none;
     outline: none;
-    border-radius: 1.375rem;
+    border-radius: 0.5rem;
     padding: 0.625rem 0.875rem;
     cursor: pointer;
+    &:hover {
+      opacity: 0.9;
+    }
   }
 `;
 
@@ -131,8 +133,8 @@ export const RoomType = styled.div.withConfig({
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  background-color: ${(prop) => (prop.roomType ? "#20BD5F33" : "")};
-  color: ${(prop) => (prop.roomType ? "#20BD5F" : "")};
+  background-color: ${(prop) => (prop.roomType ? "var(--navbar-color)" : "")};
+  color: ${(prop) => (prop.roomType ? "var(--button-color)" : "")};
   width: 100px;
   padding: 0.625rem;
   border-radius: 0.75rem;
@@ -141,7 +143,7 @@ export const RoomType = styled.div.withConfig({
     width: 50px;
   }
   &:hover {
-    background-color: #20bd5f33;
+    background-color: var(--navbar-color);
   }
 `;
 
@@ -172,10 +174,11 @@ export const AccessibilityType = styled.div.withConfig({
   display: flex;
   justify-content: center;
   align-items: center;
-  background: ${(props) => (props?.accessibility ? "#20bd5f33" : "none")};
-  color: ${(props) => (props?.accessibility ? "#fff" : "#20bd5f")};
+  background: ${(props) =>
+    props?.accessibility ? "var(--navbar-color)" : "none"};
+  color: var(--button-color);
   font-weight: 600;
-  border: 1px solid #00ff6675;
+  border: 1px solid var(--border-color);
   padding: 0.5rem 0.75rem;
   border-radius: 1.375rem;
   cursor: pointer;
