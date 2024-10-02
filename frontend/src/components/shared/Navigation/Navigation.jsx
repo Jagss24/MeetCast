@@ -12,7 +12,8 @@ import { ImPodcast } from "react-icons/im";
 
 
 const Navigation = () => {
-    const [{ user }, { isNavBarVisible }] = useSelector(state => [state.user, state.utility])
+    const { user } = useSelector(state => state.user)
+    const { isNavBarVisible } = useSelector(state => state.utility)
     const dispatch = useDispatch();
     const navigate = useNavigate()
     const { refetch: logoutRefetch } = useQuery({
@@ -43,7 +44,7 @@ const Navigation = () => {
 
             {user?.userName && <UserComponent >
                 <div onClick={() => navigate(`/profile/${user?.userName}`)}>
-                    {user?.avatar ? <img src={user?.avatar} alt="user_pic" /> : <DummyImage
+                    {user?.avatar ? <img src={user?.avatar} alt="user_pic" referrerPolicy='no-referrer' /> : <DummyImage
                         width={40} height={40}
                         userName={user?.userName?.charAt(0).toUpperCase()} />}
                 </div>

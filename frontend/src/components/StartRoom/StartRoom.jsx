@@ -322,7 +322,7 @@ const Option = (props) => {
     return (
         <components.Option {...props}>
             <OptionOuterStyled>
-                {props?.data?.avatar ? <img src={props.data.avatar} alt="" style={{ width: '30px', height: '30px', borderRadius: '50%' }} /> : <DummyImage height={30} width={30} userName={props?.data?.label?.charAt(0)} />}
+                {props?.data?.avatar ? <img src={props.data.avatar} alt="" style={{ width: '30px', height: '30px', borderRadius: '50%' }} referrerPolicy='no-referrer' /> : <DummyImage height={30} width={30} userName={props?.data?.label?.charAt(0)} />}
                 <span>
                     <span>{props.data.label}</span>
                     <p style={{ fontSize: '12px', color: 'gray' }}>@{props.data.userName}</p>

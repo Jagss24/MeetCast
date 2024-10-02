@@ -23,18 +23,18 @@ const RoomCard = ({ room }) => {
                     : room?.description}</About>
                 <SpeakerContainers >
                     <HostContainer>
-                        {room?.ownerId?.avatar ? <img src={room?.ownerId?.avatar} alt='host_pic' />
+                        {room?.ownerId?.avatar ? <img src={room?.ownerId?.avatar} alt='host_pic' referrerPolicy='no-referrer' />
                             : <DummyImage userName={room?.ownerId?.fullName.charAt(0).toUpperCase()} />}
                         <span>{room?.ownerId?.fullName} <br /> (Host)</span>
                     </HostContainer>
                     <SpeakersAvatar randomcolors={borderColors[Math.floor(Math.random() * 4)]} speakerLength={room?.speakers.length}>
                         {room?.speakers?.length <= 2 ?
                             room?.speakers.map((speaker, index) => speaker?.avatar
-                                ? <img key={index} src={speaker?.avatar} alt={"profile"} />
+                                ? <img key={index} src={speaker?.avatar} alt="profile" referrerPolicy='no-referrer' />
                                 : <DummyImage key={index} userName={speaker?.fullName?.charAt(0).toUpperCase()} />) :
                             room?.speakers.filter(speaker => speaker?._id !== room?.ownerId?._id).slice(0, 2).map((speaker, index) =>
                                 speaker?.avatar
-                                    ? <img key={index} src={speaker?.avatar} alt={"profile"} />
+                                    ? <img key={index} src={speaker?.avatar} alt="profile" referrerPolicy='no-referrer' />
                                     : <DummyImage key={index} userName={speaker?.fullName?.charAt(0).toUpperCase()} />)}
                     </SpeakersAvatar>
                 </SpeakerContainers>

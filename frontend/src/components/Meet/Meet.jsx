@@ -56,7 +56,7 @@ const Meet = ({ roomId, user, roomTopic }) => {
         toast.custom(() => <UserToast>
             <div>
                 {remoteUser?.avatar
-                    ? <img src={remoteUser?.avatar} alt="user_pic" />
+                    ? <img src={remoteUser?.avatar} alt="user_pic" referrerPolicy='no-referrer' />
                     : <DummyImage width={40} height={40}
                         userName={remoteUser?.fullName?.charAt(0)} fontSize={1.1} />}
             </div>
@@ -104,6 +104,7 @@ const Meet = ({ roomId, user, roomTopic }) => {
                                         <img
                                             src={client.avatar}
                                             alt={`${client.fullName}'s avatar`}
+                                            referrerPolicy='no-referrer'
                                         /> : <DummyImage userName={client?.fullName?.charAt(0).toUpperCase()} width={90} height={90} />}
                                 </AvtarContainer>
                             )}
@@ -148,7 +149,7 @@ const Meet = ({ roomId, user, roomTopic }) => {
                         <h5>In meet</h5>
                         <ClientNameContainer>
                             {clients?.map(client => <div>
-                                {client?.avatar ? <img src={client?.avatar} alt="user_pic" /> : <DummyImage userName={client?.fullName?.charAt(0).toUpperCase()} width={30} height={30} />}
+                                {client?.avatar ? <img src={client?.avatar} alt="user_pic" referrerPolicy='no-referrer' /> : <DummyImage userName={client?.fullName?.charAt(0).toUpperCase()} width={30} height={30} />}
                                 <p>{client?.fullName}</p>
                             </div>)}
                         </ClientNameContainer>
@@ -186,7 +187,7 @@ const Meet = ({ roomId, user, roomTopic }) => {
                         <h5>In meet</h5>
                         <ClientNameContainer>
                             {clients?.map(client => <div>
-                                {client?.avatar ? <img src={client?.avatar} alt="user_pic" /> : <DummyImage userName={client?.fullName?.charAt(0).toUpperCase()} width={30} height={30} />}
+                                {client?.avatar ? <img src={client?.avatar} alt="user_pic" referrerPolicy='no-referrer' /> : <DummyImage userName={client?.fullName?.charAt(0).toUpperCase()} width={30} height={30} />}
                                 <p>{client?.fullName}</p>
                             </div>)}
                         </ClientNameContainer>

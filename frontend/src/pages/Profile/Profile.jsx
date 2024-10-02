@@ -141,7 +141,7 @@ const Profile = ({ user }) => {
             </CoverContainer>
             <ProfileContainer>
                 <ImageContainer>
-                    {pics?.avatar ? <img src={pics?.avatar} alt="user-pic" /> : <DummyImage userName={userInfo?.fullName?.charAt(0)} width={160} height={160} fontSize={2.5} />}
+                    {pics?.avatar ? <img src={pics?.avatar} alt="user-pic" referrerPolicy='no-referrer' /> : <DummyImage userName={userInfo?.fullName?.charAt(0)} width={160} height={160} fontSize={2.5} />}
                     {user?.id === userInfo?.id && <>
                         <label htmlFor='avatar_picker'>
                             <IoCameraOutline size={"100%"} />

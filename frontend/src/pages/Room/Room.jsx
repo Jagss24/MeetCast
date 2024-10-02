@@ -135,6 +135,7 @@ const Room = () => {
                                                 <img
                                                     src={speaker.avatar}
                                                     alt={`${speaker.fullName}'s avatar`}
+                                                    referrerPolicy='no-referrer'
                                                 /> : <DummyImage userName={speaker?.fullName?.charAt(0).toUpperCase()} width={50} height={50} />}
 
                                             <p>{speaker?.fullName}</p>
@@ -155,6 +156,7 @@ const Room = () => {
                                                 <img
                                                     src={eachUser.avatar}
                                                     alt={`${eachUser.fullName}'s avatar`}
+                                                    referrerPolicy='no-referrer'
                                                 /> : <DummyImage userName={eachUser?.fullName?.charAt(0).toUpperCase()} width={50} height={50} />}
 
                                             <p>{eachUser?.fullName}</p>
