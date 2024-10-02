@@ -14,10 +14,12 @@ export const useStateWithCallback = (initialState) => {
   );
 
   useEffect(() => {
-    if (cbRef.current) {
-      cbRef.current(state);
-      cbRef.current = null;
-    }
+    setTimeout(() => {
+      if (cbRef.current) {
+        cbRef.current(state);
+        cbRef.current = null;
+      }
+    }, 500);
   }, [state]);
 
   return [state, updateState];
