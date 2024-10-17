@@ -207,6 +207,10 @@ const Meet = ({ roomId, user, roomTopic }) => {
                     {screenIsSharing ? <button onClick={() => {
                         stopScreenSharing(setscreenIsSharing)
                     }}><span><MdOutlineStopScreenShare size={20} /></span></button> : <button onClick={() => {
+                        if (clients?.length === 1) {
+                            toast("Cannot share screen when only one participant is present")
+                            return
+                        }
                         startScreenSharing(setscreenIsSharing)
 
                     }}><span><MdOutlineScreenShare size={20} /></span></button>}

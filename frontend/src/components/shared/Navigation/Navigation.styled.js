@@ -5,7 +5,6 @@ export const NavigationContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 1rem;
-  height: 3.75rem;
   background: var(--navbar-color);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
   .logo_wrapper {

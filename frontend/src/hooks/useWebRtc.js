@@ -180,9 +180,16 @@ export const useWebRTC = ({ roomId, user, showToastFunc = () => {} }) => {
         }
         setscreenIsSharing(true);
         // on stop sharing
-        screenTrack.onended = function () {
-          stopScreenSharing();
-        };
+        screenShareStream.current.addEventListener(
+          "ended",
+          () => stopScreenSharing(setscreenIsSharing),
+          false
+        );
+        screenShareStream.current.addEventListener(
+          "inactive",
+          () => stopScreenSharing(setscreenIsSharing),
+          false
+        );
       } catch (error) {
         toast("Some error occured while sharing screen");
         setscreenIsSharing(false);
@@ -190,6 +197,9 @@ export const useWebRTC = ({ roomId, user, showToastFunc = () => {} }) => {
     }
 
     const stopScreenSharing = (setscreenIsSharing) => {
+      // Stop the screen-sharing tracks to close the browser's stop popup
+      screenShareStream.current.getTracks().forEach((track) => track.stop());
+
       // Replace your video Track with the screen track.
       senders.current
         .find((sender) => sender.track.kind === "video")
