@@ -21,13 +21,22 @@ function App({ isAuth, user }) {
         <Router>
           <Navigation />
           <Routes>
-            {/* Public Routes */}
             <Route path="/" element={<HomePage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/login" element={<LoginPage />} />
+            {/* Restricted Route for UnAuthenticated Users */}
+            <Route path="/register" element={
+              <PrivateRoute isAuth={isAuth} isActivated={user.activated} route="/register">
+                <RegisterPage />
+              </PrivateRoute>} />
+            <Route path="/login" element={
+              <PrivateRoute isAuth={isAuth} isActivated={user.activated} route="/login">
+                <LoginPage />
+              </PrivateRoute>} />
 
             {/* Restricted Route for Non-Activated Users */}
-            <Route path="/activate" element={!isAuth ? <Navigate to="/login" /> : !user.activated ? <ActivationPage /> : <Navigate to="/rooms" />} />
+            <Route path="/activate" element={
+              <PrivateRoute isAuth={isAuth} isActivated={user.activated} route="/activate">
+                <ActivationPage />
+              </PrivateRoute>} />
 
             {/* Private Routes for Authenticated and Activated Users */}
             <Route path="/rooms" element={
@@ -64,15 +73,36 @@ export default App;
 // Component for routes where only authenticated users can access
 
 //But in this they are authenticated but are non-activated they will thrown to activate page
-const PrivateRoute = ({ isAuth, isActivated, children }) => {
+const PrivateRoute = ({ isAuth, isActivated, children, route }) => {
   if (!isAuth) {
-    return <Navigate to="/login" />;
+    // User is not authenticated
+    if (route === "/login" || route === "/register") {
+      return children; // Allow access to login and register
+    }
+    return <Navigate to="/login" />; // Redirect all other routes to login
   }
 
   if (isAuth && !isActivated) {
-    return <Navigate to="/activate" />;
+    // User is authenticated but not activated
+    if (route === "/activate") {
+      return children; // Allow access to activation page
+    }
+    return <Navigate to="/activate" />; // Redirect all other routes to activation page
+  }
+
+  if (isAuth && isActivated) {
+    // User is authenticated and activated
+    if (route === "/login" || route === "/register" || route === "/activate") {
+      return <Navigate to="/rooms" />; // Redirect to rooms if trying to access login, register, or activate
+    }
+    return children; // Allow access to all other routes
   }
 
   return children;
 };
+
+
+const PublicRoute = () => {
+  return children
+}
 

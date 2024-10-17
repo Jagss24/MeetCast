@@ -71,9 +71,7 @@ export const authenticateOtpEmail = async (req, res) => {
             .json({ message: "There's some error in sending mail" });
         }
       } else {
-        return res
-          .status(200)
-          .json({ hash: `${hash}.${expires}`, otp, emailId });
+        return res.status(200).json({ hash: `${hash}.${expires}`, emailId });
       }
     });
   } catch (err) {
