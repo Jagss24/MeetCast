@@ -32,7 +32,7 @@ app.use(express.json({ limit: "5mb" }));
 app.use("/authenticate", authenticate);
 app.use("/rooms", rooms);
 app.get("/", (req, res) => {
-  res.send("Hello");
+  res.send("Hello in MeetCast");
 });
 
 // Sockets
