@@ -5,7 +5,7 @@ export const socketInit = () => {
     "force new connection": true,
     reconnectionAttempt: "Infinity",
     timeout: 10000,
-    transport: ["websocket"],
+    transports: ["websocket"],
   };
 
   return io(import.meta.env.VITE_BACKEND_URL, options);
