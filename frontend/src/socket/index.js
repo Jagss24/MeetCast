@@ -6,6 +6,7 @@ export const socketInit = () => {
     reconnectionAttempt: "Infinity",
     timeout: 10000,
     transports: ["websocket"],
+    path: "/socket.io",
   };
 
   return io(import.meta.env.VITE_BACKEND_URL, options);
