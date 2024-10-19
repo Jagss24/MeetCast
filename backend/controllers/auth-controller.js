@@ -123,10 +123,14 @@ export const verifyOtpEmail = async (req, res) => {
   res.cookie("refreshtoken", refereshToken, {
     maxAge: 1000 * 60 * 60 * 24 * 30,
     httpOnly: true,
+    secure: true,
+    sameSite: "None",
   });
   res.cookie("accesstoken", accessToken, {
     maxAge: 1000 * 60 * 60 * 24 * 30,
     httpOnly: true,
+    secure: true,
+    sameSite: "None",
   });
   const userData = await userDto(user);
   res.json({ userData, auth: true });
@@ -178,6 +182,8 @@ export const activateUser = async (req, res) => {
         expires: new Date(0),
         httpOnly: true,
         path: "/",
+        secure: true,
+        sameSite: "None",
       });
       res.status(200).json({ userData });
     } else {
@@ -230,6 +236,8 @@ export const loginUser = async (req, res) => {
       res.cookie("refreshtoken", refreshToken, {
         maxAge: 1000 * 60 * 60 * 24 * 30,
         httpOnly: true,
+        secure: true,
+        sameSite: "None",
       });
     }
     res.status(200).json({ userDtos });
@@ -248,6 +256,8 @@ export const logoutFunctionality = async (req, res) => {
     expires: new Date(0),
     httpOnly: true,
     path: "/",
+    secure: true,
+    sameSite: "None",
   });
   res.status(200).json({ message: "User Logged out" });
 };
@@ -291,6 +301,8 @@ export const googleLogin = async (req, res) => {
         res.cookie("refreshtoken", refreshToken, {
           maxAge: 1000 * 60 * 60 * 24 * 30,
           httpOnly: true,
+          secure: true,
+          sameSite: "None",
         });
       }
       res.status(200).json({ userDtos });
@@ -323,10 +335,14 @@ export const googleLogin = async (req, res) => {
       res.cookie("refreshtoken", refereshToken, {
         maxAge: 1000 * 60 * 60 * 24 * 30,
         httpOnly: true,
+        secure: true,
+        sameSite: "None",
       });
       res.cookie("accesstoken", accessToken, {
         maxAge: 1000 * 60 * 60 * 24 * 30,
         httpOnly: true,
+        secure: true,
+        sameSite: "None",
       });
       const userData = await userDto(user);
       res.status(200).json({ userData, auth: true });
