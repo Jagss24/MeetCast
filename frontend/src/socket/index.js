@@ -9,5 +9,5 @@ export const socketInit = () => {
     path: "/api/socket",
   };
 
-  return io(import.meta.env.VITE_BACKEND_URL, options);
+  return io(import.meta.env.VITE_BACKEND_URL, { path: "/api/socket" });
 };
