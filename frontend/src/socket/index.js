@@ -9,5 +9,10 @@ export const socketInit = () => {
     path: "/api/socket",
   };
 
-  return io(import.meta.env.VITE_BACKEND_URL, { path: "/api/socket" });
+  return io(import.meta.env.VITE_BACKEND_URL, {
+    "force new connection": true,
+    reconnectionAttempt: "Infinity",
+    timeout: 10000,
+    path: "/api/socket",
+  });
 };
