@@ -20,7 +20,7 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
     credentials: true,
   },
-  path: "/socket.io",
+  path: "/api/socket",
 });
 
 app.use(cookieParser());
