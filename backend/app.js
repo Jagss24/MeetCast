@@ -15,6 +15,9 @@ import { ACTIONS } from "./actions.js";
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
   path: "/api/socket",
 });
 
