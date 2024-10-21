@@ -13,7 +13,6 @@ export const RoomCardContainer = styled.div.withConfig({
   align-items: center;
   gap: 1.25rem;
   flex-wrap: wrap;
-  margin: 0 1.875rem;
   margin-top: 1rem;
   padding: ${(props) => (props.isProfile ? "0px" : "0 5rem")};
   ${MAX.md} {

@@ -106,6 +106,9 @@ const HomeWrapper = styled.div`
             span{
                 font-size: 2.5rem;
                 font-weight: 600;
+                @media (max-width: 768px){
+                    font-size: 2rem;
+                }
             }
         }
     }
@@ -115,6 +118,12 @@ const HomeWrapper = styled.div`
         font-weight: 600;
         p{
             font-size: 2rem;
+             @media (max-width: 768px){
+                    font-size: 1.5rem;
+                }
+        }
+        @media (max-width: 768px){
+            width: 90%;
         }
     }
     .about{
@@ -122,6 +131,12 @@ const HomeWrapper = styled.div`
         width: 60%;
         p{
             font-size: 1.75rem;
+             @media (max-width: 768px){
+                    font-size: 1rem;
+                }
+        }
+        @media (max-width: 768px){
+            width: 90%;
         }
     }
     button{
