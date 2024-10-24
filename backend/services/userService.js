@@ -25,6 +25,7 @@ export const userDto = async (fields) => {
     avatar,
     signedUpwithGoogle,
     coverPhoto,
+    about,
   } = fields;
   return {
     id: _id,
@@ -35,6 +36,7 @@ export const userDto = async (fields) => {
     avatar,
     signedUpwithGoogle,
     coverPhoto,
+    about,
   };
 };
 export const searchUser = async (searchText) => {
@@ -48,10 +50,15 @@ export const searchUser = async (searchText) => {
 };
 
 export const photoUpdation = async (req, res) => {
-  const { userId, photo, type } = req.body;
+  const { userId, photo, type, about } = req.body;
   const user = await User.findById(userId);
   try {
     if (user) {
+      if (about) {
+        user.about = about;
+        await user.save();
+        return res.status(200).json({ message: "About updated succesfully" });
+      }
       if (type === "Cover Photo") {
         user.coverPhoto = photo;
         await user.save();

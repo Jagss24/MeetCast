@@ -30,6 +30,9 @@ const userSchema = new mongoose.Schema(
     coverPhoto: {
       type: String,
     },
+    about: {
+      type: String,
+    },
   },
   {
     timestamps: true,
