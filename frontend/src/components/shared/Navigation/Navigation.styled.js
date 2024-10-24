@@ -44,8 +44,10 @@ export const InputWrapper = styled.div`
 export const UserComponent = styled.div`
   display: flex;
   justify-content: center;
+  flex-direction: column;
   align-items: center;
   gap: 10px;
+  position: relative;
   div {
     cursor: pointer;
   }
@@ -54,5 +56,26 @@ export const UserComponent = styled.div`
     height: 50px;
     border-radius: 50%;
     cursor: pointer;
+  }
+  .user-modal {
+    position: absolute;
+    top: 100%;
+    right: 0%;
+    z-index: 10;
+    background-color: var(--navbar-color);
+    width: 150px;
+    display: none;
+
+    &.open {
+      display: block;
+    }
+    & > p {
+      padding: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
   }
 `;

@@ -9,6 +9,8 @@ import DummyImage from "../../DummyImage"
 import { useLocation } from 'react-router-dom'
 import { setIsNavbarVisible } from '../../../slices/utilitySlice.js'
 import { ImPodcast } from "react-icons/im";
+import { FaUserCircle } from "react-icons/fa";
+import { IoLogOutOutline } from "react-icons/io5";
 
 
 const Navigation = () => {
@@ -16,14 +18,14 @@ const Navigation = () => {
     const { isNavBarVisible } = useSelector(state => state.utility)
     const dispatch = useDispatch();
     const navigate = useNavigate()
-    const { refetch: logoutRefetch } = useQuery({
+    const { refetch: logoutRefetch, isSuccess, data } = useQuery({
         queryKey: ["user-logout"],
         queryFn: () => logout(),
         enabled: false
     })
     const handleLogout = () => {
         logoutRefetch()
-        navigate("/")
+        window.location.reload()
     }
     const location = useLocation()
     useEffect(() => {
@@ -33,6 +35,12 @@ const Navigation = () => {
             return
         }
     }, [location.pathname])
+
+    useEffect(() => {
+        if (data?.data?.message === "User Logged out") {
+            window.location.reload()
+        }
+    }, [isSuccess])
     return (
         isNavBarVisible ? <NavigationContainer>
             <Link to="/" className="logo_wrapper" >
@@ -42,14 +50,29 @@ const Navigation = () => {
                 <span>MeetCast</span>
             </Link>
 
-            {user?.userName && <UserComponent >
-                <div onClick={() => navigate(`/profile/${user?.userName}`)}>
+            {user?.userName && <UserComponent onClick={() => {
+                const userModal = document.querySelector(".user-modal")
+                if (userModal.classList.contains("open"))
+                    userModal.classList.remove("open")
+                else {
+                    userModal.classList.add('open')
+                }
+            }}>
+                <div >
                     {user?.avatar ? <img src={user?.avatar} alt="user_pic" referrerPolicy='no-referrer' /> : <DummyImage
                         width={40} height={40}
                         userName={user?.userName?.charAt(0).toUpperCase()} />}
                 </div>
+                <div className="user-modal">
+                    {!window.location.pathname.includes("profile") && < p onClick={() => navigate(`/profile/${user?.userName}`)}>View Profile
+                        <span><FaUserCircle /></span>
+                    </p>}
+                    <p onClick={() => handleLogout()}>Logout
+                        <span><IoLogOutOutline /></span>
+                    </p>
+                </div>
             </UserComponent>}
-        </NavigationContainer> : <></>
+        </NavigationContainer > : <></>
     )
 
 }
