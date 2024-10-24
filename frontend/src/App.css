@@ -47,3 +47,8 @@ body {
   line-height: 1.5;
   font-weight: 400;
 }
+
+/* Disable tap highlight on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
