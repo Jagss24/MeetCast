@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ProfileWrapperStyled, ProfileContainer, RoomContainer, ImageContainer, UserInfoContainer, RoomTypes, RoomTypeHeading, NoRoomContainer, CoverContainer, AboutAndRoomContainer, SessionBox } from './Profile.styled'
+import { ProfileWrapperStyled, ProfileContainer, RoomContainer, ImageContainer, UserInfoContainer, RoomTypes, RoomTypeHeading, NoRoomContainer, CoverContainer, AboutAndRoomContainer, SessionBox, AboutModalStyled } from './Profile.styled'
 import { getUserRoom, getSpeakers, getUserbyUserName, photoUpdation } from '../../api/api'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useParams, useNavigate } from 'react-router-dom'
@@ -7,6 +7,8 @@ import { RoomCardContainer } from '../Rooms/Rooms.styled'
 import RoomCard from '../../components/RoomCard/RoomCard'
 import DummyImage from '../../components/DummyImage'
 import { IoChevronBackSharp, IoCameraOutline, IoTimer } from "react-icons/io5";
+import { GoPencil } from "react-icons/go";
+import { MdCancel } from "react-icons/md";
 import { LoadingContainer } from '../Room/Room.styled'
 import { ThreeDots } from 'react-loading-icons'
 import toast from 'react-hot-toast'
@@ -157,7 +159,17 @@ const Profile = ({ user }) => {
             <AboutAndRoomContainer>
                 <div className='aboutContainer'>
                     <h4>About Me</h4>
-                    <p>Hi, I’m Jagannath! I'm a music enthusiast, tech geek, avid gamer. Here to connect, share, and enjoy meaningful conversations.</p>
+                    <div>
+                        {userInfo?.about && <p>{userInfo?.about}</p>}
+                        {!userInfo?.about && <p>Write something about yourself</p>}
+                        <span onClick={() => {
+                            const modal = document.querySelector(".about-modal")
+                            modal.classList.add("open")
+                            document.body.style.overflow = "hidden"
+                        }}>
+                            <GoPencil />
+                        </span>
+                    </div>
                     <div className='sessions'>
                         <SessionBox>
                             <span>
@@ -199,6 +211,42 @@ const Profile = ({ user }) => {
                     </RoomCardContainer>
                 </RoomContainer>
             </AboutAndRoomContainer>
+            <AboutModalStyled className='about-modal'>
+
+                <div
+                    onInput={(e) => {
+                        const { target } = e
+                        if (target.type === "text" && target.placeholder === "Write something about yourself")
+                            if (target.value.length === 200) {
+                                alert('Max length is 200');
+                            }
+                    }}
+
+                    onClick={(e) => {
+                        const { target } = e
+                        if (target.tagName === "BUTTON" && target.dataset.action === "update") {
+                            const aboutInput = e.currentTarget.querySelector('input[data-type="about"]');
+                            if (!aboutInput.value.length) {
+                                toast("Please write something about your self")
+                            } else {
+                                mutate({ userId: user?.id, about: aboutInput.value });
+                            }
+                        }
+                    }
+                    }
+
+                >
+                    <h4>About Me</h4>
+
+                    <input type='text' data-type="about" defaultValue={userInfo?.about} placeholder='Write something about yourself' maxLength={200} />
+                    <button data-action="update">Update</button>
+                    <span onClick={() => {
+                        const modal = document.querySelector(".about-modal")
+                        modal.classList.remove("open")
+                        document.body.style.overflow = "unset";
+                    }}><MdCancel fontSize={18} /></span>
+                </div>
+            </AboutModalStyled>
         </ProfileWrapperStyled >
     )
 }

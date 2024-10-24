@@ -83,8 +83,24 @@ export const AboutAndRoomContainer = styled.div`
   padding: 0 3rem;
   .aboutContainer {
     width: 20%;
-    & > p {
+    & > div > span {
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+    & > div {
+      display: flex;
+      align-items: center;
       margin-top: 0.9rem;
+      gap: 0.5rem;
+    }
+    & > div > p > span {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     .sessions {
       margin-top: 1.25rem;
@@ -177,5 +193,71 @@ export const CoverContainer = styled.div`
   img {
     width: 100%;
     height: 200px;
+  }
+`;
+
+export const AboutModalStyled = styled.div`
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+
+  &.open {
+    display: flex;
+  }
+  h4 {
+    font-size: 1.2rem;
+  }
+  & > div {
+    min-width: 50%;
+    position: relative;
+    @media (max-width: 768px) {
+      min-width: 90%;
+    }
+    margin: 0 auto;
+    background-color: var(--navbar-color);
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    & > span {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.5rem;
+      cursor: pointer;
+    }
+  }
+  input {
+    border: none;
+    outline: none;
+    border-bottom: 1px solid rgb(159, 0, 255);
+    background-color: transparent;
+    color: var(--button-color);
+    font-size: 0.9rem;
+  }
+
+  button {
+    background: var(--button-color);
+    outline: none;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    width: fit-content;
+    cursor: pointer;
+    &:hover {
+      opacity: 0.9;
+    }
   }
 `;
