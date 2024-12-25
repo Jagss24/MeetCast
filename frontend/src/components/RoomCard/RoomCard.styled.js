@@ -79,6 +79,7 @@ export const Topic = styled.span`
 export const About = styled.p`
   font-weight: 400;
   min-height: 3rem;
+  word-break: break-all;
   span {
     cursor: pointer;
     color: #20bd5f;

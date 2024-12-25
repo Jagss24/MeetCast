@@ -33,11 +33,18 @@ export const InputWrapper = styled.div`
   & > span {
     display: flex;
     position: absolute;
-    left: 10px; /* Position the icon inside the input */
     top: 50%;
     transform: translateY(-50%);
     color: #20bd5f;
     z-index: 3;
+    cursor: pointer;
+  }
+  & > span.icons {
+    right: 10px; /* Add some spacing from the right */
+  }
+
+  & > span:first-of-type {
+    left: 10px; /* Position for the left icon */
   }
 `;
 
