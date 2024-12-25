@@ -1,12 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, HeadingLogo, ButtonWrapper } from '../../shared/commonStyles/Card.styled'
 import { InputStyled, TermStyled } from '../StepEmail/StepEmail.styled'
-import { FaRegUser, FaRegKeyboard, FaKey } from "react-icons/fa";
+import { FaRegUser, FaRegKeyboard, FaKey, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { InputWrapper } from '../../shared/Navigation/Navigation.styled';
 
 
 const StepName = ({ setStep, data, setData, user }) => {
 
+  const [inputType, setInputType] = useState("password")
   const handleChange = e => {
     const { name, value } = e.target
     if (name === "password") {
@@ -63,7 +64,10 @@ const StepName = ({ setStep, data, setData, user }) => {
             <span>
               <FaKey />
             </span>
-            <InputStyled placeholder="Enter your password" value={data.password} name="password" onChange={handleChange} />
+            <InputStyled type={inputType} placeholder="Enter your password" value={data.password} name="password" onChange={handleChange} />
+            <span className='icons' onClick={() => setInputType(inputType === "password" ? "text" : "password")}>
+              {inputType === "password" ? <FaRegEye /> : <FaRegEyeSlash />}
+            </span>
           </InputWrapper>
           }
           <TermStyled>{user?.signedUpwithGoogle ? "Just your username and we’re all set to go!" : "Your Fullname, username & password, we’re all set to go!"}</TermStyled>

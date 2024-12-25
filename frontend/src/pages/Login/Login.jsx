@@ -11,6 +11,7 @@ import { InputWrapper } from '../../components/shared/Navigation/Navigation.styl
 import { ImPodcast } from 'react-icons/im'
 import { MdOutlineMailOutline, MdKey } from "react-icons/md";
 import { GoogleLogin } from "@react-oauth/google"
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import toast from 'react-hot-toast'
 
 const Login = () => {
@@ -18,6 +19,7 @@ const Login = () => {
     emailId: "",
     password: ""
   })
+  const [inputType, setInputType] = useState("password")
   const [cred, setCred] = useState("")
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -113,7 +115,10 @@ const Login = () => {
           <span>
             <MdKey />
           </span>
-          <InputStyled placeholder="Enter your password" value={data.password} name="password" onChange={handleChange} />
+          <InputStyled type={inputType} placeholder="Enter your password" value={data.password} name="password" onChange={handleChange} />
+          <span className='icons' onClick={() => setInputType(inputType === "password" ? "text" : "password")}>
+            {inputType === "password" ? <FaRegEye /> : <FaRegEyeSlash />}
+          </span>
         </InputWrapper>
         <TermStyled>Don't have an account? <Link to="/register" style={{ color: "rgb(0, 119, 255)", textDecoration: "none" }}>Create one</Link></TermStyled>
         <ButtonWrapper disabled={isFetching} onClick={handleLogin}>

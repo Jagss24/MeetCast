@@ -3,22 +3,27 @@ import { MainStyled, CardStyled, HeadingWrapper, HeadingLogo, HeadingStyled, But
 import { TermStyled } from '../StepEmail/StepEmail.styled'
 import { ImgInput, UploadText, ImageWrapper, ErrorStyled, Buttons, SkipStyled, GoBackStyled } from './StepAvatar.styled'
 import { CgProfile } from "react-icons/cg";
+import toast from 'react-hot-toast';
 
-const StepAvatar = ({ setStep, data, user, setData, activateUser }) => {
+const StepAvatar = ({ setStep, data, setData, activateUser }) => {
     const [wrongImgType, setWrongImgType] = useState(false)
 
     const uploadImage = (e) => {
         const file = e.target.files[0]
-        if (file?.type === "image/png" || file?.type === "image/jpeg") {
+        if ((file?.type === "image/png" || file?.type === "image/jpeg") && file?.size <= 5 * 1024 * 1024) {
             setWrongImgType(false)
             const reader = new FileReader();
             reader.onloadend = () => {
-                setData({ img: reader.result })
+                setData((prev) => ({ ...prev, img: reader.result }))
             }
             reader.readAsDataURL(file)
         }
-        else {
+        else if (file?.type !== "image/png" && file?.type !== "image/jpeg") {
             setWrongImgType(true)
+        }
+        else if (file?.size > 5 * 1024 * 1024) {
+            setWrongImgType(false)
+            toast("File size should not exceed 5MB.");
         }
     }
 

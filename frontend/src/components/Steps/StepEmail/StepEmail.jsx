@@ -19,23 +19,23 @@ const StepEmail = ({ setStep }) => {
     const queryClient = useQueryClient()
     const [email, setEmail] = useState("")
     const [cred, setCred] = useState("")
-    const handleEmailSubmission = () => {
-        mutate({
-            emailId: email
-        })
-    }
 
-    const { data, mutate, isPending, isSuccess } = useMutation({
+    const { mutateAsync, isPending } = useMutation({
         mutationKey: ["send-otp"],
         mutationFn: sendOtp,
     })
-
-    useEffect(() => {
-        if (isSuccess) {
-            dispatch(setOtp({ emailId: data?.data.emailId, hash: data?.data.hash }))
+    const handleEmailSubmission = async () => {
+        const { data } = await mutateAsync({
+            emailId: email
+        })
+        if (data?.message) {
+            toast(data?.message)
+            return
+        } else if (data?.emailId) {
+            dispatch(setOtp({ emailId: data?.emailId, hash: data?.hash }))
             setStep(2)
         }
-    }, [isSuccess])
+    }
 
     const { data: googleData, refetch: gooleRefetch } = useQuery({
         queryKey: ["signup-user-google"],
@@ -55,7 +55,7 @@ const StepEmail = ({ setStep }) => {
         if (googleData?.data?.userData) {
             dispatch(setUser(googleData?.data?.userData))
             navigate("/activate")
-        } else if (googleData?.data?.message === "EmailId is already in use") {
+        } else if (googleData?.data?.message) {
             toast(googleData?.data?.message)
         }
     }, [googleData])
