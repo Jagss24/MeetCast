@@ -55,6 +55,7 @@ export const HeadingLogo = styled.span`
 export const ButtonWrapper = styled.button`
   display: flex;
   align-items: center;
+  gap: 0.5rem;
   background-color: var(--button-color);
   color: var(--text-color);
   font-size: 1rem;

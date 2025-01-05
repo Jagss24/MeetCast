@@ -3,7 +3,6 @@ import { MainStyled, CardStyled, HeadingStyled, HeadingWrapper, HeadingLogo, But
 import { TermStyled, InputStyled } from "./StepEmail.styled"
 import { setOtp, setUser } from '../../../slices/userSlice';
 import { useDispatch } from 'react-redux';
-import { SpinningCircles } from 'react-loading-icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { sendOtp, googleAuth } from '../../../api/api';
@@ -12,6 +11,7 @@ import { MdOutlineMail } from 'react-icons/md';
 import { ImPodcast } from 'react-icons/im';
 import { GoogleLogin } from "@react-oauth/google"
 import toast from 'react-hot-toast';
+import CircularIcon from '../../CircularIcon';
 
 const StepEmail = ({ setStep }) => {
     const dispatch = useDispatch()
@@ -81,9 +81,9 @@ const StepEmail = ({ setStep }) => {
                     </span>
                     <InputStyled type="email" placeholder='yourmail@gmail.com' value={email} onChange={e => setEmail(e.target.value)} />
                 </InputWrapper>
-                <ButtonWrapper onClick={handleEmailSubmission}>
+                <ButtonWrapper onClick={handleEmailSubmission} disabled={isPending}>
                     Next
-                    {isPending && <SpinningCircles speed={2} width={16} height={16} />}
+                    {isPending && <CircularIcon width={12} height={12} color='#000' />}
 
                 </ButtonWrapper>
                 <GoogleLogin

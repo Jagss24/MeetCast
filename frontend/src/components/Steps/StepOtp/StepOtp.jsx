@@ -8,6 +8,7 @@ import { setUser } from '../../../slices/userSlice'
 import { useMutation } from '@tanstack/react-query'
 import { verifyOtp } from '../../../api/api'
 import { useNavigate } from 'react-router-dom'
+import CircularIcon from '../../CircularIcon'
 
 const StepOtp = () => {
   const [inputs, setInputs] = useState(["", "", "", ""]);
@@ -88,9 +89,9 @@ const StepOtp = () => {
             </div>
             <TermStyled>Didn't receive the code? Tap to resend</TermStyled>
           </OTPWrapper>
-          <ButtonWrapper disabled={inputs.includes("")} onClick={handleSubmit}>
+          <ButtonWrapper disabled={inputs.includes("") || isPending} onClick={handleSubmit}>
             Next
-            {isPending && <SpinningCircles speed={2} width={16} height={16} />}
+            {isPending && <CircularIcon width={12} height={12} color='#000' />}
           </ButtonWrapper>
         </CardStyled>
       </MainStyled>

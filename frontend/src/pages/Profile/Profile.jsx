@@ -170,18 +170,6 @@ const Profile = ({ user }) => {
                             <GoPencil />
                         </span>
                     </div>
-                    <div className='sessions'>
-                        <SessionBox>
-                            <span>
-                                <IoTimer size={"100%"} />
-                            </span>
-                            <div>
-                                <p>Sessions Completed</p>
-                                <span>10</span>
-                            </div>
-
-                        </SessionBox>
-                    </div>
                 </div>
 
                 <RoomContainer>

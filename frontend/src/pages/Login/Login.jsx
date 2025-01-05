@@ -4,7 +4,6 @@ import { InputStyled, TermStyled } from '../../components/Steps/StepEmail/StepEm
 import { Link, useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { loginUser, googleAuth } from '../../api/api'
-import { SpinningCircles } from 'react-loading-icons';
 import { useDispatch } from 'react-redux'
 import { setUser } from '../../slices/userSlice'
 import { InputWrapper } from '../../components/shared/Navigation/Navigation.styled'
@@ -13,6 +12,7 @@ import { MdOutlineMailOutline, MdKey } from "react-icons/md";
 import { GoogleLogin } from "@react-oauth/google"
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import toast from 'react-hot-toast'
+import CircularIcon from '../../components/CircularIcon'
 
 const Login = () => {
   const [data, setData] = useState({
@@ -123,7 +123,7 @@ const Login = () => {
         <TermStyled>Don't have an account? <Link to="/register" style={{ color: "rgb(0, 119, 255)", textDecoration: "none" }}>Create one</Link></TermStyled>
         <ButtonWrapper disabled={isFetching} onClick={handleLogin}>
           Login
-          {isFetching && <SpinningCircles speed={2} width={16} height={16} />}
+          {isFetching && <CircularIcon width={12} height={12} color="#000" />}
         </ButtonWrapper>
 
         <GoogleLogin
