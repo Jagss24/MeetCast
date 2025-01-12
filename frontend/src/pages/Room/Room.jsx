@@ -218,6 +218,8 @@ const Room = () => {
                         }}
                         roomId={roomId}
                         roomTopic={room.topic}
+                        setRoomType={setRoomType}
+
                     />
                 }
                 {
@@ -227,6 +229,7 @@ const Room = () => {
                         isSpeaker={handleIsSpeaker(user?.id)}
                         isOwner={user?.id === room?.ownerId?._id}
                         roomTopic={room?.topic}
+                        setRoomType={setRoomType}
                     />
                 }
             </RoomConatiner >
