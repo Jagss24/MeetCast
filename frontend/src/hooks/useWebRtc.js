@@ -191,7 +191,9 @@ export const useWebRTC = ({ roomId, user, showToastFunc = () => {} }) => {
           false
         );
       } catch (error) {
-        toast("Some error occured while sharing screen");
+        if (error.name !== "NotAllowedError") {
+          toast("Some error occured while sharing screen");
+        }
         setscreenIsSharing(false);
       }
     }

@@ -37,27 +37,19 @@ export const usePodCast = ({
       if (!clientIds.current.has(newClient?.id)) {
         clientIds.current.add(newClient?.id);
 
-        setClients((existingClients) => {
-          if (newClient?.isOwner) {
-            return [newClient, ...existingClients];
-          } else if (newClient?.isSpeaker) {
-            if (existingClients.length && existingClients[0]?.isOwner) {
-              return [
-                existingClients[0],
-                newClient,
-                ...existingClients.slice(1),
-              ];
-            } else {
-              return [newClient, ...existingClients];
-            }
-          } else {
-            return [...existingClients, newClient];
-          }
-        }, cb);
+        setClients((existingClients) => [...existingClients, newClient], cb);
       }
     },
     [setClients]
   );
+
+  const monitorVolume = () => {
+    if (!monitoring) return;
+
+    requestAnimationFrame(monitorVolume);
+
+    analyser.getByteFrequencyData(dataArray);
+  };
 
   const handleAudio = (userId) => {
     try {
@@ -78,7 +70,7 @@ export const usePodCast = ({
         userId,
         isAudioOn: audioTrack.enabled,
       });
-      // Update the local video element
+      // Update the local audio element
       const localElement = audioElements.current[user.id];
       if (localElement) {
         localElement.srcObject = new MediaStream([audioTrack]);
@@ -86,14 +78,6 @@ export const usePodCast = ({
     } catch (error) {
       toast("Some issue occured in starting audio");
     }
-  };
-
-  const monitorVolume = () => {
-    if (!monitoring) return;
-
-    requestAnimationFrame(monitorVolume);
-
-    analyser.getByteFrequencyData(dataArray);
   };
 
   const sendMessage = ({ userId, msgContent, userFullName, userAvatar }) => {
@@ -128,13 +112,6 @@ export const usePodCast = ({
 
       const audioTracks = localMediaStream.current.getAudioTracks()[0];
       audioTracks.enabled = false;
-
-      const source = audioContext.createMediaStreamSource(
-        localMediaStream.current
-      );
-      source.connect(analyser);
-
-      monitorVolume();
     };
 
     startCapture().then(() => {
@@ -194,21 +171,15 @@ export const usePodCast = ({
           showToastFunc({ remoteUser });
         }
         addNewClient(remoteUser, () => {
-          if (audioElements.current[remoteUser?.id]) {
-            audioElements.current[remoteUser?.id].srcObject = remoteStream;
+          const audioElement = audioElements.current[remoteUser?.id];
+          if (audioElement) {
+            audioElement.srcObject = remoteStream;
           } else {
-            //Checking again nd again on 1 sec interval till user get's the remoteStream and set it as its own stream.
-            let settled = false;
-            const interval = setInterval(() => {
-              if (audioElements.current[remoteUser?.id]) {
-                audioElements.current[remoteUser?.id].srcObject = remoteStream;
-                settled = true;
-              }
-
-              if (settled) {
-                clearInterval(interval);
-              }
-            }, 1000);
+            // If remote audio element doensn't exist create one and give the src object
+            const newAudioElement = new Audio();
+            newAudioElement.srcObject = remoteStream;
+            newAudioElement.autoplay = true;
+            audioElements.current[remoteUser?.id] = newAudioElement;
           }
         });
       };
