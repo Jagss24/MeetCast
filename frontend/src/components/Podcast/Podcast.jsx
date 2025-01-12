@@ -10,7 +10,7 @@ import { AudioConatiner, AudioElement, PodContainer, AudioAndChatContainer } fro
 import { Controls, AvtarContainer, TopicStyle, ChatContainer, OptionsContainer, EachOption, ChatInnerContainer, ChatInputContainer, ChatMessageContainer, PariticiPantContainer, PariticiPantInnerContainer, ClientNameContainer, MobileChatAndPariticipantContainer, UserToast } from '../Meet/Meet.styled';
 import { setIsNavbarVisible } from '../../slices/utilitySlice';
 import toast from 'react-hot-toast';
-const Podcast = ({ roomId, roomTopic, user, isSpeaker, isOwner }) => {
+const Podcast = ({ roomId, roomTopic, user, isSpeaker, isOwner, setRoomType }) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
@@ -186,7 +186,7 @@ const Podcast = ({ roomId, roomTopic, user, isSpeaker, isOwner }) => {
                     <button onClick={() => {
                         leaveRoom()
                         dispatch(setIsNavbarVisible(true))
-                        navigate("/rooms")
+                        setRoomType("")
                     }}><span><MdCallEnd size={20} color='red' /></span></button>
                 </div>
             </Controls >

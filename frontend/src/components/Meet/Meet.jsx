@@ -11,7 +11,7 @@ import { MeetContainer, VideoContainer, VideoElement, ClientContainer, AvtarCont
 import { setIsNavbarVisible } from '../../slices/utilitySlice';
 import toast from 'react-hot-toast';
 
-const Meet = ({ roomId, user, roomTopic }) => {
+const Meet = ({ roomId, user, roomTopic, setRoomType }) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
@@ -197,6 +197,10 @@ const Meet = ({ roomId, user, roomTopic }) => {
             <Controls>
                 <div>
                     <button onClick={() => {
+                        if (clients?.length === 1) {
+                            toast("Cannot start audio when only one participant is present")
+                            return
+                        }
                         setIsAudioOn(prev => !prev)
                         handleAudio(user?.id)
                     }}><span>{isAudioOn ? <FaMicrophone size={20} /> : <FaMicrophoneSlash size={20} />}</span></button>
@@ -217,7 +221,7 @@ const Meet = ({ roomId, user, roomTopic }) => {
                     <button onClick={() => {
                         leaveRoom()
                         dispatch(setIsNavbarVisible(true))
-                        navigate("/rooms")
+                        setRoomType("")
                     }}><span><MdCallEnd size={20} color='red' /></span></button>
                 </div>
             </Controls>
