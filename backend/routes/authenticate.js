@@ -24,7 +24,7 @@ router.get("/getUser", getUser);
 
 router.post("/activate", authMiddleWarefunc, activateUser);
 
-router.get("/login", loginUser);
+router.post("/login", loginUser);
 
 router.get("/autoReLogin", autoReLoginFunctionality);
 
@@ -32,9 +32,9 @@ router.get("/logout", logoutFunctionality);
 
 router.get("/searchUser", searchUserFunctionality);
 
-router.get("/getUserbyUserName", getUserbyUserName);
+router.get("/getUserbyUserName", authMiddleWarefunc, getUserbyUserName);
 
-router.get("/google", googleLogin);
+router.post("/google", googleLogin);
 
 router.patch("/photoUpdation", photoUpdation);
 
