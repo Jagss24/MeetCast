@@ -21,10 +21,7 @@ export const activate = (data) => api.post("authenticate/activate", data);
 
 export const autoReLogin = () => api.get("authenticate/autoReLogin");
 
-export const loginUser = (data) =>
-  api.get(
-    `authenticate/login?emailId=${data.emailId}&password=${data.password}`
-  );
+export const loginUser = (data) => api.post(`authenticate/login`, data);
 
 export const getUserbyUserName = (userName) =>
   api.get(`authenticate/getUserbyUserName?userName=${userName}`);
@@ -59,8 +56,7 @@ export const removeMemberFromRoom = (payload) =>
 export const getRoomsByTopic = (topicName) =>
   api.get(`rooms/roomsBytTopic?topic=${topicName}`);
 
-export const googleAuth = ({ cred, mode }) =>
-  api.get(`authenticate/google?cred=${cred}&mode=${mode}`);
+export const googleAuth = (data) => api.post(`authenticate/google`, data);
 
 export const photoUpdation = (data) =>
   api.patch(`authenticate/photoUpdation`, data);
