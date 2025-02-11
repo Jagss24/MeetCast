@@ -9,6 +9,7 @@ import {
 import {
   generateTokens,
   getUserToken,
+  removeRefreshToken,
   storeRefereshToken,
 } from "../services/tokenService.js";
 import Refresh from "../models/refreshModel.js";
@@ -115,7 +116,7 @@ export const verifyOtpEmail = async (req, res) => {
 
   const { accessToken, refereshToken } = generateTokens({
     id: user?._id,
-    activated: false,
+    email: emailId,
   });
 
   //Stroing refresh Token
@@ -123,19 +124,13 @@ export const verifyOtpEmail = async (req, res) => {
 
   //Sending refreshtoken in cookie & accessotken in JSON
   res.cookie("refreshtoken", refereshToken, {
-    maxAge: 1000 * 60 * 60 * 24 * 30,
-    httpOnly: true,
-    secure: true,
-    sameSite: "None",
-  });
-  res.cookie("accesstoken", accessToken, {
-    maxAge: 1000 * 60 * 60 * 24 * 30,
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days cookie will be in browser
     httpOnly: true,
     secure: true,
     sameSite: "None",
   });
   const userData = await userDto(user);
-  res.json({ userData, auth: true });
+  res.json({ userData, auth: true, accessToken });
 };
 
 export const getUser = async (req, res) => {
@@ -148,6 +143,7 @@ export const getUser = async (req, res) => {
     res.status(200).json({ message: "Not Found" });
   }
 };
+
 export const getUserbyUserName = async (req, res) => {
   const { userName } = req.query;
   const user = await findUser({ userName });
@@ -207,7 +203,9 @@ export const autoReLoginFunctionality = async (req, res) => {
         return res.status(404).json({ message: "No user Found" });
       }
       const userData = await userDto(user);
-      res.status(200).json({ userData });
+      res
+        .status(200)
+        .json({ message: "Your Session has expired. Please Login again" });
     } else {
       res
         .status(200)
@@ -218,9 +216,10 @@ export const autoReLoginFunctionality = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 export const loginUser = async (req, res) => {
   try {
-    const { emailId, password } = req.query;
+    const { emailId, password } = req.body;
     const user = await findUser({ emailId });
     if (!user) {
       return res.status(200).json({ message: "No user found" });
@@ -232,17 +231,25 @@ export const loginUser = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(200).json({ message: "Password is not correct" });
     }
-    const refreshToken = await getUserToken(user?.id);
+
+    const { accessToken, refereshToken } = generateTokens({
+      id: user?.id,
+      email: user?.emailId,
+    });
+
+    //Storing refresh Token
+    await storeRefereshToken(refereshToken, user?._id);
     const userDtos = await userDto(user);
-    if (refreshToken) {
-      res.cookie("refreshtoken", refreshToken, {
-        maxAge: 1000 * 60 * 60 * 24 * 30,
+
+    if (refereshToken) {
+      res.cookie("refreshtoken", refereshToken, {
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days this cookie will be in the browser
         httpOnly: true,
         secure: true,
         sameSite: "None",
       });
     }
-    res.status(200).json({ userDtos });
+    res.status(200).json({ userDtos, accessToken });
   } catch (error) {
     console.log(error);
     return res.status(200).json({ error });
@@ -250,18 +257,24 @@ export const loginUser = async (req, res) => {
 };
 
 export const logoutFunctionality = async (req, res) => {
-  const { refreshtoken } = req.cookies;
+  const { refreshtoken, userId } = req.cookies;
   if (!refreshtoken) {
     return res.status(400).json({ message: "No Cookies found" });
   }
-  res.cookie("refreshtoken", "", {
-    expires: new Date(0),
-    httpOnly: true,
-    path: "/",
-    secure: true,
-    sameSite: "None",
-  });
-  res.status(200).json({ message: "User Logged out" });
+
+  const isRefreshTokenRemove = await removeRefreshToken(userId);
+  if (isRefreshTokenRemove) {
+    res.cookie("refreshtoken", "", {
+      expires: new Date(0),
+      httpOnly: true,
+      path: "/",
+      secure: true,
+      sameSite: "None",
+    });
+    res.status(200).json({ message: "User Logged out" });
+  } else {
+    res.status(500).json({ message: "Some error occured while logging out" });
+  }
 };
 export const searchUserFunctionality = async (req, res) => {
   try {
@@ -288,7 +301,7 @@ export const searchUserFunctionality = async (req, res) => {
 
 export const googleLogin = async (req, res) => {
   try {
-    const { cred, mode } = req.query;
+    const { cred, mode } = req.body;
 
     const { email, name, picture } = await verifyCreds(cred);
     if (mode === "login") {
@@ -328,26 +341,20 @@ export const googleLogin = async (req, res) => {
 
       const { accessToken, refereshToken } = generateTokens({
         id: user?._id,
-        activated: false,
+        email: email,
       });
 
-      //Stroing refresh Token
+      //Storing refresh Token
       await storeRefereshToken(refereshToken, user?._id);
       //Sending refreshtoken in cookie & accessotken in JSON
       res.cookie("refreshtoken", refereshToken, {
-        maxAge: 1000 * 60 * 60 * 24 * 30,
-        httpOnly: true,
-        secure: true,
-        sameSite: "None",
-      });
-      res.cookie("accesstoken", accessToken, {
-        maxAge: 1000 * 60 * 60 * 24 * 30,
+        maxAge: 1000 * 60 * 60 * 24 * 7, // Store for 7 days
         httpOnly: true,
         secure: true,
         sameSite: "None",
       });
       const userData = await userDto(user);
-      res.status(200).json({ userData, auth: true });
+      res.status(200).json({ userData, auth: true, accessToken });
     }
   } catch (error) {
     console.log("Error occured", error);
