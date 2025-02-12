@@ -1,35 +1,35 @@
-import { generateOtp, hashOtp } from "../services/otpServices.js";
+import { generateOtp, hashOtp } from '../services/otpServices.js';
 import {
   creatUser,
   findUser,
   userDto,
   findUserById,
   searchUser,
-} from "../services/userService.js";
+} from '../services/userService.js';
 import {
   generateTokens,
   getUserToken,
   removeRefreshToken,
   storeRefereshToken,
-} from "../services/tokenService.js";
-import Refresh from "../models/refreshModel.js";
-import bcryptjs from "bcryptjs";
-import nodemailer from "nodemailer";
-import { verifyCreds } from "../utils/googleConfig.js";
+} from '../services/tokenService.js';
+import Refresh from '../models/refreshModel.js';
+import bcryptjs from 'bcryptjs';
+import nodemailer from 'nodemailer';
+import { verifyCreds } from '../utils/googleConfig.js';
 
 export const authenticateOtpEmail = async (req, res) => {
   const { emailId } = req.body;
   const gmail = process.env.GMAIL_ADDRESS;
   const gmailpass = process.env.GMAIL_APP_PASSWORD;
   if (!emailId) {
-    return res.status(400).json({ message: "Email Id  is required" });
+    return res.status(400).json({ message: 'Email Id  is required' });
   }
   const isExistingEmailId = await findUser({ emailId });
 
   if (isExistingEmailId) {
     return res
-      .status(200)
-      .json({ message: "EmailId already in use try another one" });
+      .status(409)
+      .json({ message: 'EmailId already in use try another one' });
   }
   //Generate the Otp
   const otp = await generateOtp();
@@ -43,7 +43,7 @@ export const authenticateOtpEmail = async (req, res) => {
   // Send the OTP on email
   try {
     let transporter = nodemailer.createTransport({
-      service: "Gmail",
+      service: 'Gmail',
       auth: {
         user: gmail,
         // This is app password for my account
@@ -53,7 +53,7 @@ export const authenticateOtpEmail = async (req, res) => {
     let mailOptions = {
       from: `"MeetCast" ${process.env.GMAIL_ADDRESS}`,
       to: emailId,
-      subject: "MeetCast Signup OTP",
+      subject: 'MeetCast Signup OTP',
       html: `
       <h4>Hello User,</h4>
       <p>This is your OTP: <strong>${otp}</strong> to sign up your account on <b>MeetCast</b>.</p>
@@ -66,11 +66,11 @@ export const authenticateOtpEmail = async (req, res) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log(error);
-        if (error.code === "EENVELOPE" && error.responseCode === 553) {
-          return res.status(200).json({ message: "Wrong Email Address" });
+        if (error.code === 'EENVELOPE' && error.responseCode === 553) {
+          return res.status(400).json({ message: 'Wrong Email Address' });
         } else {
           return res
-            .status(200)
+            .status(500)
             .json({ message: "There's some error in sending mail" });
         }
       } else {
@@ -79,26 +79,26 @@ export const authenticateOtpEmail = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.status(400).json({ message: "Some error occured" });
+    res.status(500).json({ message: 'Some error occured' });
   }
 };
 
 export const verifyOtpEmail = async (req, res) => {
   const { otp, hash, emailId } = req.body;
   if (!otp || !hash || !emailId)
-    return res.status(400).json({ message: "All fields are required" });
+    return res.status(400).json({ message: 'All fields are required' });
 
-  const [hashedOtp, expires] = hash.split("."); // Destructuring the hashedOtp & expired time
+  const [hashedOtp, expires] = hash.split('.'); // Destructuring the hashedOtp & expired time
 
   if (Date.now() > expires)
-    return res.status(200).json({ message: "Otp is expired" });
+    return res.status(200).json({ message: 'Otp is expired' });
 
   const data = `${emailId}.${otp}.${expires}`;
 
   const computedHash = await hashOtp(data); //Whether Hashed otp is correct or not
 
   if (computedHash !== hashedOtp)
-    return res.status(400).json({ message: "Invalid Otp" });
+    return res.status(400).json({ message: 'Invalid Otp' });
 
   let user;
 
@@ -109,7 +109,7 @@ export const verifyOtpEmail = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: 'Server Error' });
   }
 
   //Token Generation
@@ -123,11 +123,11 @@ export const verifyOtpEmail = async (req, res) => {
   await storeRefereshToken(refereshToken, user?._id);
 
   //Sending refreshtoken in cookie & accessotken in JSON
-  res.cookie("refreshtoken", refereshToken, {
+  res.cookie('refreshtoken', refereshToken, {
     maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days cookie will be in browser
     httpOnly: true,
     secure: true,
-    sameSite: "None",
+    sameSite: 'None',
   });
   const userData = await userDto(user);
   res.json({ userData, auth: true, accessToken });
@@ -140,7 +140,7 @@ export const getUser = async (req, res) => {
     const userData = await userDto(user);
     res.status(200).json({ userData });
   } else {
-    res.status(200).json({ message: "Not Found" });
+    res.status(200).json({ message: 'Not Found' });
   }
 };
 
@@ -151,7 +151,7 @@ export const getUserbyUserName = async (req, res) => {
     const userData = await userDto(user);
     res.status(200).json({ userData });
   } else {
-    res.status(404).json({ message: "Not Found" });
+    res.status(404).json({ message: 'Not Found' });
   }
 };
 
@@ -160,7 +160,7 @@ export const activateUser = async (req, res) => {
   const user = await findUserById(userId);
   try {
     if (user && user.activated) {
-      res.status(200).json({ message: "User is already activate" });
+      res.status(200).json({ message: 'User is already activate' });
     } else if (user) {
       if (user?.signedUpwithGoogle) {
         user.userName = userName;
@@ -176,19 +176,19 @@ export const activateUser = async (req, res) => {
       }
       await user.save();
       const userData = await userDto(user);
-      res.cookie("accesstoken", "", {
+      res.cookie('accesstoken', '', {
         expires: new Date(0),
         httpOnly: true,
-        path: "/",
+        path: '/',
         secure: true,
-        sameSite: "None",
+        sameSite: 'None',
       });
       res.status(200).json({ userData });
     } else {
-      res.status(200).json({ message: "No user found" });
+      res.status(200).json({ message: 'No user found' });
     }
   } catch (error) {
-    res.status(500).json({ message: "Some internal Server Error" });
+    res.status(500).json({ message: 'Some internal Server Error' });
     console.log({ error });
   }
 };
@@ -200,20 +200,20 @@ export const autoReLoginFunctionality = async (req, res) => {
       const userToken = await Refresh.findOne({ token: refreshtoken });
       const user = await findUserById(userToken?.userId);
       if (!user) {
-        return res.status(404).json({ message: "No user Found" });
+        return res.status(404).json({ message: 'No user Found' });
       }
       const userData = await userDto(user);
       res
         .status(200)
-        .json({ message: "Your Session has expired. Please Login again" });
+        .json({ message: 'Your Session has expired. Please Login again' });
     } else {
       res
         .status(200)
-        .json({ message: "Your Session has expired. Please Login again" });
+        .json({ message: 'Your Session has expired. Please Login again' });
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
@@ -222,14 +222,14 @@ export const loginUser = async (req, res) => {
     const { emailId, password } = req.body;
     const user = await findUser({ emailId });
     if (!user) {
-      return res.status(200).json({ message: "No user found" });
+      return res.status(401).json({ message: 'No user found' });
     }
     if (user.signedUpwithGoogle) {
-      return res.status(200).json({ message: "Please Login with Google" });
+      return res.status(401).json({ message: 'Please Login with Google' });
     }
     const isPasswordCorrect = bcryptjs.compareSync(password, user.password);
     if (!isPasswordCorrect) {
-      return res.status(200).json({ message: "Password is not correct" });
+      return res.status(401).json({ message: 'Password is not correct' });
     }
 
     const { accessToken, refereshToken } = generateTokens({
@@ -242,11 +242,11 @@ export const loginUser = async (req, res) => {
     const userDtos = await userDto(user);
 
     if (refereshToken) {
-      res.cookie("refreshtoken", refereshToken, {
+      res.cookie('refreshtoken', refereshToken, {
         maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days this cookie will be in the browser
         httpOnly: true,
         secure: true,
-        sameSite: "None",
+        sameSite: 'None',
       });
     }
     res.status(200).json({ userDtos, accessToken });
@@ -259,21 +259,21 @@ export const loginUser = async (req, res) => {
 export const logoutFunctionality = async (req, res) => {
   const { refreshtoken, userId } = req.cookies;
   if (!refreshtoken) {
-    return res.status(400).json({ message: "No Cookies found" });
+    return res.status(400).json({ message: 'No Cookies found' });
   }
 
   const isRefreshTokenRemove = await removeRefreshToken(userId);
   if (isRefreshTokenRemove) {
-    res.cookie("refreshtoken", "", {
+    res.cookie('refreshtoken', '', {
       expires: new Date(0),
       httpOnly: true,
-      path: "/",
+      path: '/',
       secure: true,
-      sameSite: "None",
+      sameSite: 'None',
     });
-    res.status(200).json({ message: "User Logged out" });
+    res.status(200).json({ message: 'User Logged out' });
   } else {
-    res.status(500).json({ message: "Some error occured while logging out" });
+    res.status(500).json({ message: 'Some error occured while logging out' });
   }
 };
 export const searchUserFunctionality = async (req, res) => {
@@ -282,11 +282,11 @@ export const searchUserFunctionality = async (req, res) => {
 
     // Ensure searchText is provided
     if (!searchText) {
-      return res.status(400).json({ error: "searchText is required" });
+      return res.status(400).json({ error: 'searchText is required' });
     }
 
     // Create a regex for case-insensitive search
-    const searchRegEx = new RegExp(searchText, "i");
+    const searchRegEx = new RegExp(searchText, 'i');
 
     // Search in both userName and fullName fields
     const users = await searchUser(searchRegEx);
@@ -295,7 +295,7 @@ export const searchUserFunctionality = async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ error: "An error occurred while searching for users" });
+      .json({ error: 'An error occurred while searching for users' });
   }
 };
 
@@ -304,32 +304,32 @@ export const googleLogin = async (req, res) => {
     const { cred, mode } = req.body;
 
     const { email, name, picture } = await verifyCreds(cred);
-    if (mode === "login") {
+    if (mode === 'login') {
       const user = await findUser({ emailId: email });
 
       if (!user) {
-        return res.status(200).json({ message: "No user found" });
+        return res.status(401).json({ message: 'No user found' });
       }
       const refreshToken = await getUserToken(user?.id);
       const userDtos = await userDto(user);
       if (refreshToken) {
-        res.cookie("refreshtoken", refreshToken, {
+        res.cookie('refreshtoken', refreshToken, {
           maxAge: 1000 * 60 * 60 * 24 * 30,
           httpOnly: true,
           secure: true,
-          sameSite: "None",
+          sameSite: 'None',
         });
       }
       res.status(200).json({ userDtos });
     }
-    if (mode === "register") {
+    if (mode === 'register') {
       let user;
 
       user = await findUser({ emailId: email });
       if (user) {
-        return res.status(200).json({ message: "EmailId is already in use" });
+        return res.status(409).json({ message: 'EmailId is already in use' });
       }
-      const modifiedAvatar = picture?.split("=")[0];
+      const modifiedAvatar = picture?.split('=')[0];
       user = await creatUser({
         emailId: email,
         fullName: name,
@@ -347,17 +347,17 @@ export const googleLogin = async (req, res) => {
       //Storing refresh Token
       await storeRefereshToken(refereshToken, user?._id);
       //Sending refreshtoken in cookie & accessotken in JSON
-      res.cookie("refreshtoken", refereshToken, {
+      res.cookie('refreshtoken', refereshToken, {
         maxAge: 1000 * 60 * 60 * 24 * 7, // Store for 7 days
         httpOnly: true,
         secure: true,
-        sameSite: "None",
+        sameSite: 'None',
       });
       const userData = await userDto(user);
       res.status(200).json({ userData, auth: true, accessToken });
     }
   } catch (error) {
-    console.log("Error occured", error);
+    console.log('Error occured', error);
     res.status(500).json({ error });
   }
 };
