@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { MAX } from "../../../typography/style";
+import styled from 'styled-components';
+import { MAX } from '../../../typography/style';
 
 export const MainStyled = styled.div`
   display: flex;
@@ -72,5 +72,8 @@ export const ButtonWrapper = styled.button`
   }
   &:not(&:disabled):hover {
     opacity: 0.8;
+  }
+  &:focus {
+    border: 3px solid #20bd5f;
   }
 `;

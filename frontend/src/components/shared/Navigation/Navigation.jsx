@@ -4,7 +4,7 @@ import { NavigationContainer, UserComponent } from "./Navigation.styled.js"
 import { HeadingLogo } from '../commonStyles/Card.styled'
 import { useQuery } from '@tanstack/react-query'
 import { useSelector, useDispatch } from 'react-redux'
-import { logout } from '../../../api/api'
+import { logout } from '../../../api/api.js'
 import DummyImage from "../../DummyImage"
 import { useLocation } from 'react-router-dom'
 import { setIsNavbarVisible } from '../../../slices/utilitySlice.js'

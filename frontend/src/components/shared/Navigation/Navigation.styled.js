@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const NavigationContainer = styled.div`
   display: flex;
@@ -46,6 +46,14 @@ export const InputWrapper = styled.div`
   & > span:first-of-type {
     left: 10px; /* Position for the left icon */
   }
+`;
+
+export const FormStyled = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const UserComponent = styled.div`
