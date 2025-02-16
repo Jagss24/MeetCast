@@ -1,4 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { ImPodcast } from 'react-icons/im';
+import { MdOutlineMailOutline, MdKey } from 'react-icons/md';
+import { GoogleLogin } from '@react-oauth/google';
+import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 import {
   MainStyled,
   CardStyled,
@@ -6,22 +12,13 @@ import {
   HeadingWrapper,
   ButtonWrapper,
   HeadingLogo,
-} from '../../components/shared/commonStyles/Card.styled';
-import {
-  InputStyled,
-  TermStyled,
-} from '../../components/Steps/StepEmail/StepEmail.styled';
-import { Link } from 'react-router-dom';
+} from '@/components/shared/commonStyles/Card.styled';
 import {
   InputWrapper,
   FormStyled,
-} from '../../components/shared/Navigation/Navigation.styled';
-import { ImPodcast } from 'react-icons/im';
-import { MdOutlineMailOutline, MdKey } from 'react-icons/md';
-import { GoogleLogin } from '@react-oauth/google';
-import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
-import toast from 'react-hot-toast';
-import CircularIcon from '../../components/CircularIcon';
+} from '@/components/shared/Navigation/Navigation.styled';
+import CircularIcon from '@/components/CircularIcon';
+import { InputStyled, TermStyled } from '../Register/styles/StepEmail.styled';
 import { useLogin } from './hooks/useLogin';
 
 const Login = () => {

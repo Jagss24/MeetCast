@@ -2,8 +2,8 @@ import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setOtp, setUser } from '../../../../slices/userSlice';
-import { googleAuth, sendOtp } from '../../../../api/api';
+import { setOtp, setUser } from '@/slices/userSlice';
+import { googleAuth, sendOtp } from '@/api/api';
 
 export const useStepEmail = ({ setStep }) => {
   const dispatch = useDispatch();
@@ -38,7 +38,10 @@ export const useStepEmail = ({ setStep }) => {
         emailId,
       })
       .then((data) => {
-        dispatch(setOtp({ emailId: data?.emailId, hash: data?.hash }));
+        console.log('executed');
+        dispatch(
+          setOtp({ emailId: data?.data?.emailId, hash: data?.data?.hash })
+        );
         setStep(2);
       });
   };

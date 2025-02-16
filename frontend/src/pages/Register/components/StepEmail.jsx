@@ -1,4 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { MdOutlineMail } from 'react-icons/md';
+import { ImPodcast } from 'react-icons/im';
+import { GoogleLogin } from '@react-oauth/google';
+import toast from 'react-hot-toast';
 import {
   MainStyled,
   CardStyled,
@@ -6,19 +11,14 @@ import {
   HeadingWrapper,
   HeadingLogo,
   ButtonWrapper,
-} from '../../shared/commonStyles/Card.styled';
-import { TermStyled, InputStyled } from './StepEmail.styled';
-import { Link } from 'react-router-dom';
+} from '@/components/shared/commonStyles/Card.styled';
+import { TermStyled, InputStyled } from '../styles/StepEmail.styled';
 import {
   FormStyled,
   InputWrapper,
-} from '../../shared/Navigation/Navigation.styled';
-import { MdOutlineMail } from 'react-icons/md';
-import { ImPodcast } from 'react-icons/im';
-import { GoogleLogin } from '@react-oauth/google';
-import toast from 'react-hot-toast';
-import CircularIcon from '../../CircularIcon';
-import { useStepEmail } from './hooks/useStepEmail';
+} from '@/components/shared/Navigation/Navigation.styled';
+import CircularIcon from '@/components/CircularIcon';
+import { useStepEmail } from '../hooks/useStepEmail';
 
 const StepEmail = ({ setStep }) => {
   const {
