@@ -1,15 +1,15 @@
-import jwt from "jsonwebtoken";
-import Refresh from "../models/refreshModel.js";
+import jwt from 'jsonwebtoken';
+import Refresh from '../models/refreshModel.js';
 
 export const generateTokens = (payload) => {
   const accessTokenSecret = process.env.JWT_ACCESS_TOKEN_SECRET;
   const refereshTokenSecret = process.env.JWT_REFRESH_TOKEN_SECRET;
   const accessToken = jwt.sign(payload, accessTokenSecret, {
-    expiresIn: "15m",
+    expiresIn: '15m',
   });
 
   const refereshToken = jwt.sign(payload, refereshTokenSecret, {
-    expiresIn: "7d",
+    expiresIn: '7d',
   });
 
   return { accessToken, refereshToken };
@@ -39,12 +39,12 @@ export const verifyAccessToken = async (token) => {
     // Verify the token
     return jwt.verify(token, accessTokenSecret);
   } catch (error) {
-    if (error.name === "TokenExpiredError") {
-      return { error: "TokenExpired" }; // Token expired
-    } else if (error.name === "JsonWebTokenError") {
-      return { error: "InvalidToken" }; // Invalid token
+    if (error.name === 'TokenExpiredError') {
+      return { error: 'TokenExpired' }; // Token expired
+    } else if (error.name === 'JsonWebTokenError') {
+      return { error: 'InvalidToken' }; // Invalid token
     } else {
-      return { error: "UnknownError" }; // Other errors
+      return { error: 'UnknownError' }; // Other errors
     }
   }
 };
@@ -57,7 +57,7 @@ export const getUserToken = async (userId) => {
     }
     return refreshToken.token;
   } catch (error) {
-    console.error("Error verifying token:", error);
+    console.error('Error verifying token:', error);
     return null;
   }
 };
@@ -68,11 +68,11 @@ export const removeRefreshToken = async (userId) => {
     if (!tokenRecord) {
       return false;
     }
-    tokenRecord.token = "";
+    tokenRecord.token = '';
     await tokenRecord.save();
     return true;
   } catch (error) {
-    console.error("Error getting token:", error);
+    console.error('Error getting token:', error);
     return null;
   }
 };

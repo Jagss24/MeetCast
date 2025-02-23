@@ -1,4 +1,4 @@
-import User from "../models/user-model.js";
+import User from '../models/user-model.js';
 
 export const findUser = async (filter) => {
   const user = await User.findOne(filter);
@@ -57,24 +57,24 @@ export const photoUpdation = async (req, res) => {
       if (about) {
         user.about = about;
         await user.save();
-        return res.status(200).json({ message: "About updated succesfully" });
+        return res.status(200).json({ message: 'About updated succesfully' });
       }
-      if (type === "Cover Photo") {
+      if (type === 'Cover Photo') {
         user.coverPhoto = photo;
         await user.save();
-      } else if (type === "Profile Photo") {
+      } else if (type === 'Profile Photo') {
         user.avatar = photo;
         await user.save();
       } else {
-        res.status(422).json({ message: "Unknown Type" });
+        res.status(422).json({ message: 'Unknown Type' });
         return;
       }
       res.status(200).json({ message: `${type} has been Updated` });
     } else {
-      res.status(404).json({ message: "User Not found" });
+      res.status(404).json({ message: 'User Not found' });
     }
   } catch (error) {
-    res.status(500).json({ message: "Internal server Error" });
+    res.status(500).json({ message: 'Internal server Error' });
     console.log({ error });
   }
 };
