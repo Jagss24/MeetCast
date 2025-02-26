@@ -4,10 +4,15 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { setOtp, setUser } from '@/slices/userSlice';
 import { googleAuth, sendOtp } from '@/api/api';
+import { useState } from 'react';
 
-export const useStepEmail = ({ setStep }) => {
+export const useRegister = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [isOTPOpenModal, setIsOTPOpenModal] = useState(false);
+  const [inputType, setInputType] = useState('password');
+  const [password, setPassword] = useState('');
   const sendOtpMutation = useMutation({
     mutationFn: (data) => sendOtp(data),
     onError: (error) => toast.error(error.response.data.message),
@@ -28,9 +33,9 @@ export const useStepEmail = ({ setStep }) => {
     });
   };
 
-  const handleEmailSubmission = ({ emailId }) => {
-    if (!emailId) {
-      toast('Please enter Email Id');
+  const handleEmailSubmission = ({ emailId, password }) => {
+    if (!emailId || !password) {
+      toast('Please enter all details');
       return;
     }
     sendOtpMutation
@@ -38,16 +43,23 @@ export const useStepEmail = ({ setStep }) => {
         emailId,
       })
       .then((data) => {
-        console.log('executed');
         dispatch(
           setOtp({ emailId: data?.data?.emailId, hash: data?.data?.hash })
         );
-        setStep(2);
+        setPassword(password);
+        setIsOTPOpenModal(true);
       });
   };
 
   return {
     functions: { handleEmailSubmission, handleGoogleRegister },
     mutations: { sendOtpMutation },
+    states: {
+      isOTPOpenModal,
+      setIsOTPOpenModal,
+      inputType,
+      setInputType,
+      password,
+    },
   };
 };

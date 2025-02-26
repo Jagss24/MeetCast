@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-export const useStepOtp = () => {
+export const useOTPModal = ({ handleClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [inputs, setInputs] = useState(['', '', '', '']);
@@ -22,7 +22,6 @@ export const useStepOtp = () => {
   const verifyOtpMutation = useMutation({
     mutationFn: (data) => verifyOtp(data),
     onError: (error) => {
-      console.log(error);
       toast.error(error.response.data.message || 'Some error occured');
     },
   });
@@ -37,14 +36,17 @@ export const useStepOtp = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = ({ password }) => {
     const data = {
       otp: inputs.join(''),
       hash: otp.hash,
       emailId: otp.emailId,
+      password,
     };
     verifyOtpMutation.mutateAsync(data).then((verifyData) => {
       dispatch(setUser(verifyData?.data?.userData));
+      handleClose();
+      localStorage.setItem('accessToken', verifyData?.data?.accessToken);
       navigate('/activate');
     });
   };
