@@ -1,78 +1,96 @@
-import React, { useState, useEffect } from 'react';
-import StepName from "../../components/Steps/StepName/StepName"
-import StepAvatar from '../../components/Steps/StepAvatar/StepAvatar';
-import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { useMutation } from '@tanstack/react-query';
-import { activate } from '../../api/api';
-import { setUser } from '../../slices/userSlice';
-import AppLoader from '../../AppLoader';
-import toast from 'react-hot-toast';
-
-const steps = {
-    1: StepName,
-    2: StepAvatar
-}
+import {
+  MainStyled,
+  CardStyled,
+  HeadingStyled,
+  HeadingWrapper,
+  HeadingLogo,
+  ButtonWrapper,
+  TermStyled,
+  InputStyled,
+} from '@/components/shared/commonStyles/Card.styled';
+import { useActivate } from './hooks/useActivate';
+import { FaRegKeyboard, FaRegUser } from 'react-icons/fa';
+import {
+  FormStyled,
+  InputWrapper,
+} from '@/components/shared/Navigation/Navigation.styled';
+import { ImageWrapper, ImgInput, UploadText } from './Activate.styled';
+import { CgProfile } from 'react-icons/cg';
 
 const Activate = () => {
-    const [step, setStep] = useState(1)
-    const [userActivated, setUserActivated] = useState(false)
-    const { user } = useSelector(state => state.user)
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
-    const { data: activatedData, mutate, isSuccess, isPending, isError } = useMutation({
-        mutationKey: ["acivate-api"],
-        mutationFn: activate,
-    })
-    const [data, setData] = useState({
-        fullName: user?.fullName,
-        name: "",
-        password: "",
-        img: user?.avatar
-    })
-    const Step = steps[step]
+  const {
+    states: { user, avatar },
+    functions: { uploadImage, handleSubmit },
+    mutations: { activateMutation },
+  } = useActivate();
+  return (
+    <MainStyled>
+      <CardStyled>
+        <HeadingWrapper>
+          <HeadingLogo
+            src='/images/cool.png'
+            style={{ width: '25px', height: '25px' }}
+          />
+          <HeadingStyled>Let's activate your account</HeadingStyled>
+        </HeadingWrapper>
+        <FormStyled
+          onSubmit={(e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const fullName = formData.get('fullName');
+            const userName = formData.get('userName');
+            handleSubmit({
+              userId: user?.id,
+              fullName,
+              userName,
+              avatar,
+            });
+          }}>
+          <div>
+            <ImageWrapper>
+              {avatar ? <ImgInput src={avatar} /> : <CgProfile size={50} />}
+            </ImageWrapper>
+          </div>
+          <UploadText htmlFor='fileInput'>
+            <input
+              type='file'
+              id='fileInput'
+              onChange={uploadImage}
+              name='avatar'
+              style={{ display: 'none' }}
+              accept='image/*'
+            />
+            {avatar ? 'Choose another Pic' : 'Upload your Pic'}
+          </UploadText>
+          {!user.signedUpwithGoogle && (
+            <InputWrapper>
+              <span>
+                <FaRegKeyboard />
+              </span>
+              <InputStyled placeholder='Enter your FullName' name='fullName' />
+            </InputWrapper>
+          )}
+          <InputWrapper>
+            <span>
+              <FaRegUser />
+            </span>
+            <InputStyled placeholder='Set your username' name='userName' />
+          </InputWrapper>
+          <TermStyled>
+            {user?.signedUpwithGoogle
+              ? 'Just your username and we’re all set to go!'
+              : 'Your fullname, username, we’re all set to go!'}
+          </TermStyled>
+          <ButtonWrapper type='submit'>
+            Next
+            {activateMutation?.isPending && (
+              <CircularIcon width={12} height={12} color='#000' />
+            )}
+          </ButtonWrapper>
+        </FormStyled>
+      </CardStyled>
+    </MainStyled>
+  );
+};
 
-    const activateUser = () => {
-        mutate({
-            userId: user?.id,
-            userName: data.name,
-            fullName: data.fullName,
-            password: data.password,
-            avatar: data.img
-        })
-    }
-
-
-    useEffect(() => {
-        if (isSuccess) {
-            if (activatedData?.data?.userData) {
-                dispatch(setUser(activatedData?.data?.userData))
-                setUserActivated(true)
-            }
-            else {
-                toast.er("No user Found")
-                return
-            }
-        }
-        if (isError) {
-            return toast.error("Some internal server Error")
-        }
-    }, [isSuccess || isError || activatedData])
-
-    useEffect(() => {
-        if (userActivated) {
-            navigate("/rooms")
-        }
-    }, [userActivated])
-
-    if (isPending) {
-        return <AppLoader />
-    }
-    return (
-        <>
-            <Step setStep={setStep} data={data} setData={setData} user={user} activateUser={activateUser} />
-        </>
-    )
-}
-
-export default Activate
+export default Activate;
