@@ -1,50 +1,27 @@
-import React from 'react'
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useQuery } from "@tanstack/react-query";
-import { autoReLogin } from "./api/api";
-import { setUser } from "./slices/userSlice";
-import App from './App';
+import { Suspense } from 'react';
+import { Outlet } from 'react-router-dom';
 import AppLoader from './AppLoader';
+import Navigation from './components/shared/Navigation/Navigation';
+import { useAutoReLogin } from './hooks/useAutoReLogin';
+import { Toaster } from 'react-hot-toast';
 
 const AppProvider = () => {
-    const { isAuth, user } = useSelector((state) => state.user);
-    const dispatch = useDispatch();
-    const [userisSet, setUserisSet] = useState(false)
-    const { data, isSuccess, refetch, isFetching } = useQuery({
-        queryKey: ["user-login"],
-        queryFn: () => autoReLogin(),
-        enabled: false,
-        retry: 0,
-    });
+  const {
+    services: { getReLoginUser },
+  } = useAutoReLogin({ enableQuery: true });
 
-    useEffect(() => {
-        if (!user?.userName) {
-            refetch();
-        }
-    }, []);
+  if (getReLoginUser?.isFetching || getReLoginUser?.isLoading) {
+    return <AppLoader />;
+  }
+  return (
+    <>
+      <Navigation />
+      <Suspense fallback={<AppLoader />}>
+        <Outlet />
+      </Suspense>
+      <Toaster position='top-center' reverseOrder={false} />
+    </>
+  );
+};
 
-    useEffect(() => {
-        if (data?.data?.userData) {
-            dispatch(setUser(data?.data?.userData));
-            setUserisSet(true)
-        }
-        else if (data?.data?.message === "Your Session has expired. Please Login again") {
-            setUserisSet(true)
-        }
-        else if (data?.data?.message === "No user found") {
-            setUserisSet(true)
-        }
-    }, [isSuccess]);
-
-    if (isFetching || !userisSet) {
-        return <AppLoader />
-    }
-
-    return <App isAuth={isAuth} user={user} />
-
-
-
-}
-
-export default AppProvider
+export default AppProvider;
