@@ -1,14 +1,13 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from 'mongoose';
 
 const refreshSchema = new mongoose.Schema(
   {
     token: {
       type: String,
-      required: true,
     },
     userId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
     },
   },
   {
@@ -16,4 +15,4 @@ const refreshSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("Refresh", refreshSchema, "tokens");
+export default mongoose.model('Refresh', refreshSchema, 'tokens');

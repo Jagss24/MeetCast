@@ -47,7 +47,7 @@ router.post('/login', loginUser);
 
 router.get('/autoReLogin', autoReLoginFunctionality);
 
-router.get('/logout', logoutFunctionality);
+router.post('/logout', logoutFunctionality);
 
 router.get('/searchUser', searchUserFunctionality);
 

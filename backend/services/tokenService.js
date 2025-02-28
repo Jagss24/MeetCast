@@ -62,9 +62,9 @@ export const getUserToken = async (userId) => {
   }
 };
 
-export const removeRefreshToken = async (userId) => {
+export const removeRefreshToken = async (token) => {
   try {
-    const tokenRecord = await Refresh.findOne({ userId });
+    const tokenRecord = await Refresh.findOne({ token });
     if (!tokenRecord) {
       return false;
     }
