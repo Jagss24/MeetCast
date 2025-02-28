@@ -16,6 +16,7 @@ import {
 } from '@/components/shared/Navigation/Navigation.styled';
 import { ImageWrapper, ImgInput, UploadText } from './Activate.styled';
 import { CgProfile } from 'react-icons/cg';
+import CircularIcon from '@/components/CircularIcon';
 
 const Activate = () => {
   const {

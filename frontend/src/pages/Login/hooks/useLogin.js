@@ -30,8 +30,12 @@ export const useLogin = () => {
       return;
     }
     loginMutation.mutateAsync({ emailId, password }).then((userData) => {
-      dispatch(setUser(userData?.data?.userDtos));
-      navigate('/rooms');
+      if (userData?.data?.userDtos) {
+        dispatch(setUser(userData?.data?.userDtos));
+        localStorage.setItem('accessToken', userData?.data?.accessToken);
+        navigate('/rooms');
+        return;
+      }
     });
   };
 
@@ -39,6 +43,7 @@ export const useLogin = () => {
     const data = { cred, mode: 'login' };
     googleLoginMutation.mutateAsync(data).then((googleData) => {
       dispatch(setUser(googleData?.data?.userDtos));
+      localStorage.setItem('accessToken', userData?.data?.accessToken);
       navigate('/rooms');
     });
   };

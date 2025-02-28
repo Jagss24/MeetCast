@@ -12,13 +12,14 @@ import {
   HeadingWrapper,
   ButtonWrapper,
   HeadingLogo,
+  InputStyled,
+  TermStyled,
 } from '@/components/shared/commonStyles/Card.styled';
 import {
   InputWrapper,
   FormStyled,
 } from '@/components/shared/Navigation/Navigation.styled';
 import CircularIcon from '@/components/CircularIcon';
-import { InputStyled, TermStyled } from '../Register/styles/StepEmail.styled';
 import { useLogin } from './hooks/useLogin';
 
 const Login = () => {
