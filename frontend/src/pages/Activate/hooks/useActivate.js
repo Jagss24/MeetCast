@@ -1,14 +1,19 @@
 import { activate } from '@/api/api';
+import { useAutoReLogin } from '@/hooks/useAutoReLogin';
 import { setUser } from '@/slices/userSlice';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export const useActivate = () => {
   const [avatar, setAvatar] = useState('');
-  const { user } = useSelector((state) => state.user);
+  const {
+    services: { getReLoginUser },
+  } = useAutoReLogin();
+  const user = getReLoginUser?.data?.data?.userData;
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

@@ -1,4 +1,5 @@
 import { verifyOtp } from '@/api/api';
+import { useAutoReLogin } from '@/hooks/useAutoReLogin';
 import { setUser } from '@/slices/userSlice';
 import { useMutation } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
@@ -9,6 +10,9 @@ import { useNavigate } from 'react-router-dom';
 export const useOTPModal = ({ handleClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {
+    services: { getReLoginUser },
+  } = useAutoReLogin();
   const [inputs, setInputs] = useState(['', '', '', '']);
   const [currentFocus, setCurrentFocus] = useState(0);
   const { otp } = useSelector((state) => state.user);
@@ -46,6 +50,7 @@ export const useOTPModal = ({ handleClose }) => {
     verifyOtpMutation.mutateAsync(data).then((verifyData) => {
       dispatch(setUser(verifyData?.data?.userData));
       handleClose();
+      getReLoginUser.refetch();
       localStorage.setItem('accessToken', verifyData?.data?.accessToken);
       navigate('/activate');
     });

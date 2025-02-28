@@ -1,0 +1,54 @@
+:root {
+  --primary-color: hsl(222.2 84% 4.9%);
+  --navbar-color: rgb(17 24 39/1);
+  --text-color: #000; /* Change to your secondary color */
+  --button-color: #fff;
+  --border-color: hsl(217.2 32.6% 17.5%);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p.ol.ul,
+span {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+  -webkit-font-smoothing: antialiased;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+body {
+  background: var(--primary-color);
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  color: #fff;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+/* Disable tap highlight on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}

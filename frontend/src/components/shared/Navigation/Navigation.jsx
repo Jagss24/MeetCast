@@ -12,9 +12,13 @@ import { ImPodcast } from 'react-icons/im';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoLogOutOutline } from 'react-icons/io5';
 import queryClient from '@/queryConfig/queryClient.config.js';
+import { useAutoReLogin } from '@/hooks/useAutoReLogin.js';
 
 const Navigation = () => {
-  const { user } = useSelector((state) => state.user);
+  const {
+    services: { getReLoginUser },
+  } = useAutoReLogin();
+  const user = getReLoginUser?.data?.data?.userData;
   const { isNavBarVisible } = useSelector((state) => state.utility);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -24,7 +28,8 @@ const Navigation = () => {
     mutationFn: () => logout(),
     onSuccess: () => {
       localStorage.removeItem('accessToken');
-      queryClient.invalidateQueries({ queryKey: ['user-login'] });
+      queryClient.setQueryData(['user-login'], null);
+      getReLoginUser.refetch();
       navigate('/');
     },
   });
