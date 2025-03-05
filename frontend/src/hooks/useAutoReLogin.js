@@ -1,11 +1,10 @@
 import { autoReLogin } from '@/api/api';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useRouteHandlers } from './useRouteHandlers';
 
 export const useAutoReLogin = ({ enableQuery = false } = {}) => {
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { navigate, route } = useRouteHandlers();
   const getReLoginUser = useQuery({
     queryKey: ['user-login'],
     queryFn: () => autoReLogin(),
@@ -18,18 +17,22 @@ export const useAutoReLogin = ({ enableQuery = false } = {}) => {
       return () => {};
     }
     if (getReLoginUser?.isError) {
-      if (
-        location.pathname === '/login' ||
-        location.pathname === '/register' ||
-        location.pathname === '/'
-      ) {
-        console.log('hello');
-        navigate({ pathname: location.pathname }, { replace: true });
+      if (route === 'login' || route === 'register' || route === '') {
+        navigate({ pathname: `/${route}` }, { replace: true });
         return;
       }
-      navigate({ pathname: '/login' });
+      navigate({ pathname: 'login' });
     } else {
-      navigate({ pathname: location.pathname }, { replace: true });
+      const isUserActivated = getReLoginUser.data.data.userData.activated;
+      if (route === '') {
+        navigate({ pathname: route }, { replace: true });
+      } else if (['login', 'register', 'activate', 'rooms'].includes(route)) {
+        if (isUserActivated) {
+          navigate({ pathname: '/rooms' }, { replace: true });
+        } else {
+          navigate({ pathname: '/activate' }, { replace: true });
+        }
+      }
     }
   }, [getReLoginUser?.isFetching || getReLoginUser?.isLoading]);
 
