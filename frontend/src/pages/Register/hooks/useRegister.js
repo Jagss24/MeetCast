@@ -1,13 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { setOtp, setUser } from '@/slices/userSlice';
 import { googleAuth, sendOtp } from '@/api/api';
 import { useState } from 'react';
 
 export const useRegister = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [isOTPOpenModal, setIsOTPOpenModal] = useState(false);
@@ -20,6 +17,7 @@ export const useRegister = () => {
 
   const googleRegisterMutation = useMutation({
     mutationFn: (data) => googleAuth(data),
+    onSuccess: () => navigate('/activate'),
     onError: (error) => {
       toast.error(error.response.data.message || 'Some error occured');
     },
@@ -27,10 +25,7 @@ export const useRegister = () => {
 
   const handleGoogleRegister = ({ cred }) => {
     const data = { cred, mode: 'register' };
-    googleRegisterMutation.mutateAsync(data).then((googleData) => {
-      dispatch(setUser(googleData?.data?.userDtos));
-      navigate('/activate');
-    });
+    googleRegisterMutation.mutate(data);
   };
 
   const handleEmailSubmission = ({ emailId, password }) => {
@@ -43,9 +38,8 @@ export const useRegister = () => {
         emailId,
       })
       .then((data) => {
-        dispatch(
-          setOtp({ emailId: data?.data?.emailId, hash: data?.data?.hash })
-        );
+        sessionStorage.setItem('emailId', data?.data?.emailId);
+        sessionStorage.setItem('hash', data?.data?.hash);
         setPassword(password);
         setIsOTPOpenModal(true);
       });

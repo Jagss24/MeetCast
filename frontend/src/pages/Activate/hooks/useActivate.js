@@ -1,10 +1,8 @@
 import { activate } from '@/api/api';
 import { useAutoReLogin } from '@/hooks/useAutoReLogin';
-import { setUser } from '@/slices/userSlice';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export const useActivate = () => {
@@ -13,12 +11,11 @@ export const useActivate = () => {
     services: { getReLoginUser },
   } = useAutoReLogin();
   const user = getReLoginUser?.data?.data?.userData;
-
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const activateMutation = useMutation({
     mutationFn: (data) => activate(data),
+    onSuccess: () => navigate('/rooms'),
     onError: (error) => {
       toast.error(error.response.data.message || 'Some error occured');
     },
@@ -53,10 +50,7 @@ export const useActivate = () => {
         return;
       }
     }
-    activateMutation.mutateAsync(data).then((activatedData) => {
-      dispatch(setUser(activatedData?.data?.userData));
-      navigate('/rooms');
-    });
+    activateMutation.mutate(data);
   };
 
   return {

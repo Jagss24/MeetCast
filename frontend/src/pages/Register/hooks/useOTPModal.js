@@ -1,21 +1,19 @@
 import { verifyOtp } from '@/api/api';
 import { useAutoReLogin } from '@/hooks/useAutoReLogin';
-import { setUser } from '@/slices/userSlice';
 import { useMutation } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export const useOTPModal = ({ handleClose }) => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const {
     services: { getReLoginUser },
   } = useAutoReLogin();
   const [inputs, setInputs] = useState(['', '', '', '']);
   const [currentFocus, setCurrentFocus] = useState(0);
-  const { otp } = useSelector((state) => state.user);
+  const emailId = sessionStorage.getItem('emailId');
+  const hash = sessionStorage.getItem('hash');
   const inputRefs = useRef([
     useRef(null),
     useRef(null),
@@ -43,12 +41,11 @@ export const useOTPModal = ({ handleClose }) => {
   const handleSubmit = ({ password }) => {
     const data = {
       otp: inputs.join(''),
-      hash: otp.hash,
-      emailId: otp.emailId,
+      hash,
+      emailId,
       password,
     };
     verifyOtpMutation.mutateAsync(data).then((verifyData) => {
-      dispatch(setUser(verifyData?.data?.userData));
       handleClose();
       getReLoginUser.refetch();
       localStorage.setItem('accessToken', verifyData?.data?.accessToken);
