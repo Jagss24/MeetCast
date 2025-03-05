@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import {
   RoomConatiner,
   Title,
@@ -28,9 +27,9 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import DummyImage from '../../components/DummyImage';
 import { ThreeDots } from 'react-loading-icons';
 import { IoShareSocialSharp } from 'react-icons/io5';
-import { setIsNavbarVisible } from '../../slices/utilitySlice';
 import toast from 'react-hot-toast';
 import { useAutoReLogin } from '@/hooks/useAutoReLogin';
+import { useRouteHandlers } from '@/hooks/useRouteHandlers';
 
 const Room = () => {
   const { id: roomId } = useParams();
@@ -45,7 +44,7 @@ const Room = () => {
   const [userisInMemberList, setuserisInMemberList] = useState(false);
   const [userisInRemovedList, setuserisInRemovedList] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { navigateTo } = useRouteHandlers();
 
   // Queries & Mutations
   const { data, isLoading, isError, refetch } = useQuery({
@@ -279,7 +278,9 @@ const Room = () => {
                 disabled={isLoading || !roomId || !user?.id}
                 onClick={() => {
                   setRoomType(room?.roomType);
-                  dispatch(setIsNavbarVisible(false));
+                  navigateTo({
+                    to: { [room.roomType]: room.id },
+                  });
                 }}>
                 Join the Room
                 {(isLoading || !roomId || !user?.id) && (

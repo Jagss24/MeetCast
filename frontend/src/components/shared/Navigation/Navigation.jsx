@@ -1,28 +1,26 @@
-import React, { useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { NavigationContainer, UserComponent } from './Navigation.styled.js';
 import { HeadingLogo } from '../commonStyles/Card.styled';
 import { useMutation } from '@tanstack/react-query';
-import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../../../api/api.js';
 import DummyImage from '../../DummyImage';
-import { useLocation } from 'react-router-dom';
-import { setIsNavbarVisible } from '../../../slices/utilitySlice.js';
 import { ImPodcast } from 'react-icons/im';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoLogOutOutline } from 'react-icons/io5';
 import queryClient from '@/queryConfig/queryClient.config.js';
 import { useAutoReLogin } from '@/hooks/useAutoReLogin.js';
+import { useRouteHandlers } from '@/hooks/useRouteHandlers.ts';
 
 const Navigation = () => {
   const {
     services: { getReLoginUser },
   } = useAutoReLogin();
   const user = getReLoginUser?.data?.data?.userData;
-  const { isNavBarVisible } = useSelector((state) => state.utility);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { paramsObject, navigate, route } = useRouteHandlers();
+
+  const isOnMeetorPodCast = ['podcast', 'meet'].some((key) =>
+    paramsObject.hasOwnProperty(key)
+  );
 
   const logoutMutation = useMutation({
     mutationFn: () => logout(),
@@ -34,15 +32,7 @@ const Navigation = () => {
     },
   });
 
-  useEffect(() => {
-    const pathName = location.pathname.split('/')[1];
-    if (pathName !== 'room') {
-      dispatch(setIsNavbarVisible(true));
-      return;
-    }
-  }, [location.pathname]);
-
-  return isNavBarVisible ? (
+  return !isOnMeetorPodCast ? (
     <NavigationContainer>
       <Link to='/' className='logo_wrapper'>
         <HeadingLogo>
@@ -77,7 +67,7 @@ const Navigation = () => {
             )}
           </div>
           <div className='user-modal'>
-            {!window.location.pathname.includes('profile') && (
+            {route !== 'profile' && (
               <p onClick={() => navigate(`/profile/${user?.userName}`)}>
                 View Profile
                 <span>
