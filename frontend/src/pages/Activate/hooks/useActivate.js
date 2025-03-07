@@ -15,7 +15,10 @@ export const useActivate = () => {
 
   const activateMutation = useMutation({
     mutationFn: (data) => activate(data),
-    onSuccess: () => navigate('/rooms'),
+    onSuccess: () => {
+      getReLoginUser.refetch();
+      navigate('/rooms');
+    },
     onError: (error) => {
       toast.error(error.response.data.message || 'Some error occured');
     },
@@ -40,7 +43,7 @@ export const useActivate = () => {
 
   const handleSubmit = (data) => {
     if (user?.signedUpwithGoogle) {
-      if (!data.name) {
+      if (!data.userName) {
         toast('Please set your username');
         return;
       }

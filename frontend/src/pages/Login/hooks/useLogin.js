@@ -43,8 +43,8 @@ export const useLogin = () => {
   const handleGoogleLogin = (cred) => {
     const data = { cred, mode: 'login' };
     googleLoginMutation.mutateAsync(data).then((googleData) => {
+      localStorage.setItem('accessToken', googleData?.data?.accessToken);
       getReLoginUser.refetch();
-      localStorage.setItem('accessToken', userData?.data?.accessToken);
       navigate('/rooms');
     });
   };

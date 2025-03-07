@@ -295,16 +295,15 @@ export const googleLogin = async (req, res) => {
 
       //Storing refresh Token
       await storeRefereshToken(refereshToken, user?._id);
-      const userDtos = await userDto(user);
-      if (refreshToken) {
-        res.cookie('refreshtoken', refreshToken, {
+      if (refereshToken) {
+        res.cookie('refreshtoken', refereshToken, {
           maxAge: 1000 * 60 * 60 * 24 * 30,
           httpOnly: true,
           secure: true,
           sameSite: 'None',
         });
       }
-      res.status(200).json({ userDtos, accessToken });
+      res.status(200).json({ accessToken });
     }
     if (mode === 'register') {
       let user;
@@ -337,8 +336,7 @@ export const googleLogin = async (req, res) => {
         secure: true,
         sameSite: 'None',
       });
-      const userData = await userDto(user);
-      res.status(200).json({ userData, auth: true, accessToken });
+      res.status(201).json({ accessToken });
     }
   } catch (error) {
     console.log('Error occured', error);

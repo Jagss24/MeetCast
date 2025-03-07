@@ -63,7 +63,7 @@ const Activate = () => {
             />
             {avatar ? 'Choose another Pic' : 'Upload your Pic'}
           </UploadText>
-          {!user.signedUpwithGoogle && (
+          {!user?.signedUpwithGoogle && (
             <InputWrapper>
               <span>
                 <FaRegKeyboard />

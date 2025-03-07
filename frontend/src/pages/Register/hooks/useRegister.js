@@ -3,9 +3,13 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { googleAuth, sendOtp } from '@/api/api';
 import { useState } from 'react';
+import { useAutoReLogin } from '@/hooks/useAutoReLogin';
 
 export const useRegister = () => {
   const navigate = useNavigate();
+  const {
+    services: { getReLoginUser },
+  } = useAutoReLogin();
 
   const [isOTPOpenModal, setIsOTPOpenModal] = useState(false);
   const [inputType, setInputType] = useState('password');
@@ -17,7 +21,11 @@ export const useRegister = () => {
 
   const googleRegisterMutation = useMutation({
     mutationFn: (data) => googleAuth(data),
-    onSuccess: () => navigate('/activate'),
+    onSuccess: (googleData) => {
+      localStorage.setItem('accessToken', googleData?.data?.accessToken);
+      getReLoginUser.refetch();
+      navigate('/activate');
+    },
     onError: (error) => {
       toast.error(error.response.data.message || 'Some error occured');
     },

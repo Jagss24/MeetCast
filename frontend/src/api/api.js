@@ -21,25 +21,27 @@ api.interceptors.request.use((req) => {
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
-    console.log({ error });
-    const errorStatus = error.response.status;
-    const errorMsgs = error.response.data.message;
-    if (
-      errorStatus &&
-      errorMsgs === 'Token expired. Please refresh your token.'
-    ) {
-      try {
-        await api.get('authenticate/refresh').then((data) => {
-          const accessToken = data?.data?.accessToken;
-          if (accessToken) {
-            localStorage.setItem('accessToken', accessToken);
-          }
-        });
-      } catch (error) {
-        console.error('Some error occured');
-        toast('Some error occured while loading website!! Try later');
+    if (error.response) {
+      const errorStatus = error.response.status;
+      const errorMsgs = error.response.data.message;
+      if (
+        errorStatus === 401 &&
+        errorMsgs === 'Token expired. Please refresh your token.'
+      ) {
+        try {
+          await api.get('authenticate/refresh').then((data) => {
+            const accessToken = data?.data?.accessToken;
+            if (accessToken) {
+              localStorage.setItem('accessToken', accessToken);
+            }
+          });
+        } catch (refreshError) {
+          toast('Some error occured while loading website!! Try later');
+          return Promise.reject(refreshError);
+        }
       }
     }
+    return Promise.reject(error);
   }
 );
 
