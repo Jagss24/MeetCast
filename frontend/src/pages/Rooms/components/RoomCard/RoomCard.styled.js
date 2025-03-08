@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { MAX } from "../../typography/style";
+import styled from 'styled-components';
+import { MAX } from '@/typography/style';
 
 export const RoomCardStyled = styled.div`
   display: flex;
@@ -51,7 +51,7 @@ export const HostContainer = styled.div`
 `;
 export const SpeakersAvatar = styled.div.withConfig({
   shouldForwardProp: (prop) =>
-    !["randomcolors", "speakerLength"].includes(prop),
+    !['randomcolors', 'speakerLength'].includes(prop),
 })`
   display: flex;
   flex-direction: column;
@@ -64,7 +64,7 @@ export const SpeakersAvatar = styled.div.withConfig({
     object-fit: cover;
     &:last-child {
       position: ${(props) =>
-        props.speakerLength === 1 ? "initial" : "absolute"};
+        props.speakerLength === 1 ? 'initial' : 'absolute'};
       top: 1.5rem;
       left: 1.25rem;
     }
