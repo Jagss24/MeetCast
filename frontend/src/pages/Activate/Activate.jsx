@@ -1,22 +1,9 @@
-import {
-  MainStyled,
-  CardStyled,
-  HeadingStyled,
-  HeadingWrapper,
-  HeadingLogo,
-  ButtonWrapper,
-  TermStyled,
-  InputStyled,
-} from '@/components/shared/commonStyles/Card.styled';
 import { useActivate } from './hooks/useActivate';
-import { FaRegKeyboard, FaRegUser } from 'react-icons/fa';
-import {
-  FormStyled,
-  InputWrapper,
-} from '@/components/shared/Navigation/Navigation.styled';
-import { ImageWrapper, ImgInput, UploadText } from './Activate.styled';
-import { CgProfile } from 'react-icons/cg';
-import CircularIcon from '@/components/CircularIcon';
+import UIPageWrapper from '@/components/ui/UIPageWrapper';
+import UiCard from '@/components/ui/UiCard';
+import UiTextInput from '@/components/ui/UiTextInput';
+import UiButton from '@/components/ui/UiButton';
+import { CircleUserRound, ShieldCheck } from 'lucide-react';
 
 const Activate = () => {
   const {
@@ -25,72 +12,76 @@ const Activate = () => {
     mutations: { activateMutation },
   } = useActivate();
   return (
-    <MainStyled>
-      <CardStyled>
-        <HeadingWrapper>
-          <HeadingLogo
-            src='/images/cool.png'
-            style={{ width: '25px', height: '25px' }}
-          />
-          <HeadingStyled>Let's activate your account</HeadingStyled>
-        </HeadingWrapper>
-        <FormStyled
-          onSubmit={(e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const fullName = formData.get('fullName');
-            const userName = formData.get('userName');
-            handleSubmit({
-              userId: user?.id,
-              fullName,
-              userName,
-              avatar,
-            });
-          }}>
-          <div>
-            <ImageWrapper>
-              {avatar ? <ImgInput src={avatar} /> : <CgProfile size={50} />}
-            </ImageWrapper>
-          </div>
-          <UploadText htmlFor='fileInput'>
-            <input
-              type='file'
-              id='fileInput'
-              onChange={uploadImage}
-              name='avatar'
-              style={{ display: 'none' }}
-              accept='image/*'
-            />
-            {avatar ? 'Choose another Pic' : 'Upload your Pic'}
-          </UploadText>
-          {!user?.signedUpwithGoogle && (
-            <InputWrapper>
-              <span>
-                <FaRegKeyboard />
-              </span>
-              <InputStyled placeholder='Enter your FullName' name='fullName' />
-            </InputWrapper>
-          )}
-          <InputWrapper>
-            <span>
-              <FaRegUser />
-            </span>
-            <InputStyled placeholder='Set your username' name='userName' />
-          </InputWrapper>
-          <TermStyled>
-            {user?.signedUpwithGoogle
-              ? 'Just your username and we’re all set to go!'
-              : 'Your fullname, username, we’re all set to go!'}
-          </TermStyled>
-          <ButtonWrapper type='submit'>
-            Next
-            {activateMutation?.isPending && (
-              <CircularIcon width={12} height={12} color='#000' />
+    <UIPageWrapper classname='flex items-center justify-center'>
+      <UiCard
+        className='w-96 rounded-md'
+        headingIcon={<ShieldCheck className='size-6 text-success' />}
+        titleClassName=''
+        headerTitle='Lets activate your account'>
+        <section className='mt-4 flex flex-col gap-4 w-full'>
+          <form
+            className='flex flex-col items-center justify-center gap-4'
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target);
+              const fullName = formData.get('fullName');
+              const userName = formData.get('userName');
+              handleSubmit({
+                userId: user?.id,
+                fullName,
+                userName,
+                avatar,
+              });
+            }}>
+            {avatar ? (
+              <img
+                className='size-32 rounded-full object-cover '
+                src={avatar}
+              />
+            ) : (
+              <CircleUserRound className='size-32 ' strokeWidth={0.8} />
             )}
-          </ButtonWrapper>
-        </FormStyled>
-      </CardStyled>
-    </MainStyled>
+            <label
+              className='text-success font-semibold text-sm cursor-pointer'
+              htmlFor='fileInput'>
+              <input
+                type='file'
+                id='fileInput'
+                onChange={uploadImage}
+                name='avatar'
+                style={{ display: 'none' }}
+                accept='image/*'
+              />
+              {avatar ? 'Choose another Pic' : 'Upload your Pic'}
+            </label>
+            {!user?.signedUpwithGoogle && (
+              <UiTextInput
+                name='fullName'
+                placeholder='Enter your fullname'
+                label='Full Name:'
+              />
+            )}
+            <UiTextInput
+              name='userName'
+              placeholder='Enter your username'
+              label='Username:'
+            />
+            <p className='text-gray text-xs font-semibold'>
+              {' '}
+              {user?.signedUpwithGoogle
+                ? 'Just your username and we’re all set to go!'
+                : 'Your fullname, username, we’re all set to go!'}
+            </p>
+            <UiButton
+              type='submit'
+              isLoading={activateMutation?.isPending}
+              text='Activate'
+              className='px-4 h-8 focus:ring-2 focus:ring-success'
+            />
+          </form>
+        </section>
+      </UiCard>
+    </UIPageWrapper>
   );
 };
 

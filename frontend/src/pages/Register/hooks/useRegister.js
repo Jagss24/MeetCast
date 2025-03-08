@@ -1,18 +1,17 @@
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
 import { googleAuth, sendOtp } from '@/api/api';
 import { useState } from 'react';
 import { useAutoReLogin } from '@/hooks/useAutoReLogin';
+import { useRouteHandlers } from '@/hooks/useRouteHandlers';
 
 export const useRegister = () => {
-  const navigate = useNavigate();
+  const { navigate } = useRouteHandlers();
   const {
     services: { getReLoginUser },
   } = useAutoReLogin();
 
   const [isOTPOpenModal, setIsOTPOpenModal] = useState(false);
-  const [inputType, setInputType] = useState('password');
   const [password, setPassword] = useState('');
   const sendOtpMutation = useMutation({
     mutationFn: (data) => sendOtp(data),
@@ -59,8 +58,6 @@ export const useRegister = () => {
     states: {
       isOTPOpenModal,
       setIsOTPOpenModal,
-      inputType,
-      setInputType,
       password,
     },
   };

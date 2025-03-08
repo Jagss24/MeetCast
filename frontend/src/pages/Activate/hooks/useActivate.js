@@ -1,9 +1,9 @@
 import { activate } from '@/api/api';
 import { useAutoReLogin } from '@/hooks/useAutoReLogin';
+import { useRouteHandlers } from '@/hooks/useRouteHandlers';
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
 
 export const useActivate = () => {
   const [avatar, setAvatar] = useState('');
@@ -11,7 +11,7 @@ export const useActivate = () => {
     services: { getReLoginUser },
   } = useAutoReLogin();
   const user = getReLoginUser?.data?.data?.userData;
-  const navigate = useNavigate();
+  const { navigate } = useRouteHandlers();
 
   const activateMutation = useMutation({
     mutationFn: (data) => activate(data),

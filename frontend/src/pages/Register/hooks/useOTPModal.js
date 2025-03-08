@@ -1,12 +1,12 @@
 import { verifyOtp } from '@/api/api';
 import { useAutoReLogin } from '@/hooks/useAutoReLogin';
+import { useRouteHandlers } from '@/hooks/useRouteHandlers';
 import { useMutation } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
 
 export const useOTPModal = ({ handleClose }) => {
-  const navigate = useNavigate();
+  const { navigate } = useRouteHandlers();
   const {
     services: { getReLoginUser },
   } = useAutoReLogin();
@@ -39,6 +39,7 @@ export const useOTPModal = ({ handleClose }) => {
   };
 
   const handleSubmit = ({ password }) => {
+    console.log({ password });
     const data = {
       otp: inputs.join(''),
       hash,
@@ -54,7 +55,7 @@ export const useOTPModal = ({ handleClose }) => {
   };
 
   return {
-    states: { inputs, currentFocus },
+    states: { inputs, currentFocus, setCurrentFocus },
     refs: { inputRefs },
     functions: { handleSubmit, handleChange },
     mutations: { verifyOtpMutation },

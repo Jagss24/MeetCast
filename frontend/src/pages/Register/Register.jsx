@@ -1,52 +1,31 @@
 import OTPModal from './components/OTPModal';
 import { Link } from 'react-router-dom';
-import { MdOutlineMail } from 'react-icons/md';
-import { ImPodcast } from 'react-icons/im';
 import { GoogleLogin } from '@react-oauth/google';
 import toast from 'react-hot-toast';
-import {
-  MainStyled,
-  CardStyled,
-  HeadingStyled,
-  HeadingWrapper,
-  HeadingLogo,
-  ButtonWrapper,
-  TermStyled,
-  InputStyled,
-} from '@/components/shared/commonStyles/Card.styled';
-import {
-  FormStyled,
-  InputWrapper,
-} from '@/components/shared/Navigation/Navigation.styled';
-import CircularIcon from '@/components/CircularIcon';
 import { useRegister } from './hooks/useRegister';
-import { FaKey, FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
+import UIPageWrapper from '@/components/ui/UIPageWrapper';
+import UiCard from '@/components/ui/UiCard';
+import UiTextInput from '@/components/ui/UiTextInput';
+import UiButton from '@/components/ui/UiButton';
+import { KeyRound, Mail, Podcast } from 'lucide-react';
 
 const Register = () => {
   const {
     functions: { handleEmailSubmission, handleGoogleRegister },
     mutations: { sendOtpMutation },
-    states: {
-      isOTPOpenModal,
-      setIsOTPOpenModal,
-      inputType,
-      setInputType,
-      password,
-    },
+    states: { isOTPOpenModal, setIsOTPOpenModal, password },
   } = useRegister();
 
-  console.log({ isOTPOpenModal, password });
   return (
-    <>
-      <MainStyled>
-        <CardStyled>
-          <HeadingWrapper>
-            <HeadingLogo>
-              <ImPodcast size={22} />
-            </HeadingLogo>
-            <HeadingStyled>Enter your Email Id</HeadingStyled>
-          </HeadingWrapper>
-          <FormStyled
+    <UIPageWrapper classname='flex items-center justify-center'>
+      <UiCard
+        className='w-96 rounded-md'
+        headingIcon={<Podcast className='size-6' />}
+        titleClassName=''
+        headerTitle='Create your new account'>
+        <section className='mt-4 flex flex-col gap-4 w-full'>
+          <form
+            className='flex flex-col items-center justify-center gap-4'
             onSubmit={(e) => {
               e.preventDefault();
               const formData = new FormData(e.target);
@@ -54,40 +33,31 @@ const Register = () => {
               const password = formData.get('password');
               handleEmailSubmission({ emailId, password });
             }}>
-            <InputWrapper>
-              <span>
-                <MdOutlineMail />
-              </span>
-              <InputStyled
-                type='email'
-                placeholder='yourmail@gmail.com'
-                name='emailId'
-              />
-            </InputWrapper>
-            <InputWrapper>
-              <span>
-                <FaKey />
-              </span>
-              <InputStyled
-                type={inputType}
-                placeholder='Enter your password'
-                name='password'
-              />
-              <span
-                className='icons'
-                onClick={() =>
-                  setInputType(inputType === 'password' ? 'text' : 'password')
-                }>
-                {inputType === 'password' ? <FaRegEye /> : <FaRegEyeSlash />}
-              </span>
-            </InputWrapper>
-            <ButtonWrapper type='submit' disabled={sendOtpMutation?.isPending}>
-              Next
-              {sendOtpMutation?.isPending && (
-                <CircularIcon width={12} height={12} color='#000' />
-              )}
-            </ButtonWrapper>
-          </FormStyled>
+            <UiTextInput
+              name='emailId'
+              placeholder='Enter your email'
+              icon={<Mail className='size-4 text-success' />}
+              label='Email:'
+            />
+            <UiTextInput
+              name='password'
+              placeholder='Enter your password'
+              icon={<KeyRound className='size-4 text-success' />}
+              label='Password:'
+            />
+            <span className='text-gray text-xs font-semibold'>
+              Already have an account?{' '}
+              <Link to='/login' className='text-uiBlue '>
+                Login
+              </Link>
+            </span>
+            <UiButton
+              type='submit'
+              isLoading={sendOtpMutation?.isPending}
+              text='Next'
+              className='px-4 h-8 focus:ring-2 focus:ring-success'
+            />
+          </form>
           <GoogleLogin
             onSuccess={(credentialResponse) =>
               handleGoogleRegister({ cred: credentialResponse?.credential })
@@ -102,24 +72,15 @@ const Register = () => {
             text='continue_with'
             use_fedcm_for_prompt={true}
           />
-          <TermStyled>
-            Already have an account?{' '}
-            <Link
-              to='/login'
-              style={{ color: '#0077ff', textDecoration: 'none' }}>
-              Login
-            </Link>
-          </TermStyled>
-        </CardStyled>
-      </MainStyled>
-
+        </section>
+      </UiCard>
       {isOTPOpenModal && (
         <OTPModal
           handleClose={() => setIsOTPOpenModal(false)}
           password={password}
         />
       )}
-    </>
+    </UIPageWrapper>
   );
 };
 

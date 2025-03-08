@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import AppLoader from './AppLoader';
-import Navigation from './components/shared/Navigation/Navigation';
+import Navbar from './components/Navbar/Navbar';
 import { useAutoReLogin } from './hooks/useAutoReLogin';
 import { Toaster } from 'react-hot-toast';
 
@@ -15,7 +15,7 @@ const AppProvider = () => {
   }
   return (
     <>
-      <Navigation />
+      <Navbar />
       <Suspense fallback={<AppLoader />}>
         <Outlet />
       </Suspense>

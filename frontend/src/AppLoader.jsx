@@ -1,69 +1,24 @@
-import React from 'react'
-import styled, { keyframes } from 'styled-components'
-import { ImPodcast } from "react-icons/im";
+import React from 'react';
+import UIPageWrapper from './components/ui/UIPageWrapper';
+import { Podcast } from 'lucide-react';
 
 const AppLoader = () => {
-    return (
-        <FullScreenLoader aria-label='loading'>
-            <div>
-                <span className='logo'>
-                    <ImPodcast style={{ color: "var(--button-color)" }} size={"100%"} />
-                </span>
-                <h4>MeetCast</h4>
-            </div>
-            <span className='loader' />
-        </FullScreenLoader>
-    )
-}
+  return (
+    <UIPageWrapper
+      aria-label='loading'
+      classname='flex flex-col gap-4 items-center justify-center'>
+      <h4 className='flex items-center gap-2 text-lg'>
+        <Podcast className='size-6' />
+        <p>MeetCast</p>
+      </h4>
+      <div
+        className='w-24 h-1 bg-white rounded-md'
+        style={{
+          animation: '.5s linear infinite alternate slideIn',
+        }}
+      />
+    </UIPageWrapper>
+  );
+};
 
-export default AppLoader
-
-const loadingAnimation = keyframes`
-    0% {
-        left: -50%;
-    }
-    100% {
-        left: 100%;
-    }
-`;
-
-const FullScreenLoader = styled.div`
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    &> div{
-        display: flex;
-        span{
-            display: inline-block;
-            width: 2.5rem;
-            height: 2.5rem;
-        }
-        h4{
-            margin-left: 0.5rem;
-            font-size:1.3rem;
-        }
-    }
-    
-    .loader{
-        display: inline-block;
-        background: transparent;
-        width: 200px;
-        height: 4px;
-        position: relative;
-        overflow-x: hidden;
-        margin-top: 0.8rem;
-         &::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 4px;
-        width: 50%;
-        background-color: var(--button-color);
-        animation: ${loadingAnimation} 2s linear infinite;
-    }
-}
-`
+export default AppLoader;

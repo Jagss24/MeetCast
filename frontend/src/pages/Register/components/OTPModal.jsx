@@ -1,17 +1,11 @@
 import { useEffect } from 'react';
-import {
-  ButtonWrapper,
-  TermStyled,
-} from '@/components/shared/commonStyles/Card.styled';
-import { OTPBox, OTPWrapper } from '../styles/OTPModal.styled';
-import CircularIcon from '@/components/CircularIcon';
-import { FormStyled } from '@/components/shared/Navigation/Navigation.styled';
 import { useOTPModal } from '../hooks/useOTPModal';
-import UiModal from '@/ui/UiModal';
+import UiModal from '@/components/ui/UiModal';
+import UiButton from '@/components/ui/UiButton';
 
 const OTPModal = ({ handleClose, password }) => {
   const {
-    states: { inputs, currentFocus },
+    states: { inputs, currentFocus, setCurrentFocus },
     refs: { inputRefs },
     functions: { handleSubmit, handleChange },
     mutations: { verifyOtpMutation },
@@ -22,25 +16,28 @@ const OTPModal = ({ handleClose, password }) => {
   }, [currentFocus]);
 
   return (
-    <UiModal headingText='Enter the code we just texted you!!!'>
-      <FormStyled
-        style={{
-          marginTop: '1rem',
-        }}
+    <UiModal headingText='OTP Verification'>
+      <p className='text-center text-base my-4'>
+        Enter the code we just texted you!!!
+      </p>
+      <form
+        className='flex flex-col items-center gap-2 mt-4'
         onSubmit={(e) => {
           e.preventDefault();
           handleSubmit({ password });
         }}>
-        <OTPWrapper>
-          <div style={{ alignSelf: 'center' }}>
-            {inputs.map((value, i) => (
-              <OTPBox
+        <div className='flex items-center justify-center gap-2'>
+          {inputs.map((value, i) => {
+            const isDiabled = value ? false : i > currentFocus;
+            return (
+              <input
+                className='size-12 rounded bg-white text-primary p-4 outline-none disabled:cursor-not-allowed disabled:brightness-90'
                 autoFocus={i === 0}
                 type='text'
                 key={i}
                 value={value}
                 ref={inputRefs.current[i]}
-                disabled={i !== currentFocus}
+                disabled={isDiabled}
                 onKeyDown={(e) => {
                   if (e.key === 'Backspace' && i > 0 && inputs[i] === '') {
                     setCurrentFocus(i - 1);
@@ -48,19 +45,20 @@ const OTPModal = ({ handleClose, password }) => {
                 }}
                 onChange={(e) => handleChange(e.target.value, i)}
               />
-            ))}
-          </div>
-          <TermStyled>Didn't receive the code? Tap to resend</TermStyled>
-        </OTPWrapper>
-        <ButtonWrapper
+            );
+          })}
+        </div>
+        <span className='text-gray font-semibold text-center text-xs mt-2'>
+          Didn't receive the code? Tap to resend
+        </span>
+        <UiButton
           type='submit'
-          disabled={inputs.includes('') || verifyOtpMutation?.isPending}>
-          Next
-          {verifyOtpMutation?.isPending && (
-            <CircularIcon width={12} height={12} color='#000' />
-          )}
-        </ButtonWrapper>
-      </FormStyled>
+          disabled={inputs.includes('')}
+          isLoading={verifyOtpMutation?.isPending}
+          text='Verify'
+          className='px-6 h-8 mb-4'
+        />
+      </form>
     </UiModal>
   );
 };

@@ -1,13 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { googleAuth, loginUser } from '../../../api/api';
 import toast from 'react-hot-toast';
 import { useAutoReLogin } from '@/hooks/useAutoReLogin';
+import { useRouteHandlers } from '@/hooks/useRouteHandlers';
 
 export const useLogin = () => {
-  const [inputType, setInputType] = useState('password');
-  const navigate = useNavigate();
+  const { navigate } = useRouteHandlers();
   const {
     services: { getReLoginUser },
   } = useAutoReLogin();
@@ -50,7 +48,6 @@ export const useLogin = () => {
   };
 
   return {
-    states: { inputType, setInputType },
     functions: { handleLogin, handleGoogleLogin },
     mutations: { loginMutation, googleLoginMutation },
   };
