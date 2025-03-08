@@ -1,0 +1,65 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    fontSize: {
+      xs: ['0.75rem', { letterSpacing: '0.01rem' }],
+      sm: ['0.83rem', { letterSpacing: '0.025rem' }],
+      base: ['1rem', { letterSpacing: '0.02rem' }],
+      md: '1.25rem',
+      lg: '1.44rem',
+      xl: '1.72rem',
+      '2xl': '2.07rem',
+      '3xl': '2.48rem',
+    },
+    extend: {
+      colors: {
+        offWhite: '#eff3f6',
+        extraLightGray: '#dee2e6',
+        lightGray: '#ced4da',
+        gray: '#adb5bd',
+        darkGray: '#6c757d',
+        body: '#495057',
+        subHeading: '#343a40',
+        heading: '#212529',
+        darkBg: '#343a40',
+        darkBgShade: '#495057',
+        uiPink: '#F73D93',
+        uiBrown: '#A56E2A',
+        uiPurple: '#6F3C7D',
+        uiBlue: '#4E4FEB',
+        uiRed: '#C62300',
+        primary: 'rgb(var(--color-primary) / <alpha-value>)',
+        secondary: 'rgb(var(--color-secondary) / <alpha-value>)',
+        border: 'rgb(var(--color-border) / <alpha-value>)',
+        tertiary: 'rgb(var(--color-tertiary) / <alpha-value>)',
+        error: 'rgb(var(--color-error) / <alpha-value>)',
+        success: 'rgb(var(--color-success) / <alpha-value>)',
+        info: 'rgb(var(--color-info) / <alpha-value>)',
+        warning: 'rgb(var(--color-warning) / <alpha-value>)',
+      },
+      padding: {
+        sm: '8px',
+        base: '16px',
+        md: '24px',
+        lg: '28px',
+        xl: '32px',
+        container: 'calc(8px + 1.5625vw)',
+      },
+      keyframes: {
+        wave: {
+          '0%': { transform: 'scaleY(1)' },
+          '50%': { transform: 'scaleY(1.8)' },
+          '100%': { transform: 'scaleY(1)' },
+        },
+      },
+    },
+    animation: {
+      wave: 'wave 0.8s infinite ease-in-out',
+    },
+    boxShadow: {
+      card: '4px 4px 9.5px 0px rgba(222, 226, 230, 0.5)',
+    },
+  },
+  plugins: [],
+};

@@ -128,7 +128,7 @@ export const verifyOtpEmail = async (req, res) => {
     sameSite: 'None',
   });
   const userData = await userDto(user);
-  res.json({ userData, auth: true, accessToken });
+  res.json({ userData, accessToken });
 };
 
 export const activateUser = async (req, res) => {

@@ -15,6 +15,7 @@
     "@tanstack/react-query-devtools": "^5.40.0",
     "axios": "^1.7.2",
     "freeice": "^2.2.2",
+    "lucide-react": "^0.479.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1",
@@ -29,10 +30,13 @@
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.20",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
     "vite": "^5.2.0"
   }
 }

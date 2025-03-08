@@ -1,9 +1,25 @@
-:root {
-  --primary-color: hsl(222.2 84% 4.9%);
-  --navbar-color: rgb(17 24 39/1);
-  --text-color: #000; /* Change to your secondary color */
-  --button-color: #fff;
-  --border-color: hsl(217.2 32.6% 17.5%);
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary-color: rgb(2, 8, 23);
+    --secondary-color: rgb(17, 24, 39);
+    --border-color: rgb(30, 41, 59);
+    --color-primary: 2 8 23;
+    --color-secondary: 17 24 39;
+    --color-border: 30 41 59;
+    --color-success: 46 125 50;
+    --color-error: 198 40 40;
+    --color-info: 255 152 0;
+    --color-warning: 255 111 0;
+  }
+
+  html {
+    font-size: 16px;
+    font-family: 'Manrope', sans-serif;
+  }
 }
 
 * {
