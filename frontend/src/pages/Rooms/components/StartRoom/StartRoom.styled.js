@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { MAX } from "../../typography/style";
+import styled from 'styled-components';
+import { MAX } from '@/typography/style';
 
 export const StartRoomContainer = styled.div`
   position: fixed;
@@ -126,19 +126,20 @@ export const RoomTypes = styled.div`
 `;
 
 export const RoomType = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== "roomType",
+  shouldForwardProp: (prop) => prop !== 'isActive',
 })`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  background-color: ${(prop) => (prop.roomType ? "var(--navbar-color)" : "")};
-  color: ${(prop) => (prop.roomType ? "var(--button-color)" : "")};
+  background-color: ${(prop) => (prop.isActive ? 'var(--navbar-color)' : '')};
+  color: ${(prop) => (prop.isActive ? 'var(--button-color)' : '')};
   width: 100px;
   padding: 0.625rem;
   border-radius: 0.75rem;
   transition: all 0.3s;
+
   img {
     width: 50px;
   }
@@ -149,6 +150,7 @@ export const RoomType = styled.div.withConfig({
 
 export const RoomTitle = styled.span`
   margin-top: 0.625rem;
+  text-transform: capitalize;
 `;
 
 export const AccessiBility = styled.div`
@@ -169,13 +171,13 @@ export const AccessiBility = styled.div`
 `;
 
 export const AccessibilityType = styled.div.withConfig({
-  shouldForwardProp: (prop) => prop !== "accessibility",
+  shouldForwardProp: (prop) => prop !== 'accessibility',
 })`
   display: flex;
   justify-content: center;
   align-items: center;
   background: ${(props) =>
-    props?.accessibility ? "var(--navbar-color)" : "none"};
+    props?.accessibility ? 'var(--navbar-color)' : 'none'};
   color: var(--button-color);
   font-weight: 600;
   border: 1px solid var(--border-color);
@@ -203,3 +205,102 @@ export const AssignSpeakerConatiner = styled.div`
     font-size: 0.9rem;
   }
 `;
+
+export const selectOptionsStyle = {
+  control: (provided, state) => ({
+    ...provided,
+    background: 'var(--navbar-color)',
+    border: '1px solid var(--border-color)',
+    borderRadius: '22px',
+    outline: 'none',
+    cursor: state.isDisabled ? 'not-allowed' : 'text',
+    width: '12rem',
+  }),
+  valueContainer: (provided) => ({
+    ...provided,
+    color: 'var(--button-color)',
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: 'var(--button-color)',
+  }),
+  input: (provided) => ({
+    ...provided,
+    color: 'var(--button-color)',
+    padding: '5px 0',
+  }),
+  menu: (provided) => ({
+    ...provided,
+    cursor: 'pointer',
+    background: 'var(--primary-color)',
+    width: '100%',
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    color: 'var(--button-color)',
+    backgroundColor: state.isFocused ? '#353535' : '',
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: state.isFocused ? '#353535' : '',
+    },
+  }),
+  indicatorSeparator: (provided) => ({
+    ...provided,
+    display: 'none', // Hide indicator separator
+  }),
+};
+
+export const asyncSelectOptionsStyle = {
+  control: (provided, state) => ({
+    ...provided,
+    background: '#fff',
+    border: 'none',
+    outline: 'none',
+    cursor: state.isDisabled ? 'not-allowed' : 'text',
+    borderRadius: '11px',
+  }),
+  input: (provided) => ({
+    ...provided,
+    color: 'var(--text-color)',
+    padding: '5px 0',
+  }),
+  menu: (provided) => ({
+    ...provided,
+    color: '#262626',
+    cursor: 'pointer',
+    background: '#fff',
+  }),
+  multiValue: (provided) => ({
+    ...provided,
+    borderRadius: '20px',
+    background: ' #353535',
+    '&>div': {
+      color: '#fff',
+    },
+    '&>div[role=button]': {
+      cursor: 'pointer',
+      '&:hover': {
+        color: '#fff',
+        backgroundColor: '#ababaa',
+        borderRadius: '20px',
+      },
+    },
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    color: 'black',
+    backgroundColor: state.isFocused ? '#20bd5f33' : '',
+    cursor: 'pointer',
+    '&:hover': {
+      backgroundColor: state.isFocused ? '#20bd5f33' : '',
+    },
+  }),
+  indicatorsContainer: (provided) => ({
+    ...provided,
+    display: 'none', // Hide indicators
+  }),
+  indicatorSeparator: (provided) => ({
+    ...provided,
+    display: 'none', // Hide indicator separator
+  }),
+};

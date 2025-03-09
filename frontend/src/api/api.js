@@ -64,7 +64,8 @@ export const getUserbyUserName = (userName) =>
 
 export const logout = () => api.post('authenticate/logout');
 
-export const getRooms = () => api.get('rooms/getRooms');
+export const getRooms = (topicName) =>
+  api.get(`rooms/getRooms?topic=${topicName}`);
 
 export const createRoom = (data) => api.post('rooms/createRoom', data);
 
@@ -88,9 +89,6 @@ export const addMemberToRoom = (payload) =>
 
 export const removeMemberFromRoom = (payload) =>
   api.put(`rooms/removeMemberFromRoom`, payload);
-
-export const getRoomsByTopic = (topicName) =>
-  api.get(`rooms/roomsBytTopic?topic=${topicName}`);
 
 export const googleAuth = (data) => api.post(`authenticate/google`, data);
 
