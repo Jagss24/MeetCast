@@ -1,6 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const UiModal = ({ children, headingText, className }) => {
+  useEffect(() => {
+    document.documentElement.style.overflow = 'hidden';
+
+    return () => {
+      document.documentElement.style.overflow = 'auto';
+    };
+  }, []);
   return (
     <div className='fixed inset-0 flex items-center justify-center z-50 bg-black/60'>
       <div
