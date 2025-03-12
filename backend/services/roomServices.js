@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import Rooms from "../models/roomModel.js";
+import mongoose from 'mongoose';
+import Rooms from '../models/roomModel.js';
 
 export const createRoom = async ({
   topic,
@@ -10,7 +10,7 @@ export const createRoom = async ({
   description,
   aboutWhat,
 }) => {
-  let speakersId = speakers?.map((eachSpeaker) => eachSpeaker.value);
+  let speakersId = speakers?.map((eachSpeaker) => eachSpeaker.id);
   const room = await Rooms.create({
     ownerId,
     topic,
@@ -53,14 +53,14 @@ export const roomDto = async (fields) => {
 };
 
 export const getRooms = async (type) => {
-  const rooms = await Rooms.find({ roomType: type, accessibility: "public" })
+  const rooms = await Rooms.find({ roomType: type, accessibility: 'public' })
     .populate({
-      path: "speakers",
-      select: "fullName avatar _id",
+      path: 'speakers',
+      select: 'fullName avatar _id',
     })
     .populate({
-      path: "ownerId",
-      select: "fullName avatar _id",
+      path: 'ownerId',
+      select: 'fullName avatar _id',
     })
     .exec();
   return rooms;
@@ -68,15 +68,15 @@ export const getRooms = async (type) => {
 export const getRoomsByTopic = async (topicName) => {
   const rooms = await Rooms.find({
     aboutWhat: topicName,
-    accessibility: "public",
+    accessibility: 'public',
   })
     .populate({
-      path: "speakers",
-      select: "fullName avatar _id",
+      path: 'speakers',
+      select: 'fullName avatar _id',
     })
     .populate({
-      path: "ownerId",
-      select: "fullName avatar _id",
+      path: 'ownerId',
+      select: 'fullName avatar _id',
     })
     .exec();
   return rooms;
@@ -87,24 +87,24 @@ export const getSingleRoom = async (roomId) => {
   }
   const rooms = await Rooms.findById(roomId)
     .populate({
-      path: "speakers",
-      select: "fullName userName avatar _id",
+      path: 'speakers',
+      select: 'fullName userName avatar _id',
     })
     .populate({
-      path: "ownerId",
-      select: "fullName avatar _id",
+      path: 'ownerId',
+      select: 'fullName avatar _id',
     })
     .populate({
-      path: "waitingList",
-      select: "fullName avatar _id",
+      path: 'waitingList',
+      select: 'fullName avatar _id',
     })
     .populate({
-      path: "memberList",
-      select: " _id",
+      path: 'memberList',
+      select: ' _id',
     })
     .populate({
-      path: "removedList",
-      select: " _id",
+      path: 'removedList',
+      select: ' _id',
     })
     .exec();
   return rooms;
@@ -112,12 +112,12 @@ export const getSingleRoom = async (roomId) => {
 export const getUserRoomsWithType = async (roomType, user) => {
   const rooms = await Rooms.find({ roomType, ownerId: user?._id })
     .populate({
-      path: "speakers",
-      select: "fullName avatar _id",
+      path: 'speakers',
+      select: 'fullName avatar _id',
     })
     .populate({
-      path: "ownerId",
-      select: "fullName avatar _id",
+      path: 'ownerId',
+      select: 'fullName avatar _id',
     })
     .exec();
   return rooms;
@@ -130,12 +130,12 @@ export const getSpeakerRooms = async (user) => {
     speakers: user?.id, // userId should be in the speakers array
   })
     .populate({
-      path: "speakers",
-      select: "fullName avatar _id",
+      path: 'speakers',
+      select: 'fullName avatar _id',
     })
     .populate({
-      path: "ownerId",
-      select: "fullName avatar _id",
+      path: 'ownerId',
+      select: 'fullName avatar _id',
     })
     .exec();
   return rooms;

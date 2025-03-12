@@ -1,24 +1,24 @@
-import express from "express";
-import dotenv from "dotenv";
+import express from 'express';
+import dotenv from 'dotenv';
 dotenv.config();
-import conn from "./conn.js";
-import cors from "cors";
+import conn from './conn.js';
+import cors from 'cors';
 const mongoURI = process.env.MONGO_URI;
 conn(mongoURI);
-import authenticate from "./routes/authenticate.js";
-import rooms from "./routes/rooms.js";
-import cookieParser from "cookie-parser";
-import http from "http";
-import { Server } from "socket.io";
-import { ACTIONS } from "./actions.js";
+import authenticate from './routes/authenticate.js';
+import rooms from './routes/rooms.js';
+import cookieParser from 'cookie-parser';
+import http from 'http';
+import { Server } from 'socket.io';
+import { ACTIONS } from './actions.js';
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: '*',
   },
-  path: "/api/socket",
+  path: '/api/socket',
 });
 
 app.use(cookieParser());
@@ -28,18 +28,18 @@ app.use(
     origin: process.env.FRONTEND_URL,
   })
 );
-app.use(express.json({ limit: "5mb" }));
-app.use("/authenticate", authenticate);
-app.use("/rooms", rooms);
-app.get("/", (req, res) => {
-  res.send("Hello in MeetCast");
+app.use(express.json({ limit: '5mb' }));
+app.use('/authenticate', authenticate);
+app.use('/rooms', rooms);
+app.get('/', (req, res) => {
+  res.send('Hello in MeetCast');
 });
 
 // Sockets
 const socketUserMap = {};
 
-io.on("connection", (socket) => {
-  console.log("New connection", socket.id);
+io.on('connection', (socket) => {
+  console.log('New connection', socket.id);
   socket.on(ACTIONS.JOIN, ({ roomId, user }) => {
     socketUserMap[socket.id] = user;
 
@@ -175,14 +175,14 @@ io.on("connection", (socket) => {
     socket.leave(roomId);
     delete socketUserMap[socket.id];
 
-    console.log("map", socketUserMap);
+    console.log('map', socketUserMap);
   };
 
   socket.on(ACTIONS.LEAVE, leaveRoom);
 
-  socket.on("disconnecting", leaveRoom);
+  socket.on('disconnecting', leaveRoom);
 });
 
-server.listen(process.env.PORT || "3000", () =>
+server.listen(process.env.PORT || '3000', () =>
   console.log(`Listening on port ${process.env.PORT}`)
 );

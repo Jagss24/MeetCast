@@ -20,8 +20,8 @@ router.post('/createRoom', async (req, res) => {
   const { topic, description, roomType, accessibility, speakers, aboutWhat } =
     req.body;
   const { refreshtoken } = req.cookies;
-  if (!topic || !roomType || !accessibility || !description) {
-    return res.status(200).json({
+  if (!topic || !roomType || !accessibility || !description || !aboutWhat) {
+    return res.status(400).json({
       message: 'Some info about room is missing',
     });
   }
@@ -45,7 +45,7 @@ router.post('/createRoom', async (req, res) => {
     res.status(200).json({ roomDtos });
   } else {
     res
-      .status(200)
+      .status(400)
       .json({ message: 'Your Session has expired. Please Login again' });
   }
 });
