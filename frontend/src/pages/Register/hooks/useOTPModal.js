@@ -39,7 +39,6 @@ export const useOTPModal = ({ handleClose }) => {
   };
 
   const handleSubmit = ({ password }) => {
-    console.log({ password });
     const data = {
       otp: inputs.join(''),
       hash,

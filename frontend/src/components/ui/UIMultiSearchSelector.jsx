@@ -29,7 +29,6 @@ const UIMultiSearchSelector = ({
     : selectedValues?.length
     ? selectedValues
     : [];
-  console.log({ selectedValues, renderOptions });
   return (
     <div className='flex  relative flex-col w-full'>
       <Listbox value={selectedValues} onChange={onChange} multiple>
@@ -43,17 +42,14 @@ const UIMultiSearchSelector = ({
           <div className='flex items-center gap-2'>
             {totalSelected ? (
               <>
-                {selectedValues?.slice(0, showCount)?.map((value) => {
-                  console.log({ value, id: value?.id });
-                  return (
-                    <UiButton
-                      key={value?.id}
-                      className='px-2 py-0.5 rounded bg-primary/10 h-8 text-black text-sm  text-nowrap'
-                      buttonType='tertiary'
-                      text={value[accessorKey]}
-                    />
-                  );
-                })}
+                {selectedValues?.slice(0, showCount)?.map((value) => (
+                  <UiButton
+                    key={value?.id}
+                    className='px-2 py-0.5 rounded bg-primary/10 h-8 text-black text-sm  text-nowrap'
+                    buttonType='tertiary'
+                    text={value[accessorKey]}
+                  />
+                ))}
                 {totalSelected > showCount && (
                   <div className='h-6 w-6 rounded-full bg-primary/20 text-primary text-sm font-medium flex items-center justify-center '>
                     +{totalSelected - showCount}
