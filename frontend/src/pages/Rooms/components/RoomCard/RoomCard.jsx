@@ -1,83 +1,82 @@
 import React, { useState } from 'react';
-import {
-  RoomCardStyled,
-  RoomMain,
-  Topic,
-  SpeakerContainers,
-  SpeakersAvatar,
-  HostContainer,
-  JoinRoom,
-  About,
-} from './RoomCard.styled';
 import DummyImage from '@/components/DummyImage';
 import { useRouteHandlers } from '@/hooks/useRouteHandlers';
+import UiButton from '@/components/ui/UiButton';
 
 const RoomCard = ({ room }) => {
-  const borderColors = ['red', 'green', 'blue', 'yellow'];
   const { navigate } = useRouteHandlers();
   const [readMore, setReadMore] = useState(false);
   return (
-    <RoomCardStyled>
-      <RoomMain>
-        <Topic>{room?.topic}</Topic>
-        <About>
-          {room?.description.length >= 98 ? (
-            <>
-              {readMore
-                ? room?.description
-                : `${room?.description.slice(0, 98)}...`}
-              <span onClick={() => setReadMore((prev) => !prev)}>
-                {readMore ? ' Read Less' : ' Read More'}
-              </span>
-            </>
-          ) : (
-            room?.description
-          )}
-        </About>
-        <SpeakerContainers>
-          <HostContainer>
-            {room?.ownerId?.avatar ? (
-              <img
-                src={room?.ownerId?.avatar}
-                alt='host_pic'
-                referrerPolicy='no-referrer'
-              />
-            ) : (
-              <DummyImage
-                userName={room?.ownerId?.fullName.charAt(0).toUpperCase()}
-              />
-            )}
-            <span>
-              {room?.ownerId?.fullName} <br /> (Host)
+    <div className='flex flex-col gap-2 justify-start p-4 border border-white/10 rounded-lg relative'>
+      <p className='text-white font-semibold text-base'>{room?.topic}</p>
+      <p
+        data-readmore={!!readMore}
+        className='text-extraLightGray text-sm font-normal data-[readmore="true"]:h-auto h-10'>
+        {room?.description.length >= 98 ? (
+          <>
+            {readMore
+              ? room?.description
+              : `${room?.description.slice(0, 98)}...`}
+            <span onClick={() => setReadMore((prev) => !prev)}>
+              {readMore ? ' Read Less' : ' Read More'}
             </span>
-          </HostContainer>
-          <SpeakersAvatar
-            randomcolors={borderColors[Math.floor(Math.random() * 4)]}
-            speakerLength={room?.speakers.length}>
-            {room?.speakers
-              .slice(0, 2)
-              .map((speaker, index) =>
-                speaker?.avatar ? (
-                  <img
-                    key={index}
-                    src={speaker?.avatar}
-                    alt='profile'
-                    referrerPolicy='no-referrer'
-                  />
-                ) : (
-                  <DummyImage
-                    key={index}
-                    userName={speaker?.fullName?.charAt(0).toUpperCase()}
-                  />
-                )
-              )}
-          </SpeakersAvatar>
-        </SpeakerContainers>
-        <JoinRoom onClick={() => navigate(`/room/${room?.id}`)}>
-          Join the Room
-        </JoinRoom>
-      </RoomMain>
-    </RoomCardStyled>
+          </>
+        ) : (
+          room?.description
+        )}
+      </p>
+      <div className='flex justify-between items-center mb-2 pr-3'>
+        <div className='flex justify-center items-center gap-2'>
+          {room?.ownerId?.avatar ? (
+            <img
+              src={room?.ownerId?.avatar}
+              alt='host_pic'
+              referrerPolicy='no-referrer'
+              className='w-12 h-12 rounded-full'
+            />
+          ) : (
+            <DummyImage
+              userName={room?.ownerId?.fullName.charAt(0).toUpperCase()}
+              className='w-12 h-12 rounded-full'
+            />
+          )}
+          <span>
+            {room?.ownerId?.fullName} <br /> (Host)
+          </span>
+        </div>
+        <div className='flex flex-col relative '>
+          {room?.speakers
+            .slice(0, 2)
+            .map((speaker, index) =>
+              speaker?.avatar ? (
+                <img
+                  key={index}
+                  src={speaker?.avatar}
+                  alt='profile'
+                  referrerPolicy='no-referrer'
+                  data-index={index}
+                  className='w-12 h-12 rounded-full object-cover last:absolute only:relative only:top-0 only:right-0 last:top-4 last:right-4'
+                />
+              ) : (
+                <DummyImage
+                  key={index}
+                  userName={speaker?.fullName?.charAt(0).toUpperCase()}
+                  className='w-12 h-12 rounded-full last:absolute only:relative only:top-0 only:right-0 last:top-4 last:right-4'
+                />
+              )
+            )}
+        </div>
+      </div>
+      <section className='flex justify-center items-center'>
+        <UiButton
+          text='Join the Room'
+          buttonType='primary'
+          onClick={() => navigate(`/room/${room?.id}`)}
+          className='px-4'
+        />
+      </section>
+      {/* </RoomMain> */}
+    </div>
   );
 };
 

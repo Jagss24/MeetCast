@@ -1,42 +1,47 @@
-import { FaPodcast } from 'react-icons/fa';
-import { MdVideoCall } from 'react-icons/md';
+import { Podcast, Video } from 'lucide-react';
 
 const TOPIC_OPTIONS = [
   {
-    label: 'Health',
-    value: 'Health',
+    id: 1,
+    name: 'Health',
   },
   {
-    label: 'Art',
-    value: 'Art',
+    id: 2,
+    name: 'Art',
   },
   {
-    label: 'Fitness',
-    value: 'Fitness',
+    id: 3,
+    name: 'Fitness',
   },
   {
-    label: 'Finance',
-    value: 'Finance',
+    id: 4,
+    name: 'Finance',
   },
   {
-    label: 'Medical',
-    value: 'Medical',
+    id: 5,
+    name: 'Medical',
   },
   {
-    label: 'Engineering',
-    value: 'Engineering',
+    id: 6,
+    name: 'Engineering',
   },
   {
-    label: 'Politics',
-    value: 'Politics',
+    id: 7,
+    name: 'Politics',
   },
 ];
 
 const ROOM_TYPES = [
-  { name: 'podcast', icon: FaPodcast },
-  { name: 'meet', icon: MdVideoCall },
+  { name: 'podcast', icon: Podcast },
+  { name: 'meet', icon: Video },
 ];
+
+const ROOM_URL_KEYS = {
+  roomType: 'room-type',
+  visibility: 'visibility',
+  topic: 'filter-room',
+};
 
 const ACCESSIBILITY_TYPES = [{ name: 'public' }, { name: 'private' }];
 
-export { TOPIC_OPTIONS, ROOM_TYPES, ACCESSIBILITY_TYPES };
+export { TOPIC_OPTIONS, ROOM_TYPES, ACCESSIBILITY_TYPES, ROOM_URL_KEYS };

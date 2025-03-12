@@ -1,166 +1,148 @@
-import React, { memo } from 'react';
-import {
-  StartRoomContainer,
-  StartRoomBody,
-  StartRoomHeader,
-  StartRoomFooter,
-  RoomTypes,
-  RoomType,
-  RoomTitle,
-  AccessiBility,
-  AssignSpeakerConatiner,
-  AccessibilityType,
-  StartRoomBase,
-  TopicDiv,
-  selectOptionsStyle,
-  asyncSelectOptionsStyle,
-} from './StartRoom.styled';
-import { HiXMark } from 'react-icons/hi2';
-import AsyncSelect from 'react-select/async';
-import { Option, NoOptionsMessage } from './components/StartRoomOptions';
-import Select from 'react-select';
 import { useStartRoom } from '../../hooks/useStartRoom';
+import UiModal from '@/components/ui/UiModal';
+import UiButton from '@/components/ui/UiButton';
+import { ACCESSIBILITY_TYPES, ROOM_URL_KEYS } from '../../room.constants';
+import UiTextInput from '@/components/ui/UiTextInput';
+import UISelector from '@/components/ui/UISelector';
+import UIMultiSearchSelector from '@/components/ui/UIMultiSearchSelector';
+import toast from 'react-hot-toast';
+import { X } from 'lucide-react';
 
 const StartRoom = ({ closeModal }) => {
   const {
-    functions: {
-      handleCreateRoom,
-      handleChange,
-      loadOptions,
-      handleActiveRoom,
-    },
+    functions: { handleCreateRoom },
     states: {
       TOPIC_OPTIONS,
       ROOM_TYPES,
-      accessibility,
       selectedOption,
       selectedUser,
+      userQuery,
+      listOfUsers,
     },
-    setStates: { setSelectedOption, setAccessibility, setSelectedUser },
-    routing: { activeRoom },
+    setStates: { setSelectedOption, setSelectedUser, setUserQuery },
+    routing: { navigateTo, activeRoom, visibility },
   } = useStartRoom();
 
   return (
-    <StartRoomContainer>
-      <StartRoomBody>
-        <StartRoomHeader>
-          <span>Room Type</span>
-          <RoomTypes>
-            {ROOM_TYPES.map((eachRoomType) => {
-              const ICON = eachRoomType.icon;
-              return (
-                <RoomType
-                  isActive={activeRoom === eachRoomType.name}
-                  onClick={() => handleActiveRoom({ roomType: eachRoomType })}>
-                  <ICON />
-                  <RoomTitle>{eachRoomType.name}</RoomTitle>
-                </RoomType>
-              );
-            })}
-          </RoomTypes>
-          <AccessiBility>
-            {activeRoom === 'meet' && (
-              <AccessibilityType>
-                If room type is Meet then it will always be private
-              </AccessibilityType>
-            )}
-            {activeRoom === 'podcast' && (
-              <div>
-                <AccessibilityType
-                  accessibility={accessibility === 'public'}
-                  onClick={() => setAccessibility('public')}>
-                  Public
-                </AccessibilityType>
-                <AccessibilityType
-                  accessibility={accessibility === 'private'}
-                  onClick={() => setAccessibility('private')}>
-                  Private
-                </AccessibilityType>
-              </div>
-            )}
-            <span>
-              {activeRoom === 'podcast'
-                ? `Start a podcast, ${
-                    accessibility === 'public'
-                      ? 'open to everyone'
-                      : 'private with your people'
-                  } `
-                : 'Start a Meet, with your people'}
-            </span>
-            {activeRoom === 'podcast' && (
-              <TopicDiv>
-                <h4>About What? </h4>
-                <Select
-                  onChange={(selected) => {
-                    return setSelectedOption({
-                      label: selected.label,
-                      value: selected.value,
-                    });
-                  }}
-                  value={
-                    selectedOption.label && selectedOption.value
-                      ? selectedOption
-                      : null
-                  }
-                  options={TOPIC_OPTIONS}
-                  styles={selectOptionsStyle}
-                />
-              </TopicDiv>
-            )}
-          </AccessiBility>
-        </StartRoomHeader>
-        <StartRoomBase>
-          <h3>Title of the room</h3>
-          <input placeholder='Enter your room title...' />
-          <div className='desc_div'>
-            <h3>Description of the room</h3>
-            <input
-              onChange={(e) => {
-                if (e.target.value.length > 200) return;
-              }}
-              placeholder='Say something about your room...'
-            />
-          </div>
-          {activeRoom === 'podcast' && accessibility === 'public' && (
-            <AssignSpeakerConatiner>
-              <h6>Assign speakers to your podcast :</h6>
-              <AsyncSelect
-                isSearchable={true}
-                isMulti={true}
-                onChange={handleChange}
-                value={selectedUser}
-                menuPlacement='top'
-                placeholder={'Search users'}
-                components={{ Option, NoOptionsMessage }}
-                loadOptions={loadOptions}
-                styles={asyncSelectOptionsStyle}
+    <UiModal className='relative'>
+      <section className='flex flex-col items-center gap-4 my-4'>
+        <span>Room Type</span>
+        <div className='flex items-center gap-4'>
+          {ROOM_TYPES.map((eachRoomType) => {
+            const ICON = eachRoomType.icon;
+            return (
+              <UiButton
+                text={eachRoomType.name}
+                icon={<ICON className='size-5' />}
+                data-active={activeRoom === eachRoomType.name}
+                onClick={() =>
+                  navigateTo({
+                    to: { [ROOM_URL_KEYS.roomType]: eachRoomType.name },
+                  })
+                }
+                buttonType='tertiary'
+                className='h-20 w-24 text-white capitalize flex flex-col-reverse gap-2 rounded-md focus:ring-2 focus:ring-gray data-[active=true]:bg-secondary duration-200'
               />
-            </AssignSpeakerConatiner>
-          )}
-          {activeRoom === 'meet' && (
-            <AccessibilityType>
-              If room type is meet those users who can join the room will be
-              allowed to speak
-            </AccessibilityType>
-          )}
-          {activeRoom === 'podcast' && accessibility === 'private' && (
-            <AccessibilityType>
-              If you will create private room eveyone will be allowed to speak
-            </AccessibilityType>
-          )}
-        </StartRoomBase>
-        <StartRoomFooter>
-          <button onClick={handleCreateRoom}>
-            <span>Create Room</span>
-          </button>
-        </StartRoomFooter>
+            );
+          })}
+        </div>
+        {activeRoom === 'podcast' ? (
+          <div className='flex items-center gap-4'>
+            {ACCESSIBILITY_TYPES.map((eachAccessibility) => (
+              <UiButton
+                text={eachAccessibility.name}
+                data-active={visibility === eachAccessibility.name}
+                onClick={() =>
+                  navigateTo({
+                    to: { [ROOM_URL_KEYS.visibility]: eachAccessibility.name },
+                  })
+                }
+                buttonType='tertiary'
+                className='text-white px-6 p-2 rounded-full capitalize border border-white focus:ring-2 focus:ring-gray data-[active=true]:bg-white data-[active=true]:text-primary data-[active=true]:ring-0 duration-200'
+              />
+            ))}
+          </div>
+        ) : (
+          <p className='text-sm font-semibold border border-gray p-4 rounded-lg'>
+            If room type is meet then it will always be private
+          </p>
+        )}
+        {activeRoom === 'podcast' && (
+          <UISelector
+            label='About What?'
+            value={selectedOption}
+            onChange={(val) => {
+              return setSelectedOption({ id: val.id, name: val.name });
+            }}
+            placeholder='Select topic'
+            options={TOPIC_OPTIONS}
+          />
+        )}
+      </section>
 
-        <span onClick={closeModal}>
-          <HiXMark color={'#fff'} size={20} />
-        </span>
-      </StartRoomBody>
-    </StartRoomContainer>
+      <form
+        className='w-full flex flex-col gap-2'
+        onSubmit={(e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          const topic = formData.get('title');
+          const description = formData.get('description');
+          handleCreateRoom({ topic, description });
+        }}>
+        <UiTextInput
+          name='title'
+          label='Title of the room'
+          placeholder='Enter your room title...'
+          className='placeholder:font-normal mt-1'
+        />
+        <UiTextInput
+          name='description'
+          label='Description of the room'
+          placeholder='Say something about your room...'
+          className='placeholder:font-normal mt-1'
+        />
+        {activeRoom === 'podcast' && visibility === 'public' && (
+          <UIMultiSearchSelector
+            label='Speakers'
+            onChange={(val) => {
+              if (val.length === 4)
+                return toast.error('You can only select up to 3 options.');
+              setSelectedUser(val);
+            }}
+            placeholder='Search user to assign as speaker'
+            selectedValues={selectedUser}
+            options={listOfUsers}
+            query={userQuery}
+            setQuery={setUserQuery}
+            className='bg-white h-12'
+          />
+        )}
+        {activeRoom === 'meet' && (
+          <p className='text-sm font-semibold border border-gray p-4 rounded-lg'>
+            If room type is meet those users who can join the room will be
+            allowed to speak
+          </p>
+        )}
+        {activeRoom === 'podcast' && visibility === 'private' && (
+          <p className='text-sm font-semibold border border-gray p-4 rounded-lg'>
+            If you will create private room eveyone will be allowed to speak
+          </p>
+        )}
+        <UiButton
+          text='Create Room'
+          buttonType='primary'
+          className='px-4 w-auto self-center'
+          type='submit'
+        />
+      </form>
+
+      <span
+        className='absolute top-2 right-2 cursor-pointer bg-primary'
+        onClick={closeModal}>
+        <X className='size-4 text-white' />
+      </span>
+    </UiModal>
   );
 };
 
-export default memo(StartRoom);
+export default StartRoom;
