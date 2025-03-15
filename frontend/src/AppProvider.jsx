@@ -10,7 +10,7 @@ const AppProvider = () => {
     services: { getReLoginUser },
   } = useAutoReLogin({ enableQuery: true });
 
-  if (getReLoginUser?.isFetching || getReLoginUser?.isLoading) {
+  if (getReLoginUser?.isLoading) {
     return <AppLoader />;
   }
   return (

@@ -36,7 +36,6 @@ export const useActivate = () => {
       };
       reader.readAsDataURL(file);
     } else if (file?.size > 5 * 1024 * 1024) {
-      setWrongImgType(false);
       toast('File size should not exceed 5MB.');
     }
   };

@@ -72,7 +72,7 @@ const RoomCard = ({ room }) => {
           text='Join the Room'
           buttonType='primary'
           onClick={() => navigate(`/room/${room?.id}`)}
-          className='px-4'
+          className='px-4 focus:brightness-90 focus:scale-95'
         />
       </section>
       {/* </RoomMain> */}

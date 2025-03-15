@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import { logout } from '../../api/api.js';
+import { logout } from '@/api/api.js';
 import DummyImage from '../DummyImage.jsx';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoLogOutOutline } from 'react-icons/io5';
@@ -9,13 +9,17 @@ import { useAutoReLogin } from '@/hooks/useAutoReLogin.js';
 import { useRouteHandlers } from '@/hooks/useRouteHandlers.ts';
 import { Podcast } from 'lucide-react';
 import { useState } from 'react';
+import {
+  PROFILE_URL_KEYS,
+  ROOM_TYPES,
+} from '@/pages/Profile/profile.constants.js';
 
 const Navbar = () => {
   const {
     services: { getReLoginUser },
   } = useAutoReLogin();
   const user = getReLoginUser?.data?.data?.userData;
-  const { paramsObject, navigate, route } = useRouteHandlers();
+  const { paramsObject, navigate, navigateTo, subRoute } = useRouteHandlers();
   const [showUserModal, setShowUserModal] = useState(false);
 
   const isOnMeetorPodCast = ['podcast', 'meet'].some((key) =>
@@ -58,16 +62,24 @@ const Navbar = () => {
           )}
           {showUserModal && (
             <div className='absolute top-full right-0 bg-secondary w-[150px] border border-gray rounded z-10'>
-              {route !== 'profile' && (
-                <p
-                  className='flex items-center gap-2 p-2 border-b border-gray'
-                  onClick={() => navigate(`/profile/${user?.userName}`)}>
-                  <span>
-                    <FaUserCircle />
-                  </span>
-                  View Profile
-                </p>
-              )}
+              <p
+                className='flex items-center gap-2 p-2 border-b border-gray'
+                onClick={() => {
+                  {
+                    if (subRoute === user?.userName) {
+                      return;
+                    }
+                    navigateTo({
+                      to: { [PROFILE_URL_KEYS?.activeRoomType]: ROOM_TYPES[0] },
+                      url: `/profile/${user?.userName}`,
+                    });
+                  }
+                }}>
+                <span>
+                  <FaUserCircle />
+                </span>
+                View Profile
+              </p>
               <p
                 className='flex items-center gap-2 p-2'
                 onClick={logoutMutation.mutate}>

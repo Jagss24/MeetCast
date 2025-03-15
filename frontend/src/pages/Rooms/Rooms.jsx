@@ -23,7 +23,7 @@ const Rooms = () => {
             text='All rooms'
             data-active={!roomTopic}
             onClick={() => navigateTo({ remove: [ROOM_URL_KEYS.topic] })}
-            className='px-4 h-10 rounded-full text-white border border-gray/50 data-[active=true]:bg-white data-[active=true]:text-primary duration-300 text-nowrap'
+            className='px-4 h-10 rounded-full text-white border border-gray/50 data-[active=true]:bg-white data-[active=true]:text-primary duration-300 text-nowrap focus:brightness-90 focus:scale-90'
             buttonType='tertiary'
           />
           <UISelector
@@ -33,7 +33,7 @@ const Rooms = () => {
             }
             placeholder='Select topic'
             options={TOPIC_OPTIONS}
-            className='w-36'
+            className='w-40 focus:border-2 focus:border-primary/50'
           />
         </div>
         <UiButton
@@ -51,7 +51,7 @@ const Rooms = () => {
               });
             }, 100);
           }}
-          className='px-6 h-10 rounded-full border border-gray/50 bg-white text-primary duration-300 hover:brightness-90'
+          className='px-6 h-10 rounded-full border border-gray/50 bg-white text-primary duration-300 hover:brightness-90 focus:brightness-90 focus:scale-90'
           buttonType='tertiary'
         />
       </div>

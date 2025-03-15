@@ -157,7 +157,8 @@ const Room = () => {
       <h3>Setting you up please wait</h3>
     </LoadingContainer>
   ) : (
-    <RoomConatiner
+    <section
+      className='flex flex-col justify-center items-center gap-4 w-[1200px] mx-auto py-8'
       notAllowPadding={roomType === 'meet' || roomType === 'podcast'}>
       {!roomType && (
         <>
@@ -355,7 +356,7 @@ const Room = () => {
           setRoomType={setRoomType}
         />
       )}
-    </RoomConatiner>
+    </section>
   );
 };
 
