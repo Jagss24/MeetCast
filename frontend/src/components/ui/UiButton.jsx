@@ -1,5 +1,4 @@
 import { LoaderCircle } from 'lucide-react';
-import React from 'react';
 
 const UiButton = ({
   text,

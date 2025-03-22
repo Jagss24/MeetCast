@@ -32,6 +32,7 @@ const StartRoom = ({ closeModal }) => {
             const ICON = eachRoomType.icon;
             return (
               <UiButton
+                key={eachRoomType.name}
                 text={eachRoomType.name}
                 icon={<ICON className='size-5' />}
                 data-active={activeRoom === eachRoomType.name}
@@ -50,6 +51,7 @@ const StartRoom = ({ closeModal }) => {
           <div className='flex items-center gap-4'>
             {ACCESSIBILITY_TYPES.map((eachAccessibility) => (
               <UiButton
+                key={eachAccessibility.name}
                 text={eachAccessibility.name}
                 data-active={visibility === eachAccessibility.name}
                 onClick={() =>

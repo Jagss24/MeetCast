@@ -1,4 +1,3 @@
-import React from 'react';
 import RoomCard from '../Rooms/components/RoomCard/RoomCard';
 import DummyImage from '@/components/DummyImage';
 import { ThreeDots } from 'react-loading-icons';
@@ -36,9 +35,10 @@ const Profile = () => {
           className='h-[200px] w-full'
         />
         <UiButton
+          buttonType='tertiary'
           icon={<ChevronLeft className='size-5 text-white' />}
           className='w-10 h-10 absolute left-4 top-4 bg-black/40 p-2 rounded-full cursor-pointer focus:border focus:border-white'
-          onClick={() => navigate('/rooms')}
+          onClick={() => navigate(-1)}
         />
 
         {loggedInUser?.id === profileUserData?.id && (

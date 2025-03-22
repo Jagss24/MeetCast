@@ -8,7 +8,7 @@ import { createRoom } from '@/api/api';
 import { searchUser } from '@/api/api';
 
 export const useStartRoom = () => {
-  const { navigate, navigateTo, paramsObject } = useRouteHandlers();
+  const { navigateTo, paramsObject } = useRouteHandlers();
 
   const activeRoom = paramsObject?.[ROOM_URL_KEYS.roomType] || '';
   const visibility = paramsObject?.[ROOM_URL_KEYS.visibility] || '';
@@ -56,7 +56,10 @@ export const useStartRoom = () => {
       })
       .then((roomData) => {
         const roomId = roomData?.data?.roomDtos?.id;
-        navigateTo({ url: `/room/${roomId}` });
+        navigateTo({
+          url: `/room/${roomId}`,
+          remove: Object.values(ROOM_URL_KEYS),
+        });
       });
   };
 
