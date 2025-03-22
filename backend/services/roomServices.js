@@ -145,45 +145,72 @@ export const getSpeakerRooms = async (user) => {
 export const addUserinWaitingList = async (roomId, userId) => {
   const room = await getSingleRoom(roomId);
   if (!room) {
-    return false;
+    return { code: 'ROOM_NOT_FOUND' };
   }
-  const UserExist = room.waitingList.find(
+
+  const userExistsInWaitingList = room.waitingList.find(
     (eachUser) => eachUser?.id === userId
   );
 
-  const UserinRemovedList = room.removedList.find(
+  if (userExistsInWaitingList) {
+    return { code: 'ALREADY_IN_WAITING_LIST' };
+  }
+
+  const useExistsInRemovedList = room?.removedList.find(
     (eachUser) => eachUser?.id === userId
   );
-  // Check if the user is already in the waiting list
-  if (!UserExist) {
-    // if not then push the userId into the waitingList array
-    room.waitingList.push(userId);
-    if (UserinRemovedList)
-      room.removedList = room.removedList.filter(
-        (eachUser) => !eachUser?._id.equals(new mongoose.Types.ObjectId(userId))
-      );
-    // Save the updated room
-    await room.save();
-    return true;
+
+  if (useExistsInRemovedList) {
+    return { code: 'REMOVED_FROM_WAITING' };
   }
-  return false;
+
+  const userExistsinMemberList = room.memberList.find(
+    (eachUser) => eachUser?.id === userId
+  );
+
+  if (userExistsinMemberList) {
+    return { code: 'USER_IS_MEMBER' };
+  }
+
+  const userInRemovedList = room.removedList.find(
+    (eachUser) => eachUser?.id === userId
+  );
+
+  // Add user to waiting list
+  room.waitingList.push(userId);
+
+  // Remove from removed list if present
+  if (userInRemovedList) {
+    room.removedList = room.removedList.filter(
+      (eachUser) => !eachUser?._id.equals(new mongoose.Types.ObjectId(userId))
+    );
+  }
+
+  // Save the updated room
+  await room.save();
+  return { code: 'ADDED_TO_WAITING_LIST' };
 };
 
 //this function is used to add the user from waiting list to member list
 export const addUserinMemberList = async (roomId, userId) => {
   const room = await getSingleRoom(roomId);
   if (!room) {
-    return false;
+    return { code: 'ROOM_NOT_FOUND' };
   }
 
-  const userinMemberList = room.memberList.find(
+  const userExistsinMemberList = room.memberList.find(
     (eachUser) => eachUser?.id === userId
   );
-  const userinWaitinList = room.waitingList.find(
+
+  if (userExistsinMemberList) {
+    return { code: 'USER_IS_MEMBER' };
+  }
+
+  const userExistsinWaitingList = room.waitingList.find(
     (eachUser) => eachUser?.id === userId
   );
   // Check if the user is in the waiting list & is not in member List
-  if (userinWaitinList && !userinMemberList) {
+  if (userExistsinWaitingList) {
     // if not then push the userId into the memberList array
     room.memberList.push(userId);
     room.waitingList = room.waitingList.filter(
@@ -192,9 +219,10 @@ export const addUserinMemberList = async (roomId, userId) => {
     // Save the updated room
     await room.save();
 
-    return true;
+    return { code: 'ADDED_IN_MEMBER' };
+  } else {
+    return { code: 'USER_IS_NOT_IN_WAITING' };
   }
-  return false;
 };
 
 //this function is used to add the user from waiting list to member list

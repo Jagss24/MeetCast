@@ -20,7 +20,7 @@ router.post('/createRoom', async (req, res) => {
   const { topic, description, roomType, accessibility, speakers, aboutWhat } =
     req.body;
   const { refreshtoken } = req.cookies;
-  if (!topic || !roomType || !accessibility || !description || !aboutWhat) {
+  if (!topic || !roomType || !accessibility || !description) {
     return res.status(400).json({
       message: 'Some info about room is missing',
     });
@@ -112,11 +112,38 @@ router.put('/requestToJoin', async (req, res) => {
   if (!user) {
     return res.status(404).json({ message: 'User not found' });
   }
-  const room = await addUserinWaitingList(roomId, userId);
-  if (!room) {
-    return res.status(404).json({ message: 'Room not found' });
+
+  const result = await addUserinWaitingList(roomId, userId);
+  switch (result.code) {
+    case 'ROOM_NOT_FOUND':
+      return res.status(404).json({
+        message: 'Room not found',
+      });
+
+    case 'ALREADY_IN_WAITING_LIST':
+      return res.status(409).json({
+        message: 'Request already sent',
+      });
+
+    case 'REMOVED_FROM_WAITING':
+      return res.status(409).json({
+        message: 'You were removed from waiting list cannot join the room',
+      });
+
+    case 'ADDED_TO_WAITING_LIST':
+      return res.status(200).json({
+        message: 'Successfully added to waiting list',
+      });
+    case 'USER_IS_MEMBER':
+      return res.status(400).json({
+        message: 'User is already a member',
+      });
+
+    default:
+      return res.status(500).json({
+        message: 'Unknown error occurred',
+      });
   }
-  res.status(200).json({ message: 'User added in waiting List' });
 });
 
 router.put('/addMemberToRoom', async (req, res) => {
@@ -129,7 +156,33 @@ router.put('/addMemberToRoom', async (req, res) => {
     return res.status(404).json({ message: 'User not found' });
   }
 
-  const room = await addUserinMemberList(roomId, userId);
+  const result = await addUserinMemberList(roomId, userId);
+
+  switch (result.code) {
+    case 'ROOM_NOT_FOUND':
+      return res.status(404).json({
+        message: 'Room not found',
+      });
+
+    case 'USER_IS_MEMBER':
+      return res.status(400).json({
+        message: 'User is already a member',
+      });
+
+    case 'ADDED_IN_MEMBER':
+      return res.status(200).json({
+        message: 'User is now member of the room',
+      });
+    case 'USER_IS_NOT_IN_WAITING':
+      return res.status(400).json({
+        message: 'User is not in waiting list',
+      });
+
+    default:
+      return res.status(500).json({
+        message: 'Unknown error occurred',
+      });
+  }
 
   if (!room) {
     return res.status(404).json({ message: 'Room not found' });
