@@ -19,12 +19,8 @@ const Navbar = () => {
     services: { getReLoginUser },
   } = useAutoReLogin();
   const user = getReLoginUser?.data?.data?.userData;
-  const { paramsObject, navigate, navigateTo, subRoute } = useRouteHandlers();
+  const { navigate, navigateTo, subRoute } = useRouteHandlers();
   const [showUserModal, setShowUserModal] = useState(false);
-
-  const isOnMeetorPodCast = ['podcast', 'meet'].some((key) =>
-    paramsObject.hasOwnProperty(key)
-  );
 
   const logoutMutation = useMutation({
     mutationFn: () => logout(),
@@ -36,7 +32,7 @@ const Navbar = () => {
     },
   });
 
-  return !isOnMeetorPodCast ? (
+  return (
     <nav className='w-full flex justify-between items-center px-4 py-2 bg-secondary '>
       <Link to='/' className='flex items-center gap-2 '>
         <Podcast className='size-6' />
@@ -55,9 +51,8 @@ const Navbar = () => {
             />
           ) : (
             <DummyImage
-              width={40}
-              height={40}
               userName={user?.userName?.charAt(0).toUpperCase()}
+              className='w-10 h-10'
             />
           )}
           {showUserModal && (
@@ -93,8 +88,6 @@ const Navbar = () => {
         </div>
       )}
     </nav>
-  ) : (
-    <></>
   );
 };
 
