@@ -65,7 +65,7 @@ export const useSingleRoom = () => {
         (eachId) => eachId?._id === loggedInUser?.id
       );
       if (userisInMemberList) {
-        navigateTo({ url: `/room/${roomData?.roomType}/${roomData?.id}` });
+        navigateTo({ url: `/${roomData?.roomType}/${roomData?.id}` });
       } else {
         requestMutation.mutate({
           userId: loggedInUser?.id,
@@ -73,7 +73,7 @@ export const useSingleRoom = () => {
         });
       }
     } else {
-      navigateTo({ url: `/room/${roomData?.roomType}/${roomData?.id}` });
+      navigateTo({ url: `/${roomData?.roomType}/${roomData?.id}` });
     }
   };
 

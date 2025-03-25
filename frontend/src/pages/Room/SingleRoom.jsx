@@ -50,8 +50,7 @@ const SingleRoom = () => {
                   ) : (
                     <DummyImage
                       userName={speaker?.fullName?.charAt(0).toUpperCase()}
-                      width={48}
-                      height={48}
+                      className='w-12 h-12'
                     />
                   )}
 
@@ -87,8 +86,7 @@ const SingleRoom = () => {
                             userName={eachUser?.fullName
                               ?.charAt(0)
                               .toUpperCase()}
-                            width={50}
-                            height={50}
+                            className='w-12 h-12'
                           />
                         )}
 

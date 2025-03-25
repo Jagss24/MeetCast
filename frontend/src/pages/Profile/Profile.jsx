@@ -70,9 +70,7 @@ const Profile = () => {
           ) : (
             <DummyImage
               userName={profileUserData?.fullName?.charAt(0)}
-              width={160}
-              height={160}
-              fontSize={2.5}
+              className='w-36 h-36 rounded-md !text-xl -translate-y-[50%]'
             />
           )}
           {loggedInUser?.id === profileUserData?.id && (
