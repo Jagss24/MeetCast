@@ -1,7 +1,6 @@
-import React, { useState, useEffect, memo } from 'react';
-import styled from 'styled-components';
+import { useState, useEffect, memo } from 'react';
 
-const DummyImage = ({ width, height, userName, fontSize, className = '' }) => {
+const DummyImage = ({ userName, className = '' }) => {
   const colors = [
     '#ef4444',
     '#84cc16',
@@ -17,31 +16,11 @@ const DummyImage = ({ width, height, userName, fontSize, className = '' }) => {
     setBackgroundColor(randomColor);
   }, []);
   return (
-    <DummyWrapperImage
-      width={width}
-      height={height}
-      backgroundColor={backgroundColor}
-      fontSize={fontSize}
-      className={className}>
+    <div
+      style={{ background: backgroundColor }}
+      className={`text-xs w-10 h-10 flex items-center justify-center rounded-full ${className}`}>
       <span>{userName}</span>
-    </DummyWrapperImage>
+    </div>
   );
 };
-const DummyWrapperImage = styled.div.withConfig({
-  shouldForwardProp: (prop) =>
-    !['width', 'height', 'backgroundColor'].includes(prop),
-})`
-  width: ${(props) => (props?.width ? props.width + 'px' : '40px')};
-  height: ${(props) => (props?.height ? props.height + 'px' : '40px')};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  background-color: ${(props) =>
-    props?.backgroundColor ? props.backgroundColor : 'transparent'};
-  span {
-    font-size: ${(props) =>
-      props?.fontSize ? props?.fontSize + 'rem' : '1.2rem'};
-  }
-`;
 export default memo(DummyImage);

@@ -11,8 +11,8 @@ const RoomsPage = lazy(() => import('./pages/Rooms/Rooms'));
 const SingleRoomPage = lazy(() => import('./pages/Room/SingleRoom'));
 const ProfilePage = lazy(() => import('./pages/Profile/Profile'));
 const NotFoundPage = lazy(() => import('./components/NotFound'));
-const PodCastPage = lazy(() => import('./components/Podcast/Podcast'));
-const MeetPage = lazy(() => import('./components/Meet/Meet'));
+const PodCastPage = lazy(() => import('./pages/Podcast/Podcast'));
+const MeetPage = lazy(() => import('./pages/Meet/Meet'));
 
 const baseRoutes = createBrowserRouter([
   {
@@ -39,8 +39,8 @@ const baseRoutes = createBrowserRouter([
       { path: '/activate', element: <ActivationPage /> },
       { path: '/rooms', element: <RoomsPage /> },
       { path: '/room/:id', element: <SingleRoomPage /> },
-      { path: '/room/podcast/:id', element: <PodCastPage /> },
-      { path: '/room/meet/:id', element: <MeetPage /> },
+      { path: '/podcast/:id', element: <PodCastPage /> },
+      { path: '/meet/:id', element: <MeetPage /> },
       { path: '/profile/:userName', element: <ProfilePage /> },
     ],
   },
