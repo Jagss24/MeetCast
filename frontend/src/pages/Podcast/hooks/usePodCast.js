@@ -1,17 +1,21 @@
-import { useEffect, useRef, useCallback, useState } from "react";
-import { ACTIONS } from "../actions";
-import { socketInit } from "../socket";
-import freeice from "freeice";
-import { useStateWithCallback } from "./useStateWithCallback";
-import toast from "react-hot-toast";
+import { useEffect, useRef, useCallback, useState } from 'react';
+import { ACTIONS } from '@/actions';
+import { socketInit } from '@/socket/index';
+import freeice from 'freeice';
+import { useStateWithCallback } from '@/hooks/useStateWithCallback';
+import toast from 'react-hot-toast';
+import { useWebRTC } from '@/hooks/useWebRTC';
 
-export const usePodCast = ({
-  roomId,
-  user,
-  isSpeaker = false,
-  isOwner = false,
-  showToastFunc = () => {},
-}) => {
+export const usePodCast = ({ showToastFunc = () => {} }) => {
+  const {
+    states: { user, roomData },
+    routing: { navigateTo, roomId },
+  } = useWebRTC();
+  const roomTopic = roomData?.topic;
+  const isSpeaker = roomData?.speakers?.some(
+    (eachSpeaker) => eachSpeaker?._id === user?.id
+  );
+  const isOwner = roomData?.ownersId?._id === user?.id;
   const [clients, setClients] = useStateWithCallback([]);
   const [clientMessages, setClientMessages] = useState([]);
   const audioElements = useRef({});
@@ -76,7 +80,7 @@ export const usePodCast = ({
         localElement.srcObject = new MediaStream([audioTrack]);
       }
     } catch (error) {
-      toast("Some issue occured in starting audio");
+      toast('Some issue occured in starting audio');
     }
   };
 
@@ -135,7 +139,7 @@ export const usePodCast = ({
     return () => {
       localMediaStream.current.getTracks().forEach((track) => track.stop());
       socket.current.emit(ACTIONS.LEAVE, { roomId });
-      if (audioContext.state !== "closed") {
+      if (audioContext.state !== 'closed') {
         audioContext.close().then(() => {
           monitoring = false;
         });
@@ -240,7 +244,7 @@ export const usePodCast = ({
       );
 
       // If session descrition is offer then create an answer
-      if (remoteSessionDescription.type === "offer") {
+      if (remoteSessionDescription.type === 'offer') {
         const connection = connections.current[peerId];
 
         const answer = await connection.createAnswer();
@@ -300,8 +304,8 @@ export const usePodCast = ({
   }, []);
   // If browser is close directly then this will be triggered
   useEffect(() => {
-    window.addEventListener("unload", function () {
-      alert("leaving");
+    window.addEventListener('unload', function () {
+      alert('leaving');
       socket.current.emit(ACTIONS.LEAVE, { roomId });
     });
   }, []);
@@ -339,11 +343,15 @@ export const usePodCast = ({
   };
 
   return {
-    clients,
-    provideRef,
-    leaveRoom,
-    handleAudio,
-    sendMessage,
-    clientMessages,
+    podCastServices: {
+      clients,
+      provideRef,
+      leaveRoom,
+      handleAudio,
+      sendMessage,
+      clientMessages,
+    },
+    states: { user, isSpeaker, isOwner, roomTopic },
+    routing: { roomId, navigateTo },
   };
 };
