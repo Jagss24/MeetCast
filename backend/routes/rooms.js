@@ -9,7 +9,7 @@ import {
   getRoomsByTopic,
   getSingleRoom,
   getSpeakerRooms,
-  getUserRoomsWithType,
+  getUserRooms,
   removeUserFromRoom,
   roomDto,
 } from '../services/roomServices.js';
@@ -17,10 +17,9 @@ import {
 const router = express.Router();
 
 router.post('/createRoom', async (req, res) => {
-  const { topic, description, roomType, accessibility, speakers, aboutWhat } =
-    req.body;
+  const { topic, description, accessibility, speakers, aboutWhat } = req.body;
   const { refreshtoken } = req.cookies;
-  if (!topic || !roomType || !accessibility || !description) {
+  if (!topic || !accessibility || !description) {
     return res.status(400).json({
       message: 'Some info about room is missing',
     });
@@ -34,7 +33,6 @@ router.post('/createRoom', async (req, res) => {
     const ownerId = user._id;
     const room = await createRoom({
       topic,
-      roomType,
       accessibility,
       ownerId,
       speakers,
@@ -56,7 +54,7 @@ router.get('/getRooms', async (req, res) => {
   if (topic) {
     rooms = await getRoomsByTopic(topic);
   } else {
-    rooms = await getRooms('podcast');
+    rooms = await getRooms();
   }
   const roomDtos = await Promise.all(
     rooms.map(async (eachRoom) => await roomDto(eachRoom))
@@ -75,15 +73,13 @@ router.get('/getSingleRoom', async (req, res) => {
 });
 
 router.get('/getUserRoom', async (req, res) => {
-  const { userName, roomType } = req.query;
+  const { userName } = req.query;
   const user = await findUser({ userName });
   if (!user) {
     return res.status(404).json({ message: 'user Not Found' });
   }
-  if (!roomType) {
-    return res.status(400).json({ message: 'Please Specify the room type' });
-  }
-  const rooms = await getUserRoomsWithType(roomType, user);
+
+  const rooms = await getUserRooms(user);
   const roomDtos = await Promise.all(
     rooms.map(async (eachRoom) => await roomDto(eachRoom))
   );

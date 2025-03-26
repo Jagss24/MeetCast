@@ -1,10 +1,10 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from 'mongoose';
 
 const roomSchema = new mongoose.Schema(
   {
     ownerId: {
       type: Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
     },
     topic: {
       type: String,
@@ -22,7 +22,7 @@ const roomSchema = new mongoose.Schema(
       type: [
         {
           type: Schema.Types.ObjectId,
-          ref: "User",
+          ref: 'User',
         },
       ],
       required: false,
@@ -31,15 +31,12 @@ const roomSchema = new mongoose.Schema(
       type: [
         {
           type: Schema.Types.ObjectId,
-          ref: "User",
+          ref: 'User',
         },
       ],
       required: false,
     },
-    roomType: {
-      type: String,
-      required: true,
-    },
+    allCanSpeak: { type: Boolean, required: true },
     accessibility: {
       type: String,
       required: true,
@@ -48,7 +45,7 @@ const roomSchema = new mongoose.Schema(
       type: [
         {
           type: Schema.Types.ObjectId,
-          ref: "User",
+          ref: 'User',
         },
       ],
       required: false,
@@ -57,7 +54,7 @@ const roomSchema = new mongoose.Schema(
       type: [
         {
           type: Schema.Types.ObjectId,
-          ref: "User",
+          ref: 'User',
         },
       ],
       required: false,
@@ -68,4 +65,4 @@ const roomSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("Rooms", roomSchema, "rooms");
+export default mongoose.model('Rooms', roomSchema, 'rooms');

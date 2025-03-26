@@ -3,19 +3,19 @@ import Rooms from '../models/roomModel.js';
 
 export const createRoom = async ({
   topic,
-  roomType,
   ownerId,
   accessibility,
   speakers,
   description,
   aboutWhat,
+  allCanSpeak = false,
 }) => {
   let speakersId = speakers?.map((eachSpeaker) => eachSpeaker.id);
   const room = await Rooms.create({
     ownerId,
     topic,
-    roomType,
     accessibility,
+    allCanSpeak,
     speakers: speakersId ? [ownerId, ...speakersId] : [ownerId],
     description,
     aboutWhat,
@@ -28,7 +28,6 @@ export const roomDto = async (fields) => {
     _id,
     ownerId,
     topic,
-    roomType,
     speakers,
     description,
     aboutWhat,
@@ -36,12 +35,12 @@ export const roomDto = async (fields) => {
     removedList,
     waitingList,
     accessibility,
+    allCanSpeak,
   } = fields;
   return {
     id: _id,
     ownerId,
     topic,
-    roomType,
     speakers,
     description,
     aboutWhat,
@@ -49,11 +48,12 @@ export const roomDto = async (fields) => {
     removedList,
     waitingList,
     accessibility,
+    allCanSpeak,
   };
 };
 
-export const getRooms = async (type) => {
-  const rooms = await Rooms.find({ roomType: type, accessibility: 'public' })
+export const getRooms = async () => {
+  const rooms = await Rooms.find({})
     .populate({
       path: 'speakers',
       select: 'fullName avatar _id',
@@ -65,6 +65,7 @@ export const getRooms = async (type) => {
     .exec();
   return rooms;
 };
+
 export const getRoomsByTopic = async (topicName) => {
   const rooms = await Rooms.find({
     aboutWhat: topicName,
@@ -81,6 +82,7 @@ export const getRoomsByTopic = async (topicName) => {
     .exec();
   return rooms;
 };
+
 export const getSingleRoom = async (roomId) => {
   if (!mongoose.Types.ObjectId.isValid(roomId)) {
     return null;
@@ -109,8 +111,9 @@ export const getSingleRoom = async (roomId) => {
     .exec();
   return rooms;
 };
-export const getUserRoomsWithType = async (roomType, user) => {
-  const rooms = await Rooms.find({ roomType, ownerId: user?._id })
+
+export const getUserRooms = async (user) => {
+  const rooms = await Rooms.find({ ownerId: user?._id })
     .populate({
       path: 'speakers',
       select: 'fullName avatar _id',
