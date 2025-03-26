@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import DummyImage from '@/components/DummyImage';
 import { useRouteHandlers } from '@/hooks/useRouteHandlers';
 import UiButton from '@/components/ui/UiButton';
+import { User, Lock } from 'lucide-react';
 
 const RoomCard = ({ room }) => {
   const { navigate } = useRouteHandlers();
@@ -75,7 +76,13 @@ const RoomCard = ({ room }) => {
           className='px-4 focus:brightness-90 focus:scale-95'
         />
       </section>
-      {/* </RoomMain> */}
+      <div className='absolute p-2 right-2 top-2 bg-border rounded-full'>
+        {room?.accessibility === 'public' ? (
+          <User className='size-4' />
+        ) : (
+          <Lock className='size-4' />
+        )}
+      </div>
     </div>
   );
 };

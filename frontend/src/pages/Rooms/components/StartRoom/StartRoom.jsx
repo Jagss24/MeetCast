@@ -1,85 +1,83 @@
 import { useStartRoom } from '../../hooks/useStartRoom';
 import UiModal from '@/components/ui/UiModal';
 import UiButton from '@/components/ui/UiButton';
-import { ACCESSIBILITY_TYPES, ROOM_URL_KEYS } from '../../room.constants';
+import { ACCESSIBILITY_TYPES } from '../../room.constants';
 import UiTextInput from '@/components/ui/UiTextInput';
 import UISelector from '@/components/ui/UISelector';
 import UIMultiSearchSelector from '@/components/ui/UIMultiSearchSelector';
 import toast from 'react-hot-toast';
 import { X } from 'lucide-react';
+import { TOPIC_OPTIONS } from '../../room.constants';
 
 const StartRoom = ({ closeModal }) => {
   const {
     functions: { handleCreateRoom },
     states: {
-      TOPIC_OPTIONS,
-      ROOM_TYPES,
       selectedOption,
       selectedUser,
       userQuery,
       listOfUsers,
+      visibility,
+      allCanSpeak,
     },
-    setStates: { setSelectedOption, setSelectedUser, setUserQuery },
-    routing: { navigateTo, activeRoom, visibility },
+    setStates: {
+      setVisibility,
+      setSelectedOption,
+      setSelectedUser,
+      setUserQuery,
+      setAllCanSpeak,
+    },
   } = useStartRoom();
-
+  console.log({ allCanSpeak });
   return (
     <UiModal className='relative'>
       <section className='flex flex-col items-center gap-4 my-4'>
         <span>Room Type</span>
+
         <div className='flex items-center gap-4'>
-          {ROOM_TYPES.map((eachRoomType) => {
-            const ICON = eachRoomType.icon;
-            return (
-              <UiButton
-                key={eachRoomType.name}
-                text={eachRoomType.name}
-                icon={<ICON className='size-5' />}
-                data-active={activeRoom === eachRoomType.name}
-                onClick={() =>
-                  navigateTo({
-                    to: { [ROOM_URL_KEYS.roomType]: eachRoomType.name },
-                  })
-                }
-                buttonType='tertiary'
-                className='h-20 w-24 text-white capitalize flex flex-col-reverse gap-2 rounded-md focus:ring-2 focus:ring-gray data-[active=true]:bg-secondary duration-200'
-              />
-            );
-          })}
+          {ACCESSIBILITY_TYPES.map((eachAccessibility) => (
+            <UiButton
+              key={eachAccessibility.name}
+              text={eachAccessibility.name}
+              data-active={visibility === eachAccessibility.name}
+              onClick={() => setVisibility(eachAccessibility.name)}
+              icon={<eachAccessibility.icon className='size-4' />}
+              buttonType='tertiary'
+              className='text-white px-6 p-2 flex-row-reverse gap-4 rounded-full capitalize border border-white focus:ring-2 focus:ring-gray data-[active=true]:bg-white data-[active=true]:text-primary data-[active=true]:ring-0 duration-200'
+            />
+          ))}
         </div>
-        {activeRoom === 'podcast' ? (
-          <div className='flex items-center gap-4'>
-            {ACCESSIBILITY_TYPES.map((eachAccessibility) => (
+        {visibility === 'public' && (
+          <div className='w-full'>
+            <p className='text-sm my-2 font-semibold'>Speaker options</p>
+            <div className='flex items-center gap-4 justify-center w-full'>
               <UiButton
-                key={eachAccessibility.name}
-                text={eachAccessibility.name}
-                data-active={visibility === eachAccessibility.name}
-                onClick={() =>
-                  navigateTo({
-                    to: { [ROOM_URL_KEYS.visibility]: eachAccessibility.name },
-                  })
-                }
                 buttonType='tertiary'
-                className='text-white px-6 p-2 rounded-full capitalize border border-white focus:ring-2 focus:ring-gray data-[active=true]:bg-white data-[active=true]:text-primary data-[active=true]:ring-0 duration-200'
+                text='Assigned speakers only'
+                data-active={!allCanSpeak}
+                onClick={() => setAllCanSpeak(false)}
+                className='px-4 text-white font-normal border border-offWhite h-10 data-[active=true]:bg-border'
               />
-            ))}
+              <UiButton
+                buttonType='tertiary'
+                text='Everyone can speak'
+                data-active={allCanSpeak}
+                onClick={() => setAllCanSpeak(true)}
+                className='px-4 text-white font-normal border border-offWhite h-10 data-[active=true]:bg-border'
+              />
+            </div>
           </div>
-        ) : (
-          <p className='text-sm font-semibold border border-gray p-4 rounded-lg'>
-            If room type is meet then it will always be private
-          </p>
         )}
-        {activeRoom === 'podcast' && (
-          <UISelector
-            label='About What?'
-            value={selectedOption}
-            onChange={(val) => {
-              return setSelectedOption({ id: val.id, name: val.name });
-            }}
-            placeholder='Select topic'
-            options={TOPIC_OPTIONS}
-          />
-        )}
+
+        <UISelector
+          label='About What?'
+          value={selectedOption}
+          onChange={(val) => {
+            return setSelectedOption({ id: val.id, name: val.name });
+          }}
+          placeholder='Select topic'
+          options={TOPIC_OPTIONS}
+        />
       </section>
 
       <form
@@ -103,7 +101,7 @@ const StartRoom = ({ closeModal }) => {
           placeholder='Say something about your room...'
           className='placeholder:font-normal mt-1'
         />
-        {activeRoom === 'podcast' && visibility === 'public' && (
+        {!allCanSpeak && visibility === 'public' && (
           <UIMultiSearchSelector
             label='Speakers'
             onChange={(val) => {
@@ -119,15 +117,10 @@ const StartRoom = ({ closeModal }) => {
             className='bg-white h-12'
           />
         )}
-        {activeRoom === 'meet' && (
-          <p className='text-sm font-semibold border border-gray p-4 rounded-lg'>
-            If room type is meet those users who can join the room will be
-            allowed to speak
-          </p>
-        )}
-        {activeRoom === 'podcast' && visibility === 'private' && (
-          <p className='text-sm font-semibold border border-gray p-4 rounded-lg'>
-            If you will create private room eveyone will be allowed to speak
+
+        {visibility === 'private' && (
+          <p className='text-sm font-semibold bg-border/30 border border-gray p-4 rounded-lg'>
+            If you will create private room everyone will be allowed to speak
           </p>
         )}
         <UiButton

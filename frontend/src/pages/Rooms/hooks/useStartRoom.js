@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useRouteHandlers } from '@/hooks/useRouteHandlers';
-import { ROOM_TYPES, ROOM_URL_KEYS, TOPIC_OPTIONS } from '../room.constants';
+import { ROOM_URL_KEYS } from '../room.constants';
 import { useAutoReLogin } from '@/hooks/useAutoReLogin';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -8,10 +8,10 @@ import { createRoom } from '@/api/api';
 import { searchUser } from '@/api/api';
 
 export const useStartRoom = () => {
-  const { navigateTo, paramsObject } = useRouteHandlers();
+  const { navigateTo } = useRouteHandlers();
 
-  const activeRoom = paramsObject?.[ROOM_URL_KEYS.roomType] || '';
-  const visibility = paramsObject?.[ROOM_URL_KEYS.visibility] || '';
+  const [visibility, setVisibility] = useState('public');
+  const [allCanSpeak, setAllCanSpeak] = useState(false);
   const {
     services: { getReLoginUser },
   } = useAutoReLogin();
@@ -49,9 +49,9 @@ export const useStartRoom = () => {
       .mutateAsync({
         topic,
         description,
-        roomType: activeRoom,
-        accessibility: activeRoom === 'meet' ? 'private' : visibility,
-        aboutWhat: activeRoom === 'podcast' && selectedOption.name,
+        accessibility: visibility,
+        aboutWhat: selectedOption.name,
+        allCanSpeak,
         speakers: selectedUser,
       })
       .then((roomData) => {
@@ -68,19 +68,19 @@ export const useStartRoom = () => {
       handleCreateRoom,
     },
     states: {
-      TOPIC_OPTIONS,
-      ROOM_TYPES,
-      activeRoom,
       selectedOption,
       selectedUser,
       userQuery,
       listOfUsers,
+      visibility,
+      allCanSpeak,
     },
     setStates: {
+      setVisibility,
       setSelectedOption,
       setSelectedUser,
       setUserQuery,
+      setAllCanSpeak,
     },
-    routing: { navigateTo, activeRoom, visibility },
   };
 };
