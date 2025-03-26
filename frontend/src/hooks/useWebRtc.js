@@ -17,5 +17,8 @@ export const useWebRTC = () => {
   });
   const roomData = getSingleRoomService?.data?.data?.roomDtos;
 
-  return { states: { user, roomData }, routing: { navigateTo, roomId } };
+  return {
+    states: { user, roomData },
+    routing: { navigateTo, roomId },
+  };
 };
