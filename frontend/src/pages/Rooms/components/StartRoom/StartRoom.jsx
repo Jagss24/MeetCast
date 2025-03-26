@@ -28,7 +28,7 @@ const StartRoom = ({ closeModal }) => {
       setAllCanSpeak,
     },
   } = useStartRoom();
-  console.log({ allCanSpeak });
+
   return (
     <UiModal className='relative'>
       <section className='flex flex-col items-center gap-4 my-4'>

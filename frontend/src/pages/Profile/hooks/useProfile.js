@@ -23,7 +23,6 @@ export const useProfile = () => {
   const {
     services: { getReLoginUser },
   } = useAutoReLogin({});
-  console.log(userName, !!userName);
   const profileData = useQuery({
     queryKey: ['profile-data', userName],
     queryFn: () => getUserbyUserName(userName),

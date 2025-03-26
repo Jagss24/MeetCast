@@ -2,17 +2,11 @@ import { Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 import { logout } from '@/api/api.js';
 import DummyImage from '../DummyImage.jsx';
-import { FaUserCircle } from 'react-icons/fa';
-import { IoLogOutOutline } from 'react-icons/io5';
 import queryClient from '@/queryConfig/queryClient.config.js';
 import { useAutoReLogin } from '@/hooks/useAutoReLogin.js';
 import { useRouteHandlers } from '@/hooks/useRouteHandlers.ts';
-import { Podcast } from 'lucide-react';
+import { LogOut, Podcast, UserRound } from 'lucide-react';
 import { useState } from 'react';
-import {
-  PROFILE_URL_KEYS,
-  ROOM_TYPES,
-} from '@/pages/Profile/profile.constants.js';
 
 const Navbar = () => {
   const {
@@ -65,13 +59,12 @@ const Navbar = () => {
                       return;
                     }
                     navigateTo({
-                      to: { [PROFILE_URL_KEYS?.activeRoomType]: ROOM_TYPES[0] },
                       url: `/profile/${user?.userName}`,
                     });
                   }
                 }}>
                 <span>
-                  <FaUserCircle />
+                  <UserRound className='size-4' />
                 </span>
                 View Profile
               </p>
@@ -79,7 +72,7 @@ const Navbar = () => {
                 className='flex items-center gap-2 p-2'
                 onClick={logoutMutation.mutate}>
                 <span>
-                  <IoLogOutOutline />
+                  <LogOut className='size-4' />
                 </span>
                 Logout
               </p>
