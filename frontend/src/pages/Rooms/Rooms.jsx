@@ -40,17 +40,7 @@ const Rooms = () => {
           text='Create room'
           icon={<MessageSquareDiff className='size-4' />}
           data-active={showModal}
-          onClick={() => {
-            setShowModal(true);
-            setTimeout(() => {
-              navigateTo({
-                to: {
-                  [ROOM_URL_KEYS.roomType]: 'podcast',
-                  [ROOM_URL_KEYS.visibility]: 'public',
-                },
-              });
-            }, 100);
-          }}
+          onClick={() => setShowModal(true)}
           className='px-6 h-10 rounded-full border border-gray/50 bg-white text-primary duration-300 hover:brightness-90 focus:brightness-90 focus:scale-90'
           buttonType='tertiary'
         />
@@ -67,16 +57,7 @@ const Rooms = () => {
           ))}
         </div>
       )}
-      {showModal && (
-        <StartRoom
-          closeModal={() => {
-            setShowModal(false);
-            setTimeout(() => {
-              navigateTo({ remove: Object.values(ROOM_URL_KEYS) });
-            }, 100);
-          }}
-        />
-      )}
+      {showModal && <StartRoom closeModal={() => setShowModal(false)} />}
     </section>
   );
 };

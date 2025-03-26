@@ -12,15 +12,15 @@ const Profile = () => {
   const {
     services: { getReLoginUser, profileData, roomData, speakersRoomData },
     functions: { uploadImage },
-    routing: { navigate, activeRoomType, navigateTo },
+    routing: { navigate, navigateTo, activeRoomType },
   } = useProfile();
 
   const loggedInUser = getReLoginUser?.data?.data?.userData;
   const profileUserData = profileData?.data?.data?.userData;
   const rooms =
-    roomData?.data?.data?.roomDtos ||
-    speakersRoomData?.data?.data?.roomDtos ||
-    [];
+    (activeRoomType !== 'speakingRooms'
+      ? roomData?.data?.data?.roomDtos
+      : speakersRoomData?.data?.data?.roomDtos) || [];
   return profileData?.isLoading || getReLoginUser?.isLoading ? (
     <UIPageWrapper classname='flex flex-col gap-4 items-center justify-center'>
       <ThreeDots />

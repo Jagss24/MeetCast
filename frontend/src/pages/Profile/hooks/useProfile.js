@@ -19,7 +19,7 @@ export const useProfile = () => {
     paramsObject,
   } = useRouteHandlers();
   const activeRoomType =
-    paramsObject?.[PROFILE_URL_KEYS.activeRoomType] || ROOM_TYPES[0];
+    paramsObject?.[PROFILE_URL_KEYS.activeRoomType] || 'rooms';
   const {
     services: { getReLoginUser },
   } = useAutoReLogin({});
@@ -31,8 +31,9 @@ export const useProfile = () => {
   });
 
   const roomData = useQuery({
-    queryKey: ['get-room', activeRoomType],
-    queryFn: () => getUserRoom(activeRoomType, userName),
+    queryKey: ['get-room'],
+    queryFn: () => getUserRoom(userName),
+    enabled: activeRoomType !== 'speakingRooms',
   });
 
   const speakersRoomData = useQuery({

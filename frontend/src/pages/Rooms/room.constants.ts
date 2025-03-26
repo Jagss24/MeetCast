@@ -1,4 +1,4 @@
-import { Podcast, Video } from 'lucide-react';
+import { Lock, Users } from 'lucide-react';
 
 const TOPIC_OPTIONS = [
   {
@@ -31,17 +31,14 @@ const TOPIC_OPTIONS = [
   },
 ];
 
-const ROOM_TYPES = [
-  { name: 'podcast', icon: Podcast },
-  { name: 'meet', icon: Video },
-];
-
 const ROOM_URL_KEYS = {
-  roomType: 'room-type',
   visibility: 'visibility',
   topic: 'filter-room',
 };
 
-const ACCESSIBILITY_TYPES = [{ name: 'public' }, { name: 'private' }];
+const ACCESSIBILITY_TYPES = [
+  { name: 'public', icon: Users },
+  { name: 'private', icon: Lock },
+];
 
-export { TOPIC_OPTIONS, ROOM_TYPES, ACCESSIBILITY_TYPES, ROOM_URL_KEYS };
+export { TOPIC_OPTIONS, ACCESSIBILITY_TYPES, ROOM_URL_KEYS };

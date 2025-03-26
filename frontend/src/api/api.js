@@ -75,8 +75,8 @@ export const getSingleRoom = (roomId) =>
 export const searchUser = (searchText) =>
   api.get(`authenticate/searchUser?searchText=${searchText}`);
 
-export const getUserRoom = (roomType, userName) =>
-  api.get(`rooms/getUserRoom?userName=${userName}&roomType=${roomType}`);
+export const getUserRoom = (userName) =>
+  api.get(`rooms/getUserRoom?userName=${userName}`);
 
 export const getSpeakers = (userName) =>
   api.get(`rooms/getSpeakers?userName=${userName}`);

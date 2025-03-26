@@ -1,4 +1,4 @@
-const ROOM_TYPES = ['podcast', 'meet', 'speakingRooms'];
+const ROOM_TYPES = ['rooms', 'speakingRooms'];
 
 const PROFILE_URL_KEYS = { activeRoomType: 'active-room-type' };
 
