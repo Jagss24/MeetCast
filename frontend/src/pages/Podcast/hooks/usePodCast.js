@@ -4,7 +4,7 @@ import { socketInit } from '@/socket/index';
 import freeice from 'freeice';
 import { useStateWithCallback } from '@/hooks/useStateWithCallback';
 import toast from 'react-hot-toast';
-import { useWebRTC } from '@/hooks/useWebRTC';
+import { useWebRTC } from '@/hooks/useWebRtc';
 
 export const usePodCast = ({ showToastFunc = () => {} }) => {
   const {
