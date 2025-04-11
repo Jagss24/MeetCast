@@ -20,11 +20,9 @@
 
 ## Tech Stack
 
-**Frontend:** React, Styled-Components
+**Frontend:** React, Tailwind css, Tanstack-query, socket.io-client
 
-**Backend:** Nodejs, Expressjs, MongoDB 
-
-**Main lib:** *Socket.io, WebRTC, Tanstack-query, nodemailer, JWT*
+**Backend:** Nodejs, Expressjs, MongoDB, socket.io, nodemailer, JWT
 
 ## Test credentials
 
