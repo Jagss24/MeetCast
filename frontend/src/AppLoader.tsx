@@ -1,4 +1,3 @@
-import React from 'react';
 import UIPageWrapper from './components/ui/UIPageWrapper';
 import { Podcast } from 'lucide-react';
 
