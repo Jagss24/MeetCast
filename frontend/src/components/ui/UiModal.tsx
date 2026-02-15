@@ -1,6 +1,12 @@
 import React, { useEffect } from 'react';
 
-const UiModal = ({ children, headingText, className }) => {
+interface ModalProps {
+  children: React.ReactNode;
+  headingText: string;
+  className?: string;
+}
+
+const UiModal = ({ children, headingText, className = '' }: ModalProps) => {
   useEffect(() => {
     document.documentElement.style.overflow = 'hidden';
 

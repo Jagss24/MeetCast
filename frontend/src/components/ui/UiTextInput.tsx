@@ -1,13 +1,21 @@
 import { Asterisk } from 'lucide-react';
+import type { ComponentPropsWithoutRef } from 'react';
 
+type TextInputProps = ComponentPropsWithoutRef<'input'> & {
+  label: string;
+  icon?: React.ReactNode;
+  error?: { message: string };
+  containerClass?: string;
+  isRequired?: boolean;
+};
 const UiTextInput = ({
   label,
   icon,
   error,
-  containerClass,
-  isRequired,
+  containerClass = '',
+  isRequired = false,
   ...rest
-}) => {
+}: TextInputProps) => {
   const isError = error?.message ? true : false;
   return (
     <div className={`flex flex-col w-full ${containerClass}`}>

@@ -1,4 +1,14 @@
 import { LoaderCircle } from 'lucide-react';
+import type { ComponentPropsWithoutRef } from 'react';
+
+type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
+
+type UiButtonProps = ComponentPropsWithoutRef<'button'> & {
+  text: string;
+  buttonType?: ButtonVariant;
+  icon?: React.ReactNode;
+  isLoading?: boolean;
+};
 
 const UiButton = ({
   text,
@@ -7,7 +17,7 @@ const UiButton = ({
   isLoading,
   type = 'button',
   ...rest
-}) => {
+}: UiButtonProps) => {
   if (buttonType === 'secondary') {
     return (
       <button
