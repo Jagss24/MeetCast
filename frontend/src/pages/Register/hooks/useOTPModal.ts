@@ -1,20 +1,21 @@
-import { verifyOtp } from '@/api/api';
+import { verifyOtp } from '@/api/auth/auth.api';
 import { useAutoReLogin } from '@/hooks/useAutoReLogin';
 import { useRouteHandlers } from '@/hooks/useRouteHandlers';
+import { handleNetworkErrorToast } from '@/lib/toasts';
 import { useMutation } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
-import toast from 'react-hot-toast';
 
-export const useOTPModal = ({ handleClose }) => {
+export const useOTPModal = () => {
   const { navigate } = useRouteHandlers();
   const {
     services: { getReLoginUser },
   } = useAutoReLogin();
   const [inputs, setInputs] = useState(['', '', '', '']);
   const [currentFocus, setCurrentFocus] = useState(0);
-  const emailId = sessionStorage.getItem('emailId');
-  const hash = sessionStorage.getItem('hash');
-  const inputRefs = useRef([
+  const emailId = sessionStorage.getItem('emailId') || '';
+  const hash = sessionStorage.getItem('hash') || '';
+
+  const inputRefs = useRef<React.MutableRefObject<null | HTMLInputElement>[]>([
     useRef(null),
     useRef(null),
     useRef(null),
@@ -22,13 +23,11 @@ export const useOTPModal = ({ handleClose }) => {
   ]);
 
   const verifyOtpMutation = useMutation({
-    mutationFn: (data) => verifyOtp(data),
-    onError: (error) => {
-      toast.error(error.response.data.message || 'Some error occured');
-    },
+    mutationFn: verifyOtp,
+    onError: handleNetworkErrorToast,
   });
 
-  const handleChange = (value, idx) => {
+  const handleChange = (value: string, idx: number) => {
     if (Number.isInteger(+value) && +value < 10) {
       // If there is empty str like "" it will still be true.
       const newInputs = [...inputs];
@@ -38,17 +37,16 @@ export const useOTPModal = ({ handleClose }) => {
     }
   };
 
-  const handleSubmit = ({ password }) => {
+  const handleSubmit = async ({ password }: { password: string }) => {
     const data = {
       otp: inputs.join(''),
       hash,
       emailId,
       password,
     };
-    verifyOtpMutation.mutateAsync(data).then((verifyData) => {
-      handleClose();
+    return verifyOtpMutation.mutateAsync(data).then((verifyData) => {
       getReLoginUser.refetch();
-      localStorage.setItem('accessToken', verifyData?.data?.accessToken);
+      localStorage.setItem('accessToken', verifyData?.accessToken);
       navigate('/activate');
     });
   };

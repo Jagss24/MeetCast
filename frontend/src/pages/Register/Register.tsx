@@ -21,16 +21,19 @@ const Register = () => {
       <UiCard
         className='w-96 rounded-md'
         headingIcon={<Podcast className='size-6' />}
-        titleClassName=''
         headerTitle='Create your new account'>
         <section className='mt-4 flex flex-col gap-4 w-full'>
           <form
             className='flex flex-col items-center justify-center gap-4'
             onSubmit={(e) => {
               e.preventDefault();
-              const formData = new FormData(e.target);
-              const emailId = formData.get('emailId');
-              const password = formData.get('password');
+              const formData = new FormData(e.currentTarget);
+              const emailId = formData.get('emailId') as string;
+              const password = formData.get('password') as string;
+              if (!emailId || !password) {
+                toast('Please enter all details');
+                return;
+              }
               handleEmailSubmission({ emailId, password });
             }}>
             <UiTextInput
@@ -59,13 +62,14 @@ const Register = () => {
             />
           </form>
           <GoogleLogin
-            onSuccess={(credentialResponse) =>
-              handleGoogleRegister({ cred: credentialResponse?.credential })
-            }
+            onSuccess={(credentialResponse) => {
+              if (credentialResponse?.credential)
+                handleGoogleRegister(credentialResponse?.credential);
+            }}
             onError={() => {
               toast.error('Some Error Occured while Login');
             }}
-            theme='filled_white'
+            theme={'filled_white' as any} // filled_white is expected but was still giving me ts error so wrote any
             logo_alignment='left'
             useOneTap
             shape='square'
@@ -74,6 +78,7 @@ const Register = () => {
           />
         </section>
       </UiCard>
+
       {isOTPOpenModal && (
         <OTPModal
           handleClose={() => setIsOTPOpenModal(false)}

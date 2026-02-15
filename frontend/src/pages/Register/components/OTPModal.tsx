@@ -3,13 +3,17 @@ import { useOTPModal } from '../hooks/useOTPModal';
 import UiModal from '@/components/ui/UiModal';
 import UiButton from '@/components/ui/UiButton';
 
-const OTPModal = ({ handleClose, password }) => {
+interface OTPModalProps {
+  password: string;
+  handleClose: () => void;
+}
+const OTPModal = ({ handleClose, password }: OTPModalProps) => {
   const {
     states: { inputs, currentFocus, setCurrentFocus },
     refs: { inputRefs },
     functions: { handleSubmit, handleChange },
     mutations: { verifyOtpMutation },
-  } = useOTPModal({ handleClose });
+  } = useOTPModal();
 
   useEffect(() => {
     inputRefs.current[currentFocus]?.current?.focus();
@@ -24,11 +28,11 @@ const OTPModal = ({ handleClose, password }) => {
         className='flex flex-col items-center gap-2 mt-4'
         onSubmit={(e) => {
           e.preventDefault();
-          handleSubmit({ password });
+          handleSubmit({ password }).then(handleClose);
         }}>
         <div className='flex items-center justify-center gap-2'>
           {inputs.map((value, i) => {
-            const isDiabled = value ? false : i > currentFocus;
+            const isDisabled = value ? false : i > currentFocus;
             return (
               <input
                 className='size-12 rounded bg-white text-primary p-4 outline-none disabled:cursor-not-allowed disabled:brightness-90'
@@ -37,7 +41,7 @@ const OTPModal = ({ handleClose, password }) => {
                 key={i}
                 value={value}
                 ref={inputRefs.current[i]}
-                disabled={isDiabled}
+                disabled={isDisabled}
                 onKeyDown={(e) => {
                   if (e.key === 'Backspace' && i > 0 && inputs[i] === '') {
                     setCurrentFocus(i - 1);

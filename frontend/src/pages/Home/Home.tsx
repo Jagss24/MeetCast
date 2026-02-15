@@ -1,4 +1,3 @@
-import React from 'react';
 import UiButton from '@/components/ui/UiButton';
 import UIPageWrapper from '@/components/ui/UIPageWrapper';
 import { Podcast } from 'lucide-react';

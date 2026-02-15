@@ -2,19 +2,30 @@ import { autoReLogin } from '@/api/api';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useRouteHandlers } from './useRouteHandlers';
+import type { AxiosResponse } from 'axios';
 
+interface IUserData {
+  id: string;
+  userName: string;
+  fullName: string;
+  activated: boolean;
+  emailId: string;
+  signedUpwithGoogle: boolean;
+  about: string;
+}
 export const useAutoReLogin = ({ enableQuery = false } = {}) => {
   const { navigate, route } = useRouteHandlers();
   const getReLoginUser = useQuery({
     queryKey: ['user-login'],
-    queryFn: () => autoReLogin(),
+    queryFn: (): Promise<AxiosResponse<{ userData: IUserData }, any>> =>
+      autoReLogin(),
     retry: 0,
     enabled: enableQuery,
   });
 
   useEffect(() => {
     if (getReLoginUser?.isFetching || getReLoginUser?.isLoading) {
-      return () => {};
+      return;
     }
     if (getReLoginUser?.isError) {
       if (route === 'login' || route === 'register' || route === '') {
@@ -23,10 +34,13 @@ export const useAutoReLogin = ({ enableQuery = false } = {}) => {
       }
       navigate({ pathname: 'login' });
     } else {
-      const isUserActivated = getReLoginUser.data.data.userData.activated;
+      const isUserActivated = getReLoginUser.data?.data.userData.activated;
       if (route === '') {
         navigate({ pathname: route }, { replace: true });
-      } else if (['login', 'register', 'activate', 'rooms'].includes(route)) {
+      } else if (
+        route &&
+        ['login', 'register', 'activate', 'rooms'].includes(route)
+      ) {
         if (isUserActivated) {
           navigate({ pathname: '/rooms' }, { replace: true });
         } else {
@@ -34,6 +48,7 @@ export const useAutoReLogin = ({ enableQuery = false } = {}) => {
         }
       }
     }
+    return;
   }, [getReLoginUser?.isFetching || getReLoginUser?.isLoading]);
 
   return { services: { getReLoginUser } };
