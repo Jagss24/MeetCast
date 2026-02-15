@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import { logout } from '@/api/api.js';
+import { logout } from '@/api/api';
 import DummyImage from '../DummyImage.jsx';
 import queryClient from '@/queryConfig/queryClient.config';
-import { useAutoReLogin } from '@/hooks/useAutoReLogin.js';
-import { useRouteHandlers } from '@/hooks/useRouteHandlers.ts';
+import { useAutoReLogin } from '@/hooks/useAutoReLogin';
+import { useRouteHandlers } from '@/hooks/useRouteHandlers';
 import { LogOut, Podcast, UserRound } from 'lucide-react';
 import { useState } from 'react';
 
