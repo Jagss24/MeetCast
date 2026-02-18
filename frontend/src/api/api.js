@@ -52,8 +52,6 @@ export const activate = (data) => api.post('authenticate/activate', data);
 
 export const autoReLogin = () => api.get('authenticate/autoReLogin');
 
-export const loginUser = (data) => api.post(`authenticate/login`, data);
-
 export const getUserbyUserName = (userName) =>
   api.get(`authenticate/getUserbyUserName?userName=${userName}`);
 

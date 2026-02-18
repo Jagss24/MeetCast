@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import toast from 'react-hot-toast';
@@ -8,6 +7,7 @@ import UiCard from '@/components/ui/UiCard';
 import UiButton from '@/components/ui/UiButton';
 import UiTextInput from '@/components/ui/UiTextInput';
 import { KeyRound, Mail, Podcast } from 'lucide-react';
+import { handleErrorToast } from '@/lib/toasts';
 
 const Login = () => {
   const {
@@ -27,9 +27,13 @@ const Login = () => {
             className='flex flex-col items-center justify-center gap-4'
             onSubmit={(e) => {
               e.preventDefault();
-              const formData = new FormData(e.target);
-              const emailId = formData.get('emailId');
-              const password = formData.get('password');
+              const formData = new FormData(e.currentTarget);
+              const emailId = formData.get('emailId') as string;
+              const password = formData.get('password') as string;
+              if (!emailId || !password) {
+                handleErrorToast('Please fill all the details');
+                return;
+              }
               handleLogin({ emailId, password });
             }}>
             <UiTextInput
@@ -58,13 +62,14 @@ const Login = () => {
             />
           </form>
           <GoogleLogin
-            onSuccess={(credentialResponse) =>
-              handleGoogleLogin(credentialResponse?.credential)
-            }
+            onSuccess={(credentialResponse) => {
+              if (credentialResponse.credential)
+                handleGoogleLogin(credentialResponse?.credential);
+            }}
             onError={() => {
               toast.error('Some Error Occured while Login');
             }}
-            theme='filled_white'
+            theme={'filled_white' as any} // excepting filled_white but google login was still giving type error so wrote any
             logo_alignment='left'
             useOneTap
           />

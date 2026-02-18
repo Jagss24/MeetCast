@@ -40,6 +40,16 @@ interface IUserData {
   signedUpwithGoogle: boolean;
   about: string;
 }
+
+interface ILoginSubmitSchema {
+  emailId: string;
+  password: string;
+}
+
+interface ILoginResponseSchema {
+  accessToken: string;
+  userDtos: IUserData;
+}
 export type {
   IUserData,
   IGoogleAuthSubmitSchema,
@@ -49,4 +59,6 @@ export type {
   IVerifyOTPSubmitSchema,
   IVerifyOTPResponseSchema,
   IAutoReLoginResponseSchema,
+  ILoginSubmitSchema,
+  ILoginResponseSchema,
 };

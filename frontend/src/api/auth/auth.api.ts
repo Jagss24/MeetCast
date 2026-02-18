@@ -3,6 +3,8 @@ import type {
   IAutoReLoginResponseSchema,
   IGoogleAuthResponseSchema,
   IGoogleAuthSubmitSchema,
+  ILoginResponseSchema,
+  ILoginSubmitSchema,
   ISendOTPResponseSchema,
   ISendOTPSubmitSchema,
   IVerifyOTPResponseSchema,
@@ -32,4 +34,10 @@ const autoReLogin = () =>
     url: 'authenticate/autoReLogin',
   });
 
-export { googleAuth, sendOTP, verifyOtp, autoReLogin };
+const loginUser = (data: ILoginSubmitSchema) =>
+  post<ILoginResponseSchema, ILoginSubmitSchema>({
+    url: 'authenticate/login',
+    data,
+  });
+
+export { googleAuth, sendOTP, verifyOtp, autoReLogin, loginUser };

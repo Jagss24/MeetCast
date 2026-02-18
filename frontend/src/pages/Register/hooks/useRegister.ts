@@ -3,7 +3,7 @@ import { useAutoReLogin } from '@/hooks/useAutoReLogin';
 import { useRouteHandlers } from '@/hooks/useRouteHandlers';
 import { useGoogleAuth } from '@/hooks/mutations/useGoogleAuth';
 import type { IGoogleAuthSubmitSchema } from '@/api/auth/autht.types';
-import { useSendOTP } from '@/hooks/mutations/useSendOTP';
+import { useSendOTP } from './mutations/useSendOTP';
 
 export const useRegister = () => {
   const { navigate } = useRouteHandlers();
