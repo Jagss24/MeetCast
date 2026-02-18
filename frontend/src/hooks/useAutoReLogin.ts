@@ -3,16 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useRouteHandlers } from './useRouteHandlers';
 import type { AxiosResponse } from 'axios';
+import type { IUserData } from '@/api/auth/autht.types';
 
-interface IUserData {
-  id: string;
-  userName: string;
-  fullName: string;
-  activated: boolean;
-  emailId: string;
-  signedUpwithGoogle: boolean;
-  about: string;
-}
 export const useAutoReLogin = ({ enableQuery = false } = {}) => {
   const { navigate, route } = useRouteHandlers();
   const getReLoginUser = useQuery({
