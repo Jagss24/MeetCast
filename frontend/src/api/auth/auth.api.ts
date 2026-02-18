@@ -1,5 +1,6 @@
-import { post } from '@/lib/http';
+import { get, post } from '@/lib/http';
 import type {
+  IAutoReLoginResponseSchema,
   IGoogleAuthResponseSchema,
   IGoogleAuthSubmitSchema,
   ISendOTPResponseSchema,
@@ -26,4 +27,9 @@ const verifyOtp = (data: IVerifyOTPSubmitSchema) =>
     data,
   });
 
-export { googleAuth, sendOTP, verifyOtp };
+const autoReLogin = () =>
+  get<IAutoReLoginResponseSchema>({
+    url: 'authenticate/autoReLogin',
+  });
+
+export { googleAuth, sendOTP, verifyOtp, autoReLogin };
