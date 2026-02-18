@@ -1,6 +1,7 @@
 import api from '@/api/api';
 import { createSearchParams } from 'react-router-dom';
 
+export type TSearchParams = Record<string, string | number | boolean>;
 /* ---------------- POST ---------------- */
 
 export const post = async <TResponse, TRequest = unknown>({
@@ -66,7 +67,7 @@ export const get = async <TResponse>({
   signal,
 }: {
   url: string;
-  searchParams?: Record<string, string | number | boolean>;
+  searchParams?: TSearchParams;
   signal?: AbortSignal;
 }): Promise<TResponse> => {
   const query = searchParams
