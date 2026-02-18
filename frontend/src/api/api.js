@@ -48,8 +48,6 @@ api.interceptors.response.use(
 export const getUSer = (userId) =>
   api.get(`authenticate/getUser?userId=${userId}`);
 
-export const activate = (data) => api.post('authenticate/activate', data);
-
 export const autoReLogin = () => api.get('authenticate/autoReLogin');
 
 export const getUserbyUserName = (userName) =>

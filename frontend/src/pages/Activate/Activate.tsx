@@ -23,15 +23,17 @@ const Activate = () => {
             className='flex flex-col items-center justify-center gap-4'
             onSubmit={(e) => {
               e.preventDefault();
-              const formData = new FormData(e.target);
-              const fullName = formData.get('fullName');
-              const userName = formData.get('userName');
-              handleSubmit({
-                userId: user?.id,
-                fullName,
-                userName,
-                avatar,
-              });
+              const formData = new FormData(e.currentTarget);
+              const fullName = formData.get('fullName') as string;
+              const userName = formData.get('userName') as string;
+              if (user?.id) {
+                handleSubmit({
+                  userId: user?.id,
+                  fullName,
+                  userName,
+                  avatar,
+                });
+              }
             }}>
             {avatar ? (
               <img
@@ -59,12 +61,14 @@ const Activate = () => {
                 name='fullName'
                 placeholder='Enter your fullname'
                 label='Full Name:'
+                required
               />
             )}
             <UiTextInput
               name='userName'
               placeholder='Enter your username'
               label='Username:'
+              required
             />
             <p className='text-gray text-xs font-semibold'>
               {' '}
