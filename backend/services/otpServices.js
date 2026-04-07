@@ -1,12 +1,12 @@
-import crypto from "crypto";
+import crypto from 'crypto';
 
-export const generateOtp = async () => {
+export const generateOtp = () => {
   return crypto.randomInt(1000, 9999);
 };
 
-export const hashOtp = async (data) => {
+export const hashOtp = (data) => {
   return crypto
-    .createHmac("sha256", process.env.HASH_SECRET)
+    .createHmac('sha256', process.env.HASH_SECRET)
     .update(data)
-    .digest("hex");
+    .digest('hex');
 };
