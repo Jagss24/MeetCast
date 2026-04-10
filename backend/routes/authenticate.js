@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-  authenticateOtpEmail,
+  registerUser,
   verifyOtpEmail,
   activateUser,
   autoReLoginFunctionality,
@@ -20,8 +20,8 @@ import {
 const router = express.Router();
 
 const openRoutes = [
-  '/sendOtp',
-  '/verifyOtp',
+  '/register',
+  '/verify-otp',
   '/login',
   '/logout',
   '/google',
@@ -35,17 +35,17 @@ router.use((req, res, next) => {
   return authMiddleWarefunc(req, res, next);
 });
 
-router.post('/sendOtp', authenticateOtpEmail);
+router.post('/register', registerUser);
 
-router.post('/verifyOtp', verifyOtpEmail);
+router.post('/verify-otp', verifyOtpEmail);
 
-router.get('/getUser', getUser);
+router.get('/user', getUser);
 
 router.post('/activate', activateUser);
 
 router.post('/login', loginUser);
 
-router.get('/autoReLogin', autoReLoginFunctionality);
+router.get('/auto-relogin', autoReLoginFunctionality);
 
 router.post('/logout', logoutFunctionality);
 

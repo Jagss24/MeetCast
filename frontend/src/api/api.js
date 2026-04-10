@@ -46,9 +46,9 @@ api.interceptors.response.use(
 );
 
 export const getUSer = (userId) =>
-  api.get(`authenticate/getUser?userId=${userId}`);
+  api.get(`authenticate/user?userId=${userId}`);
 
-export const autoReLogin = () => api.get('authenticate/autoReLogin');
+export const autoReLogin = () => api.get('authenticate/auto-relogin');
 
 export const getUserbyUserName = (userName) =>
   api.get(`authenticate/getUserbyUserName?userName=${userName}`);

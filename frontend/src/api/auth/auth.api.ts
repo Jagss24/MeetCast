@@ -19,19 +19,19 @@ const googleAuth = (data: IGoogleAuthSubmitSchema) =>
 
 const sendOTP = (data: ISendOTPSubmitSchema) =>
   post<ISendOTPResponseSchema, ISendOTPSubmitSchema>({
-    url: 'authenticate/sendOtp',
+    url: 'authenticate/register',
     data,
   });
 
 const verifyOtp = (data: IVerifyOTPSubmitSchema) =>
   post<IVerifyOTPResponseSchema, IVerifyOTPSubmitSchema>({
-    url: 'authenticate/verifyOtp',
+    url: 'authenticate/verify-otp',
     data,
   });
 
 const autoReLogin = () =>
   get<IAutoReLoginResponseSchema>({
-    url: 'authenticate/autoReLogin',
+    url: 'authenticate/auto-relogin',
   });
 
 const loginUser = (data: ILoginSubmitSchema) =>
